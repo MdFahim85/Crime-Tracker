@@ -5,14 +5,13 @@ import Home from "./pages/Home.jsx";
 import ReportCrime from "./pages/ReportCrime";
 
 function App() {
-  const isAuthenticated = true; // example auth state
   const handleLogout = () => {
     console.log("Logged out");
   };
 
   return (
     <Router>
-      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      <Navbar onLogout={handleLogout} />
       <div>
         <Routes>
           <Route path="/" element={<Home />} />
