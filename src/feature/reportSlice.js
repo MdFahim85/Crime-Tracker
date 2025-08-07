@@ -23,6 +23,7 @@ const reportSlice = createSlice({
         street: action.payload.street,
         crimeType: action.payload.crimeType,
         details: action.payload.details,
+        date: action.payload.date,
       });
       localStorage.setItem("reports", JSON.stringify(state.reports));
     },
@@ -36,6 +37,7 @@ const reportSlice = createSlice({
         id.street = action.payload.street;
         id.crimeType = action.payload.crimeType;
         id.details = action.payload.details;
+        id.date = action.payload.date;
         localStorage.setItem("reports", JSON.stringify(state.reports));
       }
     },

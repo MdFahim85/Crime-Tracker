@@ -1,77 +1,125 @@
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import Button from "../components/Button";
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
+function CrimeReports() {
+  const reports = useSelector((state) => state.report.reports);
+  const [filterType, setFilterType] = useState("");
+  const [filterStreet, setFilterStreet] = useState("");
+  const [filterDate, setFilterDate] = useState("");
 
-export default function CrimeReports() {
-  const allReports = useSelector((state) => state.report.reports);
-  const navigate = useNavigate();
-
-  if (!allReports.length) {
+  const filteredReports = reports.filter((r) => {
     return (
-      <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
-        <div className="p-4 text-red-600 font-semibold">
-          No reports found
-          <Link to="/report" className="text-blue-600 underline">
-            Go back
-          </Link>
-        </div>
-      </div>
+      (filterType === "" || r.crimeType === filterType) &&
+      (filterStreet === "" ||
+        r.street.toLowerCase().includes(filterStreet.toLowerCase())) &&
+      (filterDate === "" || r.date === filterDate)
     );
-  }
-
-  const defaultCenter = { lat: 23.7806, lng: 90.4 };
+  });
 
   return (
-    <div className="max-w-6xl mx-auto mt-15 p-4 space-y-6">
-      <h2 className="text-2xl font-bold mb-4">All Crime Reports</h2>
+    <div className="flex flex-col md:flex-row h-full p-4 gap-4 max-w-7xl mx-auto">
+      <aside className="mt-15 md:w-1/4 w-full rounded p-4 shadow-sm bg-gray-50 h-fit">
+        <h2 className="text-lg font-semibold mb-4">Filter Reports</h2>
 
-      <MapContainer
-        center={[defaultCenter.lat, defaultCenter.lng]}
-        zoom={13}
-        scrollWheelZoom={true}
-        style={{ height: "400px", width: "100%" }}
-        className="rounded-md shadow-md"
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {allReports.map((report) => (
-          <Marker
-            key={report.id}
-            position={[report.position.lat, report.position.lng]}
+        <div className="mb-4">
+          <label className="block text-sm mb-1">Crime Type</label>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="w-full border p-2 rounded"
           >
-            <Popup>
-              {report.crimeType} - {report.street}
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+            <option value="">All Types</option>
+            <option value="Robbery">Robbery</option>
+            <option value="Assault">Assault</option>
+            <option value="Theft">Theft</option>
+            <option value="Vandalism">Vandalism</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {allReports.map((report) => (
-          <div
-            key={report.id}
-            onClick={() => navigate(`/crime/${report.id}`)}
-            className="cursor-pointer border border-gray-200 shadow-sm rounded-lg p-4 hover:shadow-md hover:bg-gray-50 transition-all"
+        <div className="mb-4">
+          <label className="block text-sm mb-1">Street Name</label>
+          <input
+            type="text"
+            value={filterStreet}
+            onChange={(e) => setFilterStreet(e.target.value)}
+            placeholder="Enter street"
+            className="w-full border p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm mb-1">Date</label>
+          <input
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            className="w-full border p-2 rounded"
+          />
+        </div>
+      </aside>
+
+      <main className="flex-1 space-y-6">
+        <h2 className="text-2xl font-semibold">Crime Reports</h2>
+
+        {filteredReports.length > 0 && (
+          <MapContainer
+            center={[
+              filteredReports[0].position.lat,
+              filteredReports[0].position.lng,
+            ]}
+            zoom={13}
+            zoomControl={false}
+            style={{ height: "400px", width: "100%" }}
           >
-            <h3 className="text-xl font-semibold text-blue-700">
-              {report.crimeType}
-            </h3>
-            <p className="text-gray-600 mt-1">
-              <strong>Street:</strong> {report.street}
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {filteredReports.map((report) => (
+              <Marker key={report.id} position={report.position}>
+                <Popup>
+                  <strong>{report.crimeType}</strong>
+                  <br />
+                  {report.street}
+                  <br />
+                  {report.date}
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        )}
+        <ul className="space-y-4">
+          {filteredReports.length === 0 ? (
+            <p className="text-gray-500">
+              No reports found for selected filters.
             </p>
-          </div>
-        ))}
-      </div>
+          ) : (
+            filteredReports.map((report) => (
+              <li
+                key={report.id}
+                className="rounded p-4 bg-emerald-100 hover:bg-emerald-300 transition"
+              >
+                <Link to={`/crime/${report.id}`}>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-semibold text-lg">
+                        {report.crimeType}
+                      </h3>
+                      <p className="text-gray-600">{report.street}</p>
+                      <p className="text-gray-500 text-sm">
+                        Date: {report.date}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </li>
+            ))
+          )}
+        </ul>
+      </main>
     </div>
   );
 }
+
+export default CrimeReports;

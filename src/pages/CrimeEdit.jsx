@@ -48,6 +48,7 @@ function CrimeEdit() {
   const [street, setStreet] = useState(report?.street || "");
   const [lat, setLat] = useState(report?.position.lat || 23.8103);
   const [lng, setLng] = useState(report?.position.lng || 90.4125);
+  const [date, setDate] = useState(report?.date || "");
 
   if (!report) {
     return (
@@ -65,11 +66,11 @@ function CrimeEdit() {
         street,
         crimeType,
         details,
+        date,
       })
     );
-
-    navigate(`/crime/${id}`);
     toast.success("Successfully Editted!");
+    navigate(`/crime/${id}`);
   }
 
   return (
@@ -115,6 +116,19 @@ function CrimeEdit() {
           />
         </div>
 
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium text-gray-700">
+            Date of Crime
+          </label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full border p-2 rounded"
+            required
+          />
+        </div>
+
         <div>
           <label className="block font-semibold mb-1">
             Select Location on Map:
@@ -122,6 +136,7 @@ function CrimeEdit() {
           <MapContainer
             center={[lat, lng]}
             zoom={15}
+            zoomControl={false}
             style={{ height: "300px", width: "100%" }}
             className="rounded"
           >
@@ -143,8 +158,10 @@ function CrimeEdit() {
               "px-4 py-2 border-2 text-emerald-600 border-emerald-600 rounded hover:bg-emerald-600 hover:text-white"
             }
             text={"Save Changes"}
+            onClick={() => handleEdit}
           />
           <Button
+            type={"button"}
             className={
               "block mt-2 md:mt-0 px-2 py-1 rounded border-2 text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
             }

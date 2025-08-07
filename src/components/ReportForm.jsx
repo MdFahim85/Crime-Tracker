@@ -14,6 +14,7 @@ function ReportForm({
 }) {
   const dispatch = useDispatch();
   const [crimeType, setCrimeType] = useState("");
+  const [date, setDate] = useState("");
   const crimeTypes = [
     "Theft",
     "Assault",
@@ -37,6 +38,7 @@ function ReportForm({
       crimeType,
       street,
       details,
+      date,
     };
 
     dispatch(addReport(report));
@@ -75,6 +77,18 @@ function ReportForm({
             </option>
           ))}
         </select>
+      </div>
+      <div className="mb-4">
+        <label className="block mb-1 text-sm font-medium text-gray-700">
+          Date of Crime
+        </label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full border p-2 rounded"
+          required
+        />
       </div>
       <div>
         <label className="block font-semibold">Crime Details</label>

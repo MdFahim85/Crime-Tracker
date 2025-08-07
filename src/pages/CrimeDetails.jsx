@@ -33,7 +33,10 @@ export default function CrimeDetails() {
       <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
         <div className="p-4 text-red-600 font-semibold">
           Report not found.{" "}
-          <Link to="/my-reports" className="text-blue-600 underline">
+          <Link
+            to="/my-reports"
+            className="text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-600 hover:text-white px-2 py-1 rounded"
+          >
             Go back
           </Link>
         </div>
@@ -43,7 +46,10 @@ export default function CrimeDetails() {
 
   return (
     <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
-      <Link to="/my-reports" className="text-blue-600 underline">
+      <Link
+        to="/my-reports"
+        className="text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-600 hover:text-white px-2 py-1 rounded"
+      >
         &larr; Back to Reports
       </Link>
       <h2 className="mt-5 text-2xl font-bold">{report.crimeType}</h2>
@@ -51,10 +57,14 @@ export default function CrimeDetails() {
       <p className="text-sm text-gray-500">
         <strong>Street:</strong> {report.street}
       </p>
+      <p className="text-sm text-gray-500">
+        <strong>Date:</strong> {report.date}
+      </p>
 
       <MapContainer
         center={[report.position.lat, report.position.lng]}
         zoom={16}
+        zoomControl={false}
         style={{ height: "350px", width: "100%" }}
         className="rounded-md shadow"
       >
@@ -68,14 +78,14 @@ export default function CrimeDetails() {
       <div className="flex justify-start gap-2">
         <Button
           className={
-            "block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-red-500 hover:bg-red-500 hover:text-white"
+            "block mt-2 md:mt-0 px-2 py-1 rounded border-2 text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
           }
           onClick={() => handelDelete(report.id)}
           text={"Delete"}
         />
         <Button
           className={
-            "block mt-2 md:mt-0 px-5 py-1 rounded border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white"
+            "text-emerald-600 block mt-2 md:mt-0 px-5 py-1 rounded border-2 border-emerald-500 hover:bg-emerald-500 hover:text-white"
           }
           onClick={() => navigate(`/crime/${report.id}/edit`)}
           text={"Edit"}
