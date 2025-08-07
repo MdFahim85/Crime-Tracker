@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import Button from "./Button";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../feature/authSlice";
 
 const Navbar = () => {
-  const isAuthenticated = true;
+  const user = useSelector((state) => state.auth.user);
+
+  const isAuthenticated = user ? true : false;
+
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const toggleMenu = () => setIsOpen(!isOpen);
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <nav className="bg-emerald-900 text-white shadow-md px-4 py-3 fixed top-0 left-0 right-0 z-999">
@@ -49,16 +58,15 @@ const Navbar = () => {
             Report a Crime
           </NavLink>
           <NavLink
-            to="/about"
+            to="/allreports"
             className={({ isActive }) =>
               isActive
                 ? "text-emerald-500"
                 : "block mt-2 md:mt-0  hover:text-emerald-500"
             }
           >
-            About
+            View Reports
           </NavLink>
-          {/* Conditional links */}
           {isAuthenticated ? (
             <>
               <NavLink
@@ -72,6 +80,7 @@ const Navbar = () => {
                   "block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-red-500 hover:bg-red-500 hover:text-white"
                 }
                 text={"Logout"}
+                onClick={() => handleLogout()}
               />
             </>
           ) : (

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-function CrimeReports() {
+function AllCrimeReports() {
   const reports = useSelector((state) => state.report.reports);
   const [filterType, setFilterType] = useState("");
   const [filterStreet, setFilterStreet] = useState("");
@@ -91,9 +91,7 @@ function CrimeReports() {
         )}
         <ul className="space-y-4">
           {filteredReports.length === 0 ? (
-            <p className="text-gray-500">
-              No reports found for selected filters.
-            </p>
+            <p className="text-gray-500 text-center">No reports found.</p>
           ) : (
             filteredReports.map((report) => (
               <li
@@ -110,6 +108,9 @@ function CrimeReports() {
                       <p className="text-gray-500 text-sm">
                         Date: {report.date}
                       </p>
+                      <p className="text-gray-500 text-sm">
+                        Reported By: {report.user}
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -122,4 +123,4 @@ function CrimeReports() {
   );
 }
 
-export default CrimeReports;
+export default AllCrimeReports;

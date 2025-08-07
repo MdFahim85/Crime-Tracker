@@ -24,7 +24,7 @@ export default function CrimeDetails() {
   );
   function handelDelete(id) {
     dispatch(deleteReport(id));
-    navigate("/my-reports");
+    navigate("/allreports");
     toast.success("Successfully Deleted");
   }
 
@@ -33,12 +33,12 @@ export default function CrimeDetails() {
       <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
         <div className="p-4 text-red-600 font-semibold">
           Report not found.{" "}
-          <Link
-            to="/my-reports"
+          <Button
+            type={"button"}
+            text={"Go Back"}
+            onClick={navigate(-1)}
             className="text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-600 hover:text-white px-2 py-1 rounded"
-          >
-            Go back
-          </Link>
+          />
         </div>
       </div>
     );
@@ -46,12 +46,12 @@ export default function CrimeDetails() {
 
   return (
     <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
-      <Link
-        to="/my-reports"
+      <Button
+        type={"button"}
+        text={"Back to reports"}
+        onClick={() => navigate(-1)}
         className="text-emerald-600 border-2 border-emerald-600 hover:bg-emerald-600 hover:text-white px-2 py-1 rounded"
-      >
-        &larr; Back to Reports
-      </Link>
+      />
       <h2 className="mt-5 text-2xl font-bold">{report.crimeType}</h2>
       <p className="text-gray-600">{report.details}</p>
       <p className="text-sm text-gray-500">
@@ -59,6 +59,9 @@ export default function CrimeDetails() {
       </p>
       <p className="text-sm text-gray-500">
         <strong>Date:</strong> {report.date}
+      </p>
+      <p className="text-sm text-gray-500">
+        <strong>Reported By:</strong> {report.user}
       </p>
 
       <MapContainer

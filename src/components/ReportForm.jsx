@@ -1,8 +1,9 @@
 import Button from "../components/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addReport } from "../feature/reportSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function ReportForm({
   latlng,
@@ -13,6 +14,8 @@ function ReportForm({
   setDetails,
 }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
   const [crimeType, setCrimeType] = useState("");
   const [date, setDate] = useState("");
   const crimeTypes = [
@@ -26,6 +29,12 @@ function ReportForm({
   function handleSubmit() {
     if (!latlng || !street || !details) {
       toast.error("Please fill out all fields and select a location.");
+
+      return;
+    }
+    if (!user) {
+      toast.error("Please Log In to Submit a Report");
+      navigate("/login");
       return;
     }
 
@@ -39,6 +48,7 @@ function ReportForm({
       street,
       details,
       date,
+      user: user.username,
     };
 
     dispatch(addReport(report));

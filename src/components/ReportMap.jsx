@@ -22,6 +22,7 @@ function ReportMap({ latlng, setLatLng }) {
       <MapContainer
         center={[23.8103, 90.4125]}
         zoom={13}
+        zoomControl={false}
         className="h-full w-full"
       >
         <TileLayer

@@ -24,6 +24,7 @@ const reportSlice = createSlice({
         crimeType: action.payload.crimeType,
         details: action.payload.details,
         date: action.payload.date,
+        user: action.payload.user,
       });
       localStorage.setItem("reports", JSON.stringify(state.reports));
     },
