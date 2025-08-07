@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import Button from "./Button";
 
 const Navbar = () => {
   const isAuthenticated = true;
@@ -15,9 +16,11 @@ const Navbar = () => {
         </Link>
 
         <div className="md:hidden">
-          <button onClick={toggleMenu} className=" focus:outline-none">
-            ☰
-          </button>
+          <Button
+            className={"focus:outline-none"}
+            onClick={toggleMenu}
+            text={"☰"}
+          />
         </div>
 
         <div
@@ -64,9 +67,12 @@ const Navbar = () => {
               >
                 My Reports
               </NavLink>
-              <button className="block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-red-500 hover:bg-red-500 hover:text-white">
-                Logout
-              </button>
+              <Button
+                className={
+                  "block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-red-500 hover:bg-red-500 hover:text-white"
+                }
+                text={"Logout"}
+              />
             </>
           ) : (
             <>

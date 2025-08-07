@@ -1,6 +1,6 @@
-function Button({ type, className, dispatchHandler, text }) {
+function Button({ type, className, onClick, text }) {
   return (
-    <button type={type} className={className} onClick={() => dispatchHandler()}>
+    <button type={type} className={className} onClick={onClick}>
       {text}
     </button>
   );
