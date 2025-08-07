@@ -13,7 +13,9 @@ function MyCrimeReports() {
       <h1 className="text-2xl font-bold mb-4">My Crime Reports</h1>
 
       {userReports.length === 0 ? (
-        <p className="text-gray-500">You have not reported any crimes yet.</p>
+        <p className="text-gray-500 text-center">
+          You have not reported any crimes yet.
+        </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {userReports.map((report) => (

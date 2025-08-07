@@ -21,7 +21,7 @@ function AllCrimeReports() {
 
   return (
     <div className="flex flex-col md:flex-row h-full p-4 gap-4 max-w-7xl mx-auto">
-      <aside className="mt-15 md:w-1/4 w-full rounded p-4 shadow-sm bg-gray-50 h-fit">
+      <aside className="mt-15 md:w-1/4 w-full rounded p-4 shadow-md bg-gray-100 h-fit">
         <h2 className="text-lg font-semibold mb-4">Filter Reports</h2>
 
         <div className="mb-4">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../feature/authSlice";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -14,6 +15,7 @@ function Login() {
     const fakeToken = btoa(username + "_fakejwt");
     const user = { username, fakeToken };
     dispatch(loginSuccess(user));
+    toast.success(`Welcome Back ${user.username}`);
 
     localStorage.setItem("user", JSON.stringify(user));
 

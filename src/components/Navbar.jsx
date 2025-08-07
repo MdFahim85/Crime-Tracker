@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import Button from "./Button";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../feature/authSlice";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -15,6 +16,7 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleLogout = () => {
     dispatch(logout());
+    toast.success("Logged Out Successfully");
   };
 
   return (
