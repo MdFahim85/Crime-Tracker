@@ -1,13 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home.jsx";
-import ReportCrime from "./pages/ReportCrime";
-import AllCrimeReports from "./pages/AllCrimeReports";
-import MyCrimeReports from "./pages/MyCrimeReports.jsx";
-import CrimeDetails from "./pages/CrimeDetails";
-import CrimeEdit from "./pages/CrimeEdit";
-import Login from "./components/Login.jsx";
+import ReportCrime from "./pages/Crime Reports/ReportCrime.jsx";
+import AllCrimeReports from "./pages/Crime Reports/AllCrimeReports.jsx";
+import MyCrimeReports from "./pages/Crime Reports/MyCrimeReports.jsx";
+import CrimeDetails from "./pages/Crime Reports/CrimeDetails.jsx";
+import CrimeEdit from "./pages/Crime Reports/CrimeEdit.jsx";
+import Login from "./pages/SignUp-SignIn/Login.jsx";
+import Register from "./pages/SignUp-SignIn/Register.jsx";
+import Error from "./pages/Error.jsx";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ViewProfile from "./pages/UserProfile/ViewProfile.jsx";
 
 function App() {
   return (
@@ -17,14 +21,45 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/report" element={<ReportCrime />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/report"
+            element={
+              <ProtectedRoute>
+                <ReportCrime />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/allreports" element={<AllCrimeReports />} />
-          <Route path="/my-reports" element={<MyCrimeReports />} />
+          <Route
+            path="/my-reports"
+            element={
+              <ProtectedRoute>
+                <MyCrimeReports />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-profile"
+            element={
+              <ProtectedRoute>
+                <ViewProfile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/crime/:id" element={<CrimeDetails />} />
-          <Route path="/crime/:id/edit" element={<CrimeEdit />} />
+          <Route
+            path="/crime/:id/edit"
+            element={
+              <ProtectedRoute>
+                <CrimeEdit />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Error />} />
         </Routes>
       </div>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
     </Router>
   );
 }

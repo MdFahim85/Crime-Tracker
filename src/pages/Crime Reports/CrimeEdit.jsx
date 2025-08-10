@@ -1,12 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { editReport } from "../feature/reportSlice";
+import { editReport } from "../../feature/reportSlice";
 import { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import Button from "../components/Button";
+import Button from "../../components/Button";
 import toast from "react-hot-toast";
+import DateSelector from "../../components/DateSelector";
+import OptionList from "../../components/OptionList";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -30,14 +32,7 @@ function CrimeEdit() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const crimeTypes = [
-    "Theft",
-    "Assault",
-    "Robbery",
-    "Vandalism",
-    "Drug-related",
-    "Other",
-  ];
+  const user = useSelector((state) => state.auth.user);
 
   const report = useSelector((state) =>
     state.report.reports.find((r) => r.id == id)
@@ -67,6 +62,7 @@ function CrimeEdit() {
         crimeType,
         details,
         date,
+        user,
       })
     );
     toast.success("Successfully Editted!");
@@ -74,63 +70,40 @@ function CrimeEdit() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-20 mb-5  p-4 space-y-6 border rounded">
+    <div className="max-w-3xl mx-auto mt-20 mb-5  p-4 space-y-6 border border-slate-300 rounded">
       <h2 className="text-2xl font-bold mb-4">Edit Crime Report</h2>
       <form onSubmit={handleEdit} className="space-y-4">
         <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Crime Type
-          </label>
-          <select
-            value={crimeType}
-            onChange={(e) => setCrimeType(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select a crime type</option>
-            {crimeTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
+          <OptionList crimeType={crimeType} setCrimeType={setCrimeType} />
         </div>
 
         <div>
-          <label className="block font-semibold">Details:</label>
+          <label className="block font-semibold text-slate-700">Details:</label>
           <textarea
             value={details}
             onChange={(e) => setDetails(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600"
             required
           />
         </div>
 
         <div>
-          <label className="block font-semibold">Street:</label>
+          <label className="block font-semibold text-slate-700">Street:</label>
           <input
             type="text"
             value={street}
             onChange={(e) => setStreet(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600"
             required
           />
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Date of Crime
-          </label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border p-2 rounded"
-            required
-          />
+          <DateSelector date={date} setDate={setDate} />
         </div>
 
         <div>
-          <label className="block font-semibold mb-1">
+          <label className="block font-semibold mb-1 text-slate-700">
             Select Location on Map:
           </label>
           <MapContainer
@@ -155,7 +128,7 @@ function CrimeEdit() {
           <Button
             type={"submit"}
             className={
-              "px-4 py-2 border-2 text-emerald-600 border-emerald-600 rounded hover:bg-emerald-600 hover:text-white"
+              "px-4 py-2 border-2 text-slate-600 border-slate-600 rounded hover:bg-slate-600 hover:text-white"
             }
             text={"Save Changes"}
             onClick={() => handleEdit}

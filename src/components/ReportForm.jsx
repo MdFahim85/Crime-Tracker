@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addReport } from "../feature/reportSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import DateSelector from "./DateSelector";
+import OptionList from "./OptionList";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 function ReportForm({
   latlng,
@@ -14,27 +18,12 @@ function ReportForm({
   setDetails,
 }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-  const [crimeType, setCrimeType] = useState("");
+  const [crimeType, setCrimeType] = useState("Select a crime type");
   const [date, setDate] = useState("");
-  const crimeTypes = [
-    "Theft",
-    "Assault",
-    "Robbery",
-    "Vandalism",
-    "Drug-related",
-    "Other",
-  ];
   function handleSubmit() {
     if (!latlng || !street || !details) {
       toast.error("Please fill out all fields and select a location.");
-
-      return;
-    }
-    if (!user) {
-      toast.error("Please Log In to Submit a Report");
-      navigate("/login");
       return;
     }
 
@@ -61,59 +50,39 @@ function ReportForm({
   }
   return (
     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-      <div>
-        <label className="block font-semibold">Street Name</label>
-        <input
+      <div className="z-99">
+        <Label htmlFor="search" className="mb-2">
+          Search by street
+        </Label>
+        <Input
           type="text"
-          className="w-full border p-2 rounded"
+          id="search"
+          placeholder="eg. Mirpur-10"
           value={street}
           onChange={(e) => setStreet(e.target.value)}
-          placeholder="e.g., Mirpur 10"
         />
       </div>
       <div className="mb-4">
-        <label className="block mb-1 text-sm font-medium text-gray-700">
-          Crime Type
-        </label>
-        <select
-          value={crimeType}
-          onChange={(e) => setCrimeType(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select a crime type</option>
-          {crimeTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+        <OptionList crimeType={crimeType} setCrimeType={setCrimeType} />
       </div>
       <div className="mb-4">
-        <label className="block mb-1 text-sm font-medium text-gray-700">
-          Date of Crime
-        </label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="w-full border p-2 rounded"
-          required
-        />
+        <DateSelector date={date} setDate={setDate} />
       </div>
       <div>
-        <label className="block font-semibold">Crime Details</label>
-        <textarea
-          className="w-full border p-2 rounded"
+        <Label htmlFor="message" className="mb-2">
+          Description
+        </Label>
+        <Textarea
+          placeholder="Describe the incident"
+          id="message"
           value={details}
           onChange={(e) => setDetails(e.target.value)}
-          rows="4"
-          placeholder="Describe the incident..."
-        ></textarea>
+        />
       </div>
       <Button
         type={"submit"}
         className={
-          "bg-emerald-600 text-white py-2 px-4 rounded hover:bg-emerald-700"
+          "bg-slate-600 text-white py-2 px-4 rounded hover:bg-slate-700"
         }
         onClick={() => handleSubmit()}
         text={"Submit"}

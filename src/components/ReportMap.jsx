@@ -14,7 +14,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
 });
 
-
 function LocationPicker({ setLatLng }) {
   useMapEvents({
     click(e) {
@@ -23,7 +22,6 @@ function LocationPicker({ setLatLng }) {
   });
   return null;
 }
-
 
 function SearchFly({ latlng }) {
   const map = useMap();
@@ -73,11 +71,11 @@ function ReportMap({ latlng, setLatLng }) {
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search for a location..."
-          className="w-full px-3 py-2 border border-gray-300 rounded"
+          className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
         />
         <button
           onClick={handleSearch}
-          className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
+          className="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700"
         >
           Search
         </button>

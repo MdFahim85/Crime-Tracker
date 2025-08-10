@@ -9,7 +9,7 @@ function MyCrimeReports() {
   );
 
   return (
-    <div className="p-6">
+    <div className="px-10 py-6">
       <h1 className="text-2xl font-bold mb-4">My Crime Reports</h1>
 
       {userReports.length === 0 ? (
@@ -22,9 +22,9 @@ function MyCrimeReports() {
             <Link to={`/crime/${report.id}`}>
               <div
                 key={report.id}
-                className="bg-white rounded shadow-md p-4 border border-emerald-300"
+                className="bg-white rounded shadow-sm p-4 border border-slate-300 hover:bg-slate-100 hover:shadow-lg transition duration-150 ease-in-out "
               >
-                <h2 className="text-xl font-semibold text-emerald-600">
+                <h2 className="text-xl font-semibold text-slate-600">
                   {report.crimeType}
                 </h2>
                 <p className="text-gray-600 text-sm mb-2">

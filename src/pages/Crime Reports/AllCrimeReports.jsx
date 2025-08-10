@@ -3,16 +3,19 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import OptionList from "../../components/OptionList";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 function AllCrimeReports() {
   const reports = useSelector((state) => state.report.reports);
-  const [filterType, setFilterType] = useState("");
+  const [filterType, setFilterType] = useState("Select a crime type");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
 
   const filteredReports = reports.filter((r) => {
     return (
-      (filterType === "" || r.crimeType === filterType) &&
+      (filterType === "Select a crime type" || r.crimeType === filterType) &&
       (filterStreet === "" ||
         r.street.toLowerCase().includes(filterStreet.toLowerCase())) &&
       (filterDate === "" || r.date === filterDate)
@@ -21,38 +24,30 @@ function AllCrimeReports() {
 
   return (
     <div className="flex flex-col md:flex-row h-full p-4 gap-4 max-w-7xl mx-auto">
-      <aside className="mt-15 md:w-1/4 w-full rounded p-4 shadow-md bg-gray-100 h-fit">
+      <aside className="mt-15 md:w-1/4 w-full rounded p-4 shadow-md bg-slate-100 h-fit">
         <h2 className="text-lg font-semibold mb-4">Filter Reports</h2>
 
         <div className="mb-4">
-          <label className="block text-sm mb-1">Crime Type</label>
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="w-full border p-2 rounded"
-          >
-            <option value="">All Types</option>
-            <option value="Robbery">Robbery</option>
-            <option value="Assault">Assault</option>
-            <option value="Theft">Theft</option>
-            <option value="Vandalism">Vandalism</option>
-            <option value="Other">Other</option>
-          </select>
+          <OptionList crimeType={filterType} setCrimeType={setFilterType} />
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm mb-1">Street Name</label>
-          <input
-            type="text"
-            value={filterStreet}
-            onChange={(e) => setFilterStreet(e.target.value)}
-            placeholder="Enter street"
-            className="w-full border p-2 rounded"
-          />
+          <div className="grid w-full max-w-sm items-center gap-3">
+            <Label htmlFor="search">Search by street</Label>
+            <Input
+              type="text"
+              id="search"
+              placeholder="eg. Mirpur-10"
+              value={filterStreet}
+              onChange={(e) => setFilterStreet(e.target.value)}
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm mb-1">Date</label>
+          <label className="block text-sm mb-1 font-semibold">
+            Search by date
+          </label>
           <input
             type="date"
             value={filterDate}
@@ -91,12 +86,12 @@ function AllCrimeReports() {
         )}
         <ul className="space-y-4">
           {filteredReports.length === 0 ? (
-            <p className="text-gray-500 text-center">No reports found.</p>
+            <p className="text-gray-800 text-center">No reports found.</p>
           ) : (
             filteredReports.map((report) => (
               <li
                 key={report.id}
-                className="rounded p-4 bg-emerald-100 hover:bg-emerald-300 transition"
+                className="rounded p-4 bg-slate-200 hover:bg-slate-400 transition"
               >
                 <Link to={`/crime/${report.id}`}>
                   <div className="flex justify-between items-center">
@@ -105,10 +100,10 @@ function AllCrimeReports() {
                         {report.crimeType}
                       </h3>
                       <p className="text-gray-600">{report.street}</p>
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-gray-800 text-sm">
                         Date: {report.date}
                       </p>
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-gray-800 text-sm">
                         Reported By: {report.user}
                       </p>
                     </div>
