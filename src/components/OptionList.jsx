@@ -8,7 +8,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 
-function OptionList({ crimeType, setCrimeType }) {
+function OptionList({ crimeType, setCrimeType, label }) {
   const crimeTypes = [
     "Select a crime type",
     "Theft",
@@ -22,7 +22,7 @@ function OptionList({ crimeType, setCrimeType }) {
   return (
     <div>
       <Label htmlFor="type" className="mb-2 block">
-        Search by type
+        {label}
       </Label>
 
       <Select id="type" value={crimeType} onValueChange={setCrimeType}>

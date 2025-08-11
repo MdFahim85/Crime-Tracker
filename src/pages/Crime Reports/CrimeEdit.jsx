@@ -2,31 +2,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { editReport } from "../../feature/reportSlice";
 import { useState } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import Button from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import DateSelector from "../../components/DateSelector";
 import OptionList from "../../components/OptionList";
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
-
-function LocationSelector({ setLat, setLng }) {
-  useMapEvents({
-    click(e) {
-      setLat(e.latlng.lat);
-      setLng(e.latlng.lng);
-    },
-  });
-  return null;
-}
+import ReportMap from "../../components/ReportMap";
 
 function CrimeEdit() {
   const { id } = useParams();
@@ -41,8 +21,7 @@ function CrimeEdit() {
   const [crimeType, setCrimeType] = useState(report?.crimeType || "");
   const [details, setDetails] = useState(report?.details || "");
   const [street, setStreet] = useState(report?.street || "");
-  const [lat, setLat] = useState(report?.position.lat || 23.8103);
-  const [lng, setLng] = useState(report?.position.lng || 90.4125);
+  const [latlng, setLatLng] = useState(report?.position || [23.8103, 90.4125]);
   const [date, setDate] = useState(report?.date || "");
 
   if (!report) {
@@ -53,11 +32,12 @@ function CrimeEdit() {
 
   function handleEdit(e) {
     e.preventDefault();
+    toast.success("Successfully Editted!");
 
     dispatch(
       editReport({
         id: report.id,
-        latlng: { lat, lng },
+        latlng,
         street,
         crimeType,
         details,
@@ -65,7 +45,7 @@ function CrimeEdit() {
         user,
       })
     );
-    toast.success("Successfully Editted!");
+
     navigate(`/crime/${id}`);
   }
 
@@ -106,41 +86,29 @@ function CrimeEdit() {
           <label className="block font-semibold mb-1 text-slate-700">
             Select Location on Map:
           </label>
-          <MapContainer
-            center={[lat, lng]}
-            zoom={15}
-            zoomControl={false}
-            style={{ height: "300px", width: "100%" }}
-            className="rounded"
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <LocationSelector setLat={setLat} setLng={setLng} />
-            <Marker position={[lat, lng]} />
-          </MapContainer>
+          <ReportMap latlng={latlng} setLatLng={setLatLng} />
         </div>
 
         <p className="text-sm text-gray-500">
-          <strong>Selected Coordinates:</strong> {lat.toFixed(5)},{" "}
-          {lng.toFixed(5)}
+          <strong>Selected Coordinates:</strong> {latlng.lat.toFixed(5)},{" "}
+          {latlng.lng.toFixed(5)}
         </p>
 
         <div className="flex justify-start gap-2">
           <Button
-            type={"submit"}
-            className={
-              "px-4 py-2 border-2 text-slate-600 border-slate-600 rounded hover:bg-slate-600 hover:text-white"
-            }
-            text={"Save Changes"}
             onClick={() => handleEdit}
-          />
+            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+          >
+            Save Changes
+          </Button>
+
           <Button
-            type={"button"}
-            className={
-              "block mt-2 md:mt-0 px-2 py-1 rounded border-2 text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
-            }
-            onClick={() => navigate(`/crime/${report.id}`)}
-            text={"Cancel"}
-          />
+            type="button"
+            onClick={() => navigate(-1)}
+            className="border border-red-500 bg-white text-red-500 hover:text-white hover:bg-red-500"
+          >
+            Cancel
+          </Button>
         </div>
       </form>
     </div>

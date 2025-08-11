@@ -7,6 +7,8 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -65,7 +67,7 @@ function ReportMap({ latlng, setLatLng }) {
   return (
     <div className="mb-6">
       <div className="flex mb-2 gap-2">
-        <input
+        <Input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -73,12 +75,13 @@ function ReportMap({ latlng, setLatLng }) {
           placeholder="Search for a location..."
           className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
         />
-        <button
+
+        <Button
           onClick={handleSearch}
-          className="px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700"
+          className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
         >
           Search
-        </button>
+        </Button>
       </div>
 
       <div className="h-[400px] rounded overflow-hidden">
@@ -87,6 +90,7 @@ function ReportMap({ latlng, setLatLng }) {
           zoom={13}
           zoomControl={false}
           className="h-full w-full"
+          style={{ zIndex: "1" }}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

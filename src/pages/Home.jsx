@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 function Home() {
   return (
     <div className="flex flex-col gap-y-5 justify-center items-center h-screen bg-[url(/bg.jpg)] bg-cover bg-center bg-slate-800 bg-blend-overlay">
@@ -13,11 +14,10 @@ function Home() {
           Safeguarding Together - Your Bridge to a Secure Environment
         </p>
       </div>
-      <Link
-        to="/report"
-        className="block mt-5 py-2 px-4 rounded text-xl font-bold text-white bg-slate-500 hover:bg-slate-600"
-      >
-        Report a Crime
+      <Link to="/report">
+        <Button className=" bg-slate-500 text-white hover:bg-slate-700">
+          Report a Crime
+        </Button>
       </Link>
     </div>
   );

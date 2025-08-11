@@ -1,4 +1,3 @@
-import Button from "../components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { addReport } from "../feature/reportSlice";
 import { useState } from "react";
@@ -8,6 +7,8 @@ import OptionList from "./OptionList";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 function ReportForm({
   latlng,
@@ -21,6 +22,7 @@ function ReportForm({
   const user = useSelector((state) => state.auth.user);
   const [crimeType, setCrimeType] = useState("Select a crime type");
   const [date, setDate] = useState("");
+  const navigate = useNavigate();
   function handleSubmit() {
     if (!latlng || !street || !details) {
       toast.error("Please fill out all fields and select a location.");
@@ -36,12 +38,13 @@ function ReportForm({
       crimeType,
       street,
       details,
-      date,
+      date: date.toISOString().split("T")[0],
       user: user.username,
     };
 
     dispatch(addReport(report));
     toast.success("Report Added Successfully");
+    navigate("/allreports");
 
     setLatLng(null);
     setStreet("");
@@ -52,7 +55,7 @@ function ReportForm({
     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
       <div className="z-99">
         <Label htmlFor="search" className="mb-2">
-          Search by street
+          Add street name
         </Label>
         <Input
           type="text"
@@ -63,7 +66,11 @@ function ReportForm({
         />
       </div>
       <div className="mb-4">
-        <OptionList crimeType={crimeType} setCrimeType={setCrimeType} />
+        <OptionList
+          label={"Crime type"}
+          crimeType={crimeType}
+          setCrimeType={setCrimeType}
+        />
       </div>
       <div className="mb-4">
         <DateSelector date={date} setDate={setDate} />
@@ -80,13 +87,11 @@ function ReportForm({
         />
       </div>
       <Button
-        type={"submit"}
-        className={
-          "bg-slate-600 text-white py-2 px-4 rounded hover:bg-slate-700"
-        }
+        className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
         onClick={() => handleSubmit()}
-        text={"Submit"}
-      />
+      >
+        Submit
+      </Button>
     </form>
   );
 }

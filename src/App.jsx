@@ -3,7 +3,6 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home.jsx";
 import ReportCrime from "./pages/Crime Reports/ReportCrime.jsx";
 import AllCrimeReports from "./pages/Crime Reports/AllCrimeReports.jsx";
-import MyCrimeReports from "./pages/Crime Reports/MyCrimeReports.jsx";
 import CrimeDetails from "./pages/Crime Reports/CrimeDetails.jsx";
 import CrimeEdit from "./pages/Crime Reports/CrimeEdit.jsx";
 import Login from "./pages/SignUp-SignIn/Login.jsx";
@@ -12,6 +11,7 @@ import Error from "./pages/Error.jsx";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ViewProfile from "./pages/UserProfile/ViewProfile.jsx";
+import EditProfile from "./pages/UserProfile/EditProfile.jsx";
 
 function App() {
   return (
@@ -31,19 +31,20 @@ function App() {
             }
           />
           <Route path="/allreports" element={<AllCrimeReports />} />
-          <Route
-            path="/my-reports"
-            element={
-              <ProtectedRoute>
-                <MyCrimeReports />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/my-profile"
             element={
               <ProtectedRoute>
                 <ViewProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-profile"
+            element={
+              <ProtectedRoute>
+                <EditProfile />
               </ProtectedRoute>
             }
           />

@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import Button from "./Button";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../feature/authSlice";
 import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
+  const notifications = useSelector(
+    (state) => state.notification.notifications
+  );
+
+  const filteredNotifications = notifications.filter(
+    (notification) => notification.user == user.username
+  );
 
   const isAuthenticated = user ? true : false;
 
@@ -28,17 +35,18 @@ const Navbar = () => {
         <div className="block justify-end text-end">
           <div className="md:hidden">
             <Button
-              className={"focus:outline-none"}
+              className="focus:outline-none bg-slate-900"
               onClick={toggleMenu}
-              text={isOpen ? `❌` : `☰`}
-            />
+            >
+              {isOpen ? `❌` : `☰`}
+            </Button>
           </div>
 
           <div
             onClick={() => setIsOpen(false)}
             className={`${
               isOpen ? "flex flex-col items-end space-y-2" : "hidden"
-            } md:flex md:items-center md:justify-end md:space-x-6`}
+            } md:flex md:items-center md:justify-end md:space-x-4 text-sm`}
           >
             <NavLink
               to="/report"
@@ -62,25 +70,18 @@ const Navbar = () => {
             </NavLink>
             {isAuthenticated ? (
               <>
-                <NavLink
-                  to="/my-reports"
-                  className="block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-slate-600 hover:bg-slate-800 "
-                >
-                  My Reports
+                <NavLink to="/my-profile">
+                  <Button className="border border-slate-500 bg-slate-900 text-white hover:bg-slate-500">
+                    View Profile
+                  </Button>
                 </NavLink>
-                <NavLink
-                  to="/my-profile"
-                  className="block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-slate-600 hover:bg-slate-800 "
-                >
-                  View Profile
-                </NavLink>
+
                 <Button
-                  className={
-                    "block mt-2 md:mt-0 px-2 py-1 rounded border-2 border-red-500 hover:bg-red-500 hover:text-white"
-                  }
-                  text={"Logout"}
                   onClick={() => handleLogout()}
-                />
+                  className="border border-red-500 bg-slate-900 text-white hover:bg-red-500"
+                >
+                  Logout
+                </Button>
               </>
             ) : (
               <>

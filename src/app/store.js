@@ -4,6 +4,7 @@ import reportReducer from "../feature/reportSlice";
 import authReducer from "../feature/authSlice";
 import commentReducer from "../feature/commentSlice";
 import registerReducer from "../feature/registerSlice";
+import notificationReducer from "../feature/notificationSlice";
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
     auth: authReducer,
     comment: commentReducer,
     register: registerReducer,
+    notification: notificationReducer,
   },
 });
 

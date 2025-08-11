@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../feature/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
-import Button from "../../components/Button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -51,62 +54,61 @@ function Login() {
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
         <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm mb-2"
-            htmlFor="username"
-          >
-            Username
-          </label>
-          <input
+          <Label htmlFor="username" className="mb-2">
+            User Name
+          </Label>
+          <Input
+            type="text"
             id="username"
+            placeholder="Enter User Name"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="shadow appearance-none border border-slate-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-slate-600"
-            type="text"
-            placeholder="Enter your username"
-            required
           />
         </div>
 
-        <div className="mb-6 relative">
-          <label
-            className="block text-gray-700 text-sm mb-2"
-            htmlFor="password"
-          >
-            Password
-          </label>
-          <input
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="shadow appearance-none border border-slate-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-slate-600 pr-10"
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
-            required
-          />
+        <div className="mb-6 relative flex items-end gap-4">
+          <div>
+            <Label htmlFor="password" className="mb-2">
+              Password
+            </Label>
+            <Input
+              className="w-66"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              placeholder="Enter Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
           <Button
-            type={"button"}
+            type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className={
-              "absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-            }
-            text={
-              showPassword ? (
-                <EyeOffIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )
-            }
-          />
+            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+          >
+            {showPassword ? (
+              <EyeOffIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </Button>
         </div>
-
-        <Button
-          type={"submit"}
-          className={
-            "w-full text-slate-600 border-2 border-slate-600 hover:bg-slate-600 hover:text-white font-semibold py-2 px-4 rounded"
-          }
-          text={"Log In"}
-        />
+        <div className="flex justify-between items-center">
+          <Button
+            type="submit"
+            className=" border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+          >
+            Log In{" "}
+          </Button>
+          <div className="flex flex-col items-end text-sm">
+            <p className=" text-slate-500">Dont have an account? </p>
+            <Link
+              to="/register"
+              className="  bg-white text-slate-500 underline"
+            >
+              Register
+            </Link>
+          </div>
+        </div>
       </form>
     </div>
   );

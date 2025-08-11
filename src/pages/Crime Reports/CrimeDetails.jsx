@@ -4,10 +4,11 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { deleteReport } from "../../feature/reportSlice";
-import Button from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import Comments from "../../components/Comments";
+import AlertBtn from "../../components/AlertBtn";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -28,8 +29,8 @@ export default function CrimeDetails() {
   const user = useSelector((state) => state.auth.user);
   function handelDelete(id) {
     dispatch(deleteReport(id));
-    navigate("/allreports");
     toast.success("Successfully Deleted");
+    navigate("/allreports");
   }
   if (!report) {
     return (
@@ -50,11 +51,11 @@ export default function CrimeDetails() {
   return (
     <div className="max-w-7xl mx-auto mt-15 px-2 py-4 space-y-6">
       <Button
-        type={"button"}
-        text={"Back to reports"}
-        onClick={() => navigate(-1)}
-        className="text-slate-600 border-2 border-slate-600 hover:bg-slate-600 hover:text-white px-2 py-1 rounded"
-      />
+        onClick={() => navigate("/allreports")}
+        className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+      >
+        Back to reports
+      </Button>
 
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-2/3 space-y-4">
@@ -74,7 +75,7 @@ export default function CrimeDetails() {
             center={[report.position.lat, report.position.lng]}
             zoom={16}
             zoomControl={false}
-            style={{ height: "350px", width: "100%" }}
+            style={{ height: "350px", width: "100%", zIndex: "10" }}
             className="rounded-md shadow"
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -92,16 +93,20 @@ export default function CrimeDetails() {
                 : "hidden"
             }
           >
-            <Button
-              className="block mt-2 md:mt-0 px-2 py-1 rounded border-2 text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+            <AlertBtn
+              btnText={"Delete"}
+              textMsg={"Are you sure to delete this report ?"}
               onClick={() => handelDelete(report.id)}
-              text={"Delete"}
+              textDescription={
+                "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+              }
             />
             <Button
-              className="text-slate-600 block mt-2 md:mt-0 px-5 py-1 rounded border-2 border-slate-500 hover:bg-slate-500 hover:text-white"
+              className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
               onClick={() => navigate(`/crime/${report.id}/edit`)}
-              text={"Edit"}
-            />
+            >
+              Edit
+            </Button>
           </div>
         </div>
 

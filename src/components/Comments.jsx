@@ -2,8 +2,10 @@ import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment, deleteComment } from "../feature/commentSlice";
 import toast from "react-hot-toast";
-import Button from "./Button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import CommentList from "./CommentList";
+import { addNotification } from "../feature/notificationSlice";
 
 function Comments({ comment, setComment, user, report }) {
   const dispatch = useDispatch();
@@ -26,7 +28,11 @@ function Comments({ comment, setComment, user, report }) {
       comment,
       reportId: report.id,
     };
+    const message = `${user} commented on your report`;
     dispatch(addComment(commentObj));
+    if (report.user != user) {
+      dispatch(addNotification(report.user, message));
+    }
     setComment("");
   }
 
@@ -54,7 +60,7 @@ function Comments({ comment, setComment, user, report }) {
         </ul>
       </div>
       <form className="flex space-x-2" onSubmit={(e) => e.preventDefault()}>
-        <input
+        <Input
           type="text"
           placeholder="Add a comment..."
           value={comment}
@@ -62,11 +68,11 @@ function Comments({ comment, setComment, user, report }) {
           className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
         />
         <Button
-          type={"button"}
-          className={"bg-slate-500 text-white px-4 rounded hover:bg-slate-700"}
-          text={"Comment"}
+          className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
           onClick={() => addCommentHandler()}
-        />
+        >
+          Comment
+        </Button>
       </form>
     </>
   );

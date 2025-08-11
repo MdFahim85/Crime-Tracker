@@ -41,9 +41,25 @@ const registerSlice = createSlice({
       state.error = null;
       state.success = false;
     },
+    updateUser: (state, action) => {
+      const updatedUser = action.payload;
+      const user = state.users.find((user) => user.email == updatedUser.email);
+      if (user) {
+        user.email = updatedUser.email;
+        if (updatedUser.password) {
+          user.password = updatedUser.password;
+        }
+        localStorage.setItem("registeredUsers", JSON.stringify(state.users));
+        state.success = true;
+        state.error = null;
+        toast.success("Profile updated successfully!");
+      } else {
+        state.error = "User not found";
+      }
+    },
   },
 });
 
-export const { registerUser, resetState } = registerSlice.actions;
+export const { registerUser, resetState, updateUser } = registerSlice.actions;
 
 export default registerSlice.reducer;

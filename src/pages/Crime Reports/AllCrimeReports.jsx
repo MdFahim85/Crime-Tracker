@@ -6,6 +6,8 @@ import "leaflet/dist/leaflet.css";
 import OptionList from "../../components/OptionList";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import DateSelector from "../../components/DateSelector";
 
 function AllCrimeReports() {
   const reports = useSelector((state) => state.report.reports);
@@ -22,13 +24,23 @@ function AllCrimeReports() {
     );
   });
 
+  function clearFilters() {
+    setFilterDate("");
+    setFilterStreet("");
+    setFilterType("Select a crime type");
+  }
+
   return (
     <div className="flex flex-col md:flex-row h-full p-4 gap-4 max-w-7xl mx-auto">
       <aside className="mt-15 md:w-1/4 w-full rounded p-4 shadow-md bg-slate-100 h-fit">
         <h2 className="text-lg font-semibold mb-4">Filter Reports</h2>
 
         <div className="mb-4">
-          <OptionList crimeType={filterType} setCrimeType={setFilterType} />
+          <OptionList
+            label={"Search by type"}
+            crimeType={filterType}
+            setCrimeType={setFilterType}
+          />
         </div>
 
         <div className="mb-4">
@@ -45,16 +57,15 @@ function AllCrimeReports() {
         </div>
 
         <div>
-          <label className="block text-sm mb-1 font-semibold">
-            Search by date
-          </label>
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="w-full border p-2 rounded"
-          />
+          <DateSelector date={filterDate} setDate={setFilterDate} />
         </div>
+
+        <Button
+          onClick={() => clearFilters()}
+          className="mt-4 text-sm border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+        >
+          Clear filters
+        </Button>
       </aside>
 
       <main className="flex-1 space-y-6">
