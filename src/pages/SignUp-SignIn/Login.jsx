@@ -81,9 +81,9 @@ function Login() {
             />
           </div>
           <Button
+            variant="primary"
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
           >
             {showPassword ? (
               <EyeOffIcon className="h-5 w-5" />
@@ -93,11 +93,8 @@ function Login() {
           </Button>
         </div>
         <div className="flex justify-between items-center">
-          <Button
-            type="submit"
-            className=" border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
-          >
-            Log In{" "}
+          <Button variant="primary" type="submit">
+            Log In
           </Button>
           <div className="flex flex-col items-end text-sm">
             <p className=" text-slate-500">Dont have an account? </p>

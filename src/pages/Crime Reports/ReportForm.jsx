@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { addReport } from "../feature/reportSlice";
+import { addReport } from "../../feature/reportSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import DateSelector from "./DateSelector";
@@ -15,6 +15,8 @@ function ReportForm({
   setLatLng,
   street,
   setStreet,
+  title,
+  setTitle,
   details,
   setDetails,
 }) {
@@ -37,6 +39,7 @@ function ReportForm({
       },
       crimeType,
       street,
+      title,
       details,
       date: date.toISOString().split("T")[0],
       user: user.username,
@@ -48,6 +51,7 @@ function ReportForm({
 
     setLatLng(null);
     setStreet("");
+    setTitle("");
     setDetails("");
     setCrimeType("");
   }
@@ -74,6 +78,18 @@ function ReportForm({
       </div>
       <div className="mb-4">
         <DateSelector date={date} setDate={setDate} />
+      </div>
+      <div className="z-99">
+        <Label htmlFor="title" className="mb-2">
+          Add a crime title
+        </Label>
+        <Input
+          type="text"
+          id="title"
+          placeholder="Add a title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </div>
       <div>
         <Label htmlFor="message" className="mb-2">

@@ -118,10 +118,7 @@ export default function Register() {
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
 
           <div className="flex justify-between items-center">
-            <Button
-              type="submit"
-              className=" border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
-            >
+            <Button variant="primary" type="submit">
               Register
             </Button>
             <div className="flex flex-col items-end text-sm">

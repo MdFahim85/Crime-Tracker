@@ -4,9 +4,11 @@ import { editReport } from "../../feature/reportSlice";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import DateSelector from "../../components/DateSelector";
-import OptionList from "../../components/OptionList";
-import ReportMap from "../../components/ReportMap";
+import DateSelector from "./DateSelector";
+import OptionList from "./OptionList";
+import ReportMap from "./ReportMap";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 function CrimeEdit() {
   const { id } = useParams();
@@ -19,6 +21,7 @@ function CrimeEdit() {
   );
 
   const [crimeType, setCrimeType] = useState(report?.crimeType || "");
+  const [title, setTitle] = useState(report?.title || "");
   const [details, setDetails] = useState(report?.details || "");
   const [street, setStreet] = useState(report?.street || "");
   const [latlng, setLatLng] = useState(report?.position || [23.8103, 90.4125]);
@@ -30,8 +33,7 @@ function CrimeEdit() {
     );
   }
 
-  function handleEdit(e) {
-    e.preventDefault();
+  function handleEdit() {
     toast.success("Successfully Editted!");
 
     dispatch(
@@ -40,6 +42,7 @@ function CrimeEdit() {
         latlng,
         street,
         crimeType,
+        title,
         details,
         date,
         user,
@@ -52,9 +55,22 @@ function CrimeEdit() {
   return (
     <div className="max-w-3xl mx-auto mt-20 mb-5  p-4 space-y-6 border border-slate-300 rounded">
       <h2 className="text-2xl font-bold mb-4">Edit Crime Report</h2>
-      <form onSubmit={handleEdit} className="space-y-4">
+      <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
         <div className="mb-4">
           <OptionList crimeType={crimeType} setCrimeType={setCrimeType} />
+        </div>
+
+        <div>
+          <Label htmlFor="title" className="mb-2">
+            Add a crime title
+          </Label>
+          <Input
+            type="text"
+            id="title"
+            placeholder="Add a title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
         <div>
@@ -96,7 +112,8 @@ function CrimeEdit() {
 
         <div className="flex justify-start gap-2">
           <Button
-            onClick={() => handleEdit}
+            type="button"
+            onClick={() => handleEdit()}
             className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
           >
             Save Changes

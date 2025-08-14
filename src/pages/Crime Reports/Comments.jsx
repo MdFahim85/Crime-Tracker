@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addComment, deleteComment } from "../feature/commentSlice";
+import { addComment, deleteComment } from "../../feature/commentSlice";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CommentList from "./CommentList";
-import { addNotification } from "../feature/notificationSlice";
 
 function Comments({ comment, setComment, user, report }) {
   const dispatch = useDispatch();
@@ -28,11 +27,8 @@ function Comments({ comment, setComment, user, report }) {
       comment,
       reportId: report.id,
     };
-    const message = `${user} commented on your report`;
     dispatch(addComment(commentObj));
-    if (report.user != user) {
-      dispatch(addNotification(report.user, message));
-    }
+
     setComment("");
   }
 
@@ -67,10 +63,7 @@ function Comments({ comment, setComment, user, report }) {
           onChange={(e) => setComment(e.target.value)}
           className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
         />
-        <Button
-          className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
-          onClick={() => addCommentHandler()}
-        >
+        <Button variant="primary" onClick={() => addCommentHandler()}>
           Comment
         </Button>
       </form>

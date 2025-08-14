@@ -16,9 +16,7 @@ function AlertBtn({ btnText, textMsg, textDescription, onClick }) {
     <div className="z-999">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className="border border-red-500 bg-white text-red-500 hover:text-white hover:bg-red-500">
-            {btnText}
-          </Button>
+          <Button variant="second">{btnText}</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>

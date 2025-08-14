@@ -13,7 +13,7 @@ function CommentList({ comment, deleteCommentHandler }) {
         {user ? (
           comment.user.username == user.username ? (
             <Button
-              className="border border-red-500 bg-white text-red-500 hover:text-white hover:bg-red-500"
+              variant="second"
               onClick={() => deleteCommentHandler(comment.id)}
             >
               Delete

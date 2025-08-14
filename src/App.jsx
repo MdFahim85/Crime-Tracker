@@ -17,49 +17,49 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/report"
-            element={
-              <ProtectedRoute>
-                <ReportCrime />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/allreports" element={<AllCrimeReports />} />
 
-          <Route
-            path="/my-profile"
-            element={
-              <ProtectedRoute>
-                <ViewProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/edit-profile"
-            element={
-              <ProtectedRoute>
-                <EditProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/crime/:id" element={<CrimeDetails />} />
-          <Route
-            path="/crime/:id/edit"
-            element={
-              <ProtectedRoute>
-                <CrimeEdit />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Error />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/report"
+          element={
+            <ProtectedRoute>
+              <ReportCrime />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/allreports" element={<AllCrimeReports />} />
+
+        <Route
+          path="/my-profile"
+          element={
+            <ProtectedRoute>
+              <ViewProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/crime/:id" element={<CrimeDetails />} />
+        <Route
+          path="/crime/:id/edit"
+          element={
+            <ProtectedRoute>
+              <CrimeEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Error />} />
+      </Routes>
+
       <Toaster position="top-center" />
     </Router>
   );

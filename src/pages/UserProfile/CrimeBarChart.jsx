@@ -23,7 +23,7 @@ function CrimeBarChart({ userReports }) {
   }));
   const COLORS = ["#3B82F6", "#F59E0B", "#EF4444", "#10B981", "#8B5CF6"];
   return (
-    <div className="flex-1 bg-white shadow-lg rounded-lg p-6 ml-6">
+    <div className="flex-1 bg-slate-100 shadow-lg rounded-lg p-4 sm:p-6 sm:ml-6">
       <h2 className="text-2xl font-bold mb-6 border-b pb-3">
         Crimes Reported by Type
       </h2>

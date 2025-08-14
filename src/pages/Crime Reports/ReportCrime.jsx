@@ -1,10 +1,11 @@
 import { useState } from "react";
-import ReportMap from "../../components/ReportMap";
-import ReportForm from "../../components/ReportForm";
+import ReportMap from "./ReportMap";
+import ReportForm from "./ReportForm";
 
 export default function ReportCrime() {
   const [latlng, setLatLng] = useState(null);
   const [street, setStreet] = useState("");
+  const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
 
   return (
@@ -17,6 +18,8 @@ export default function ReportCrime() {
         setLatLng={setLatLng}
         street={street}
         setStreet={setStreet}
+        title={title}
+        setTitle={setTitle}
         details={details}
         setDetails={setDetails}
       />

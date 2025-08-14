@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../feature/authSlice";
 import toast from "react-hot-toast";
@@ -7,23 +7,19 @@ import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
-  const notifications = useSelector(
-    (state) => state.notification.notifications
-  );
-
-  const filteredNotifications = notifications.filter(
-    (notification) => notification.user == user.username
-  );
 
   const isAuthenticated = user ? true : false;
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleLogout = () => {
     dispatch(logout());
     toast.success("Logged Out Successfully");
+    navigate("/");
+    setTimeout(() => navigate("/"), 0);
   };
 
   return (
@@ -35,7 +31,7 @@ const Navbar = () => {
         <div className="block justify-end text-end">
           <div className="md:hidden">
             <Button
-              className="focus:outline-none bg-slate-900"
+              className="focus:outline-none bg-slate-900 hover:bg-slate-900"
               onClick={toggleMenu}
             >
               {isOpen ? `❌` : `☰`}
@@ -87,13 +83,13 @@ const Navbar = () => {
               <>
                 <NavLink
                   to="/login"
-                  className="block mt-2 md:mt-0 px-2 py-1 rounded hover:bg-slate-600 "
+                  className="px-2 py-1 border border-slate-500 bg-slate-900 text-white hover:bg-slate-500 rounded transition-all duration-150 ease-in-out"
                 >
                   Login
                 </NavLink>
                 <NavLink
                   to="/register"
-                  className="block mt-2 md:mt-0 px-2 py-1 rounded bg-slate-400 hover:bg-slate-600 "
+                  className="px-2 py-1 bg-slate-500  text-white hover:bg-slate-700 rounded transition-all duration-150 ease-in-out"
                 >
                   Register
                 </NavLink>
