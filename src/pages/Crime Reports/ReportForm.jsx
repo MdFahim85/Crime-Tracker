@@ -57,18 +57,7 @@ function ReportForm({
   }
   return (
     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-      <div className="z-99">
-        <Label htmlFor="search" className="mb-2">
-          Add street name
-        </Label>
-        <Input
-          type="text"
-          id="search"
-          placeholder="eg. Mirpur-10"
-          value={street}
-          onChange={(e) => setStreet(e.target.value)}
-        />
-      </div>
+
       <div className="mb-4">
         <OptionList
           label={"Crime type"}

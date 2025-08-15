@@ -12,7 +12,8 @@ export default function ReportCrime() {
     <div className="max-w-3xl mx-auto mt-15 p-4">
       <h2 className="text-2xl font-bold my-4 text-slate-700">Report a Crime</h2>
 
-      <ReportMap latlng={latlng} setLatLng={setLatLng} />
+      <ReportMap latlng={latlng} setLatLng={setLatLng} street={street}
+        setStreet={setStreet} />
       <ReportForm
         latlng={latlng}
         setLatLng={setLatLng}

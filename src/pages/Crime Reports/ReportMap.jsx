@@ -16,10 +16,26 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
 });
 
-function LocationPicker({ setLatLng }) {
+function LocationPicker({ setLatLng, setStreet }) {
   useMapEvents({
-    click(e) {
-      setLatLng(e.latlng);
+    async click(e) {
+      const latlng = e.latlng;
+      setLatLng(latlng);
+
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`
+        );
+        const data = await res.json();
+        if (data && data.display_name) {
+          setStreet(data.display_name);
+        } else {
+          setStreet("");
+        }
+      } catch (err) {
+        console.error("Reverse geocoding failed", err);
+        setStreet("");
+      }
     },
   });
   return null;
@@ -27,34 +43,35 @@ function LocationPicker({ setLatLng }) {
 
 function SearchFly({ latlng }) {
   const map = useMap();
-
   useEffect(() => {
     if (latlng) {
       map.flyTo(latlng, 16);
     }
   }, [latlng, map]);
-
   return null;
 }
 
-function ReportMap({ latlng, setLatLng }) {
-  const [search, setSearch] = useState("");
+function ReportMap({ latlng, setLatLng, street, setStreet }) {
+  
 
   const handleSearch = async () => {
-    if (!search.trim()) return;
+    if (!street.trim()) return;
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+          street
+        )}&format=json`
+      );
+      const data = await response.json();
 
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-        search
-      )}&format=json`
-    );
-    const data = await response.json();
-
-    if (data && data.length > 0) {
-      const { lat, lon } = data[0];
-      setLatLng({ lat: parseFloat(lat), lng: parseFloat(lon) });
-    } else {
-      alert("Location not found.");
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        setLatLng({ lat: parseFloat(lat), lng: parseFloat(lon) });
+      } else {
+        alert("Location not found.");
+      }
+    } catch (err) {
+      console.error("Geocoding failed", err);
     }
   };
 
@@ -69,8 +86,8 @@ function ReportMap({ latlng, setLatLng }) {
       <div className="flex mb-2 gap-2">
         <Input
           type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={street}
+          onChange={(e) => setStreet(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search for a location..."
           className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
@@ -96,7 +113,7 @@ function ReportMap({ latlng, setLatLng }) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          <LocationPicker setLatLng={setLatLng} />
+          <LocationPicker setLatLng={setLatLng} setStreet={setStreet} />
           {latlng && <SearchFly latlng={latlng} />}
           {latlng && <Marker position={latlng} />}
         </MapContainer>

@@ -3,12 +3,33 @@ import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useMemo } from "react";
 
 function Home() {
   const reports = useSelector((state) => state.report.reports);
   const recentReports = [...reports]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 6);
+
+  const reportsByDate = useMemo(() => {
+    const counts = {};
+    reports.forEach(({ date }) => {
+      const day = new Date(date).toISOString().slice(0, 10);
+      counts[day] = (counts[day] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [reports]);
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-800">
@@ -31,21 +52,47 @@ function Home() {
         </Link>
       </div>
 
-      <section className="bg-white w-full py-10 px-4 md:px-8 flex flex-col items-center">
+      <section className="bg-white w-full py-8 px-0 pe-8 md:pe-0 md:px-8 flex flex-col items-center">
+        <h2 className="text-2xl font-bold text-slate-800 mb-4">
+          Crime Statistics
+        </h2>
+        <div className="w-full max-w-2xl" style={{ minHeight: 210 }}>
+          <ResponsiveContainer width="100%" height={210}>
+            <LineChart data={reportsByDate}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 10 }}
+                minTickGap={8}
+                interval="preserveStartEnd"
+              />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke="#2563eb"
+                activeDot={{ r: 8 }}
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+
+      <section className="bg-white w-full py-8 px-2 md:px-8 flex flex-col items-center">
         <h2 className="text-2xl font-bold text-slate-800 mb-6">
           Recent Crime Reports
         </h2>
 
         {recentReports.length > 0 ? (
-          <ul className="w-full max-w-7xl grid grid-cols-12 gap-4">
+          <ul className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentReports.map((report) => (
               <li
                 key={report.id}
                 className="
-                  col-span-12
-                  sm:col-span-6
-                  lg:col-span-4
                   rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-md transition
+                  flex flex-col h-full
                 "
               >
                 <Link to={`/crime/${report.id}`} className="block h-full">
@@ -71,7 +118,6 @@ function Home() {
                         <Marker position={report.position} />
                       </MapContainer>
                     </div>
-
                     <div className="p-4 pt-0">
                       <h3 className="font-semibold text-lg text-slate-900">
                         {report.title || report.crimeType}

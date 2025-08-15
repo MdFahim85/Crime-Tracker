@@ -83,16 +83,7 @@ function CrimeEdit() {
           />
         </div>
 
-        <div>
-          <label className="block font-semibold text-slate-700">Street:</label>
-          <input
-            type="text"
-            value={street}
-            onChange={(e) => setStreet(e.target.value)}
-            className="w-full p-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600"
-            required
-          />
-        </div>
+
 
         <div className="mb-4">
           <DateSelector date={date} setDate={setDate} />
@@ -102,7 +93,7 @@ function CrimeEdit() {
           <label className="block font-semibold mb-1 text-slate-700">
             Select Location on Map:
           </label>
-          <ReportMap latlng={latlng} setLatLng={setLatLng} />
+          <ReportMap latlng={latlng} setLatLng={setLatLng} street={street} setStreet={setStreet} />
         </div>
 
         <p className="text-sm text-gray-500">
