@@ -56,7 +56,7 @@ function Home() {
         <h2 className="text-2xl font-bold text-slate-800 mb-4">
           Crime Statistics
         </h2>
-        <div className="w-full max-w-2xl" style={{ minHeight: 210 }}>
+        <div className="w-full max-w-6xl" style={{ minHeight: 210 }}>
           <ResponsiveContainer width="100%" height={210}>
             <LineChart data={reportsByDate}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -72,7 +72,7 @@ function Home() {
                 type="monotone"
                 dataKey="count"
                 stroke="#2563eb"
-                activeDot={{ r: 8 }}
+                activeDot={{ r: 2 }}
                 strokeWidth={2}
               />
             </LineChart>

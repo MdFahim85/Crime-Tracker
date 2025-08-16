@@ -43,7 +43,9 @@ const registerSlice = createSlice({
     },
     updateUser: (state, action) => {
       const updatedUser = action.payload;
-      const user = state.users.find((user) => user.email == updatedUser.email);
+      const user = state.users.find(
+        (user) => user.username == updatedUser.username
+      );
       if (user) {
         user.email = updatedUser.email;
         if (updatedUser.password) {

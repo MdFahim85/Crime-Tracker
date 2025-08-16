@@ -25,8 +25,8 @@ function MyCrimeReports() {
               key={report.id}
               className="
           col-span-12
-          sm:col-span-6
-          lg:col-span-4
+          md:col-span-6
+
           rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-md transition
         "
             >
@@ -60,7 +60,10 @@ function MyCrimeReports() {
                     </h3>
                     <p className="text-slate-600 mt-1">{report.street}</p>
                     <div className="mt-2 text-sm text-slate-700">
-                      <p>Date: {report.date}</p>
+                      <p>
+                        Date:{" "}
+                        {new Date(report.date).toLocaleDateString("en-GB")}
+                      </p>
                       <p>Reported By: {report.user}</p>
                     </div>
                   </div>

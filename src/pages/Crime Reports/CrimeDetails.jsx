@@ -101,7 +101,8 @@ export default function CrimeDetails() {
                   <strong>Street:</strong> {report.street}
                 </p>
                 <p>
-                  <strong>Date:</strong> {report.date}
+                  <strong>Date:</strong>{" "}
+                  {new Date(report.date).toLocaleDateString("en-GB")}
                 </p>
                 <p>
                   <strong>Reported By:</strong> {report.user}

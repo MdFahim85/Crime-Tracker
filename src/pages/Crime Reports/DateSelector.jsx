@@ -24,11 +24,7 @@ function DateSelector({ date, setDate }) {
             id="date"
             className="w-48 justify-between font-normal"
           >
-            {date
-              ? date instanceof Date
-                ? date.toLocaleDateString()
-                : new Date(date).toLocaleDateString()
-              : "Select date"}
+            {date ? new Date(date).toLocaleDateString("en-GB") : "Select date"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
@@ -38,7 +34,8 @@ function DateSelector({ date, setDate }) {
             selected={date}
             captionLayout="dropdown"
             onSelect={(date) => {
-              setDate(date);
+              setDate(new Date(date).toISOString());
+
               setOpen(false);
             }}
             disabled={(date) => date > new Date()}

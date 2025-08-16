@@ -12,6 +12,7 @@ import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import ViewProfile from "./pages/UserProfile/ViewProfile.jsx";
 import EditProfile from "./pages/UserProfile/EditProfile.jsx";
+import AdminDashboard from "./pages/AdminProfile/AdminDashboard.jsx";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="*" element={<Error />} />
       </Routes>
 

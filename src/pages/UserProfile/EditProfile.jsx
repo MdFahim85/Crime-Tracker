@@ -18,29 +18,20 @@ function EditProfile() {
   );
 
   const [form, setForm] = useState({
-    username: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
-    if (thisUser) {
+    if (thisUser.length > 0 && form.email === "") {
       setForm({
-        username: thisUser.username || "",
-        email: thisUser.email || "",
+        email: thisUser[0].email || "",
         password: "",
+        confirmPassword: "",
       });
     }
   }, [thisUser]);
-
-  useEffect(() => {
-    if (success) {
-      toast.success("Profile updated successfully!");
-    }
-    if (error) {
-      toast.error(error);
-    }
-  }, [success, error]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -48,19 +39,21 @@ function EditProfile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (form.password !== form.confirmPassword) {
-      toast.error("Passwords don't match!");
-      return;
+    if (form.password.length > 0) {
+      if (form.password !== form.confirmPassword) {
+        toast.error("Passwords don't match!");
+        return;
+      }
     }
 
     dispatch(
       updateUser({
-        username: form.username,
+        username: user.username,
         email: form.email,
         password: form.password || undefined,
       })
     );
+    navigate("/my-profile");
   };
 
   return (
@@ -71,14 +64,14 @@ function EditProfile() {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
         <div className="space-y-4">
-          <Label htmlFor="username" className="mb-2">
-            User Name
+          <Label htmlFor="email" className="mb-2">
+            User Email
           </Label>
           <Input
-            id="username"
-            name="username"
-            type="text"
-            value={form.username}
+            id="email"
+            name="email"
+            type="email"
+            value={form.email}
             onChange={handleChange}
             placeholder="Enter username"
             required
@@ -106,7 +99,6 @@ function EditProfile() {
             value={form.confirmPassword}
             onChange={handleChange}
             placeholder="Confirm Password"
-            required
           />
 
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}

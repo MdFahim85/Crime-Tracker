@@ -64,6 +64,16 @@ const Navbar = () => {
             >
               View Reports
             </NavLink>
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-slate-300"
+                  : "block mt-2 md:mt-0  hover:text-slate-300"
+              }
+            >
+              Admin
+            </NavLink>
             {isAuthenticated ? (
               <>
                 <NavLink to="/my-profile">
