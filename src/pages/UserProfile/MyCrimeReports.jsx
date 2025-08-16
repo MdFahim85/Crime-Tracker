@@ -1,34 +1,57 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function MyCrimeReports() {
   const user = useSelector((state) => state.auth.user);
   const reports = useSelector((state) => state.report.reports);
+  const [filter, setFilter] = useState("all");
+
   const userReports = reports.filter(
     (report) => report.user === user?.username
   );
+
+  const filteredReports =
+    filter === "all"
+      ? userReports
+      : userReports.filter((report) => report.status === filter);
 
   return (
     <div className="sm:px-10 py-6">
       <h1 className="text-2xl font-bold mb-4">My Crime Reports</h1>
 
-      <ul className="grid grid-cols-12 gap-4 ">
-        {userReports.length === 0 ? (
+      <div className="mb-6 w-48 z-99">
+        <Select value={filter} onValueChange={setFilter}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filter Reports" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Reports</SelectItem>
+            <SelectItem value="approved">Approved</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <ul className="grid grid-cols-12 gap-4">
+        {filteredReports.length === 0 ? (
           <p className="col-span-12 text-gray-800 text-center">
             No reports found.
           </p>
         ) : (
-          userReports.map((report) => (
+          filteredReports.map((report) => (
             <li
               key={report.id}
-              className="
-          col-span-12
-          md:col-span-6
-
-          rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-md transition
-        "
+              className="col-span-12 md:col-span-6 rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-md transition"
             >
               <Link to={`/crime/${report.id}`} className="block h-full">
                 <div className="grid grid-rows-[220px_auto] h-full">
@@ -46,7 +69,7 @@ function MyCrimeReports() {
                       boxZoom={false}
                       keyboard={false}
                       tap={false}
-                      style={{ height: "180px", width: "100%" }}
+                      style={{ height: "180px", width: "100%", zIndex: "10" }}
                       className="rounded-md shadow"
                     >
                       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

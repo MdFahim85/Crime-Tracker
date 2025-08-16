@@ -86,12 +86,11 @@ function AllCrimeReports() {
             Clear filters
           </Button>
         </aside>
-
-        {filteredReports.length > 0 ? (
+        {filteredReports.length > 0 &&
+        filteredReports.some((r) => r.status === "approved") ? (
           <>
-            {" "}
             <main className="col-span-12 md:col-span-9 space-y-4">
-              {filteredReports.length > 0 && (
+              {filteredReports.some((r) => r.status === "approved") && (
                 <div>
                   <Label className="block text-slate-700 mb-2 text-xl">
                     Crime Locations Map
@@ -104,95 +103,102 @@ function AllCrimeReports() {
                     className="rounded-md shadow"
                   >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    {filteredReports.map((report) => (
-                      <Marker
-                        key={report.id}
-                        position={report.position}
-                        eventHandlers={{
-                          click: () => scrollToCard(report.id),
-                        }}
-                      >
-                        <Popup>
-                          <strong>{report.title}</strong>
-                          <br />
-                          {report.street}
-                          <br />
-                          {new Date(report.date).toLocaleDateString("en-GB")}
-                        </Popup>
-                      </Marker>
-                    ))}
+                    {filteredReports
+                      .filter((report) => report.status === "approved")
+                      .map((report) => (
+                        <Marker
+                          key={report.id}
+                          position={report.position}
+                          eventHandlers={{
+                            click: () => scrollToCard(report.id),
+                          }}
+                        >
+                          <Popup>
+                            <strong>{report.title}</strong>
+                            <br />
+                            {report.street}
+                            <br />
+                            {new Date(report.date).toLocaleDateString("en-GB")}
+                          </Popup>
+                        </Marker>
+                      ))}
                   </MapContainer>
                 </div>
               )}
             </main>
+
             <section className="col-span-12 mt-10">
               <hr />
               <Label className="block mt-2 text-slate-700 mb-2 text-xl text-center">
                 All Crime Reports
               </Label>
               <ul className="grid grid-cols-12 gap-4">
-                {filteredReports.map((report) => (
-                  <li
-                    key={report.id}
-                    ref={(el) => (cardRefs.current[report.id] = el)}
-                    className={`
-                    col-span-12 sm:col-span-6 lg:col-span-4
-                    rounded-lg overflow-hidden bg-white border border-slate-200
-                    shadow-sm hover:shadow-md transition
-                    ${selectedId === report.id ? "ring-2 ring-sky-500" : ""}
-                  `}
-                  >
-                    <Link to={`/crime/${report.id}`} className="block h-full">
-                      <div className="grid grid-rows-[220px_auto] h-full">
-                        <div className="relative p-3 pb-0">
-                          <div className="relative rounded-md shadow overflow-hidden">
-                            <MapContainer
-                              center={[
-                                report.position.lat,
-                                report.position.lng,
-                              ]}
-                              zoom={16}
-                              minZoom={16}
-                              maxZoom={16}
-                              zoomControl={false}
-                              scrollWheelZoom={false}
-                              doubleClickZoom={false}
-                              dragging={false}
-                              touchZoom={false}
-                              boxZoom={false}
-                              keyboard={false}
-                              tap={false}
-                              style={{ height: "180px", width: "100%" }}
-                            >
-                              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                              <Marker position={report.position} />
-                            </MapContainer>
+                {filteredReports
+                  .filter((report) => report.status === "approved")
+                  .map((report) => (
+                    <li
+                      key={report.id}
+                      ref={(el) => (cardRefs.current[report.id] = el)}
+                      className={`
+                col-span-12 sm:col-span-6 lg:col-span-4
+                rounded-lg overflow-hidden bg-white border border-slate-200
+                shadow-sm hover:shadow-md transition
+                ${selectedId === report.id ? "ring-2 ring-sky-500" : ""}
+              `}
+                    >
+                      <Link to={`/crime/${report.id}`} className="block h-full">
+                        <div className="grid grid-rows-[220px_auto] h-full">
+                          <div className="relative p-3 pb-0">
+                            <div className="relative rounded-md shadow overflow-hidden">
+                              <MapContainer
+                                center={[
+                                  report.position.lat,
+                                  report.position.lng,
+                                ]}
+                                zoom={16}
+                                minZoom={16}
+                                maxZoom={16}
+                                zoomControl={false}
+                                scrollWheelZoom={false}
+                                doubleClickZoom={false}
+                                dragging={false}
+                                touchZoom={false}
+                                boxZoom={false}
+                                keyboard={false}
+                                tap={false}
+                                style={{ height: "180px", width: "100%" }}
+                              >
+                                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                <Marker position={report.position} />
+                              </MapContainer>
 
-                            <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-900 text-md font-medium px-2 py-1 rounded shadow z-[9999]">
-                              {report.crimeType}
+                              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-900 text-md font-medium px-2 py-1 rounded shadow z-[9999]">
+                                {report.crimeType}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="p-4 pt-0">
+                            <h3 className="font-semibold text-lg text-slate-900">
+                              {report.title}
+                            </h3>
+                            <p className="text-slate-600 mt-1">
+                              {report.street}
+                            </p>
+                            <div className="mt-2 text-sm text-slate-700">
+                              <p>
+                                Date:{" "}
+                                {new Date(report.date).toLocaleDateString(
+                                  "en-GB"
+                                )}
+                              </p>
+                              <p>Reported By: {report.user}</p>
                             </div>
                           </div>
                         </div>
-
-                        <div className="p-4 pt-0">
-                          <h3 className="font-semibold text-lg text-slate-900">
-                            {report.title}
-                          </h3>
-                          <p className="text-slate-600 mt-1">{report.street}</p>
-                          <div className="mt-2 text-sm text-slate-700">
-                            <p>
-                              Date:{" "}
-                              {new Date(report.date).toLocaleDateString(
-                                "en-GB"
-                              )}
-                            </p>
-                            <p>Reported By: {report.user}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
+                      </Link>
+                    </li>
+                  ))}
               </ul>
             </section>
           </>

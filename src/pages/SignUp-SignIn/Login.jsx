@@ -41,8 +41,11 @@ function Login() {
     dispatch(loginSuccess(user));
     toast.success(`Welcome Back ${user.username}`);
     localStorage.setItem("user", JSON.stringify(user));
-
-    navigate(from);
+    if (existingUser.role == "user") {
+      navigate(from);
+    } else {
+      navigate("/admin");
+    }
   };
 
   return (

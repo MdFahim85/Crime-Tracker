@@ -25,6 +25,17 @@ export default function LineChartStats() {
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [reports]);
+
+  if (reportsByDate.length === 0) {
+    return (
+      <Card className="w-full h-full max-w-6xl p-4 bg-slate-100 shadow-md">
+        <h3 className="text-xl font-bold text-slate-800 mb-4">
+          Crime Types Percentage
+        </h3>
+        <p className="text-gray-500">No reports available to display chart.</p>
+      </Card>
+    );
+  }
   return (
     <Card className="w-full max-w-6xl p-4 bg-slate-100 shadow-md h-full">
       <h2 className="text-xl font-bold text-slate-800 mb-4">

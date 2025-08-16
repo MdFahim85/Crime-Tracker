@@ -26,6 +26,7 @@ const reportSlice = createSlice({
         details: action.payload.details,
         date: action.payload.date,
         user: action.payload.user,
+        status: "pending",
       });
       localStorage.setItem("reports", JSON.stringify(state.reports));
     },
@@ -50,8 +51,17 @@ const reportSlice = createSlice({
       );
       localStorage.setItem("reports", JSON.stringify(state.reports));
     },
+    approveReport: (state, action) => {
+      const reportId = action.payload;
+      const report = state.reports.find((r) => r.id === reportId);
+      if (report && report.status === "pending") {
+        report.status = "approved";
+      }
+      localStorage.setItem("reports", JSON.stringify(state.reports));
+    },
   },
 });
 
-export const { addReport, editReport, deleteReport } = reportSlice.actions;
+export const { addReport, editReport, deleteReport, approveReport } =
+  reportSlice.actions;
 export default reportSlice.reducer;

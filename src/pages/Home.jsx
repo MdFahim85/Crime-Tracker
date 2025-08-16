@@ -13,23 +13,27 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useMemo } from "react";
+import Footer from "../components/Footer";
 
 function Home() {
   const reports = useSelector((state) => state.report.reports);
-  const recentReports = [...reports]
+
+  const approvedReports = reports.filter((r) => r.status === "approved");
+
+  const recentReports = [...approvedReports]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 6);
 
   const reportsByDate = useMemo(() => {
     const counts = {};
-    reports.forEach(({ date }) => {
+    approvedReports.forEach(({ date }) => {
       const day = new Date(date).toISOString().slice(0, 10);
       counts[day] = (counts[day] || 0) + 1;
     });
     return Object.entries(counts)
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => new Date(a.date) - new Date(b.date));
-  }, [reports]);
+  }, [approvedReports]);
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-800">
@@ -56,28 +60,34 @@ function Home() {
         <h2 className="text-2xl font-bold text-slate-800 mb-4">
           Crime Statistics
         </h2>
-        <div className="w-full max-w-6xl" style={{ minHeight: 210 }}>
-          <ResponsiveContainer width="100%" height={210}>
-            <LineChart data={reportsByDate}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 10 }}
-                minTickGap={8}
-                interval="preserveStartEnd"
-              />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke="#2563eb"
-                activeDot={{ r: 2 }}
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        {reportsByDate.length > 0 ? (
+          <div className="w-full max-w-6xl" style={{ minHeight: 210 }}>
+            <ResponsiveContainer width="100%" height={210}>
+              <LineChart data={reportsByDate}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 10 }}
+                  minTickGap={8}
+                  interval="preserveStartEnd"
+                />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#2563eb"
+                  activeDot={{ r: 2 }}
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        ) : (
+          <p className="text-slate-500">
+            No reports available to display chart..
+          </p>
+        )}
       </section>
 
       <section className="bg-white w-full py-8 px-2 md:px-8 flex flex-col items-center">
@@ -124,7 +134,9 @@ function Home() {
                       </h3>
                       <p className="text-slate-600 mt-1">{report.street}</p>
                       <div className="mt-2 text-sm text-slate-700">
-                        <p>Date: {report.date}</p>
+                        <p>
+                          Date: {new Date(report.date).toLocaleDateString()}
+                        </p>
                         <p>Reported By: {report.user}</p>
                       </div>
                     </div>
@@ -143,10 +155,7 @@ function Home() {
           </Button>
         </Link>
       </section>
-
-      <footer className="bg-slate-900 text-white text-center py-4 mt-auto">
-        © 2025 All rights reserved
-      </footer>
+      <Footer />
     </div>
   );
 }

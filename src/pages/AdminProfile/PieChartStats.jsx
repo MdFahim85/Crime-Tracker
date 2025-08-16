@@ -15,13 +15,11 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#6372ff"];
 export default function PieChartStats() {
   const reports = useSelector((state) => state.report.reports);
 
-  // Count reports per crime type
   const crimeCounts = reports.reduce((acc, report) => {
     acc[report.crimeType] = (acc[report.crimeType] || 0) + 1;
     return acc;
   }, {});
 
-  // Convert to array for Recharts
   const chartData = Object.entries(crimeCounts).map(([name, value]) => ({
     name,
     value,
@@ -29,8 +27,10 @@ export default function PieChartStats() {
 
   if (chartData.length === 0) {
     return (
-      <Card className="w-full max-w-6xl p-4 bg-white shadow-md">
-        <h3 className="mb-3 font-semibold">Crime Types Percentage</h3>
+      <Card className="w-full h-full max-w-6xl p-4 bg-slate-100 shadow-md">
+        <h3 className="text-xl font-bold text-slate-800 mb-4">
+          Crime Types Percentage
+        </h3>
         <p className="text-gray-500">No reports available to display chart.</p>
       </Card>
     );

@@ -6,9 +6,9 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
-  const user = useSelector((state) => state.auth.user);
+  const currentUser = useSelector((state) => state.auth.user);
 
-  const isAuthenticated = user ? true : false;
+  const isAuthenticated = currentUser ? true : false;
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
@@ -64,16 +64,7 @@ const Navbar = () => {
             >
               View Reports
             </NavLink>
-            <NavLink
-              to="/admin"
-              className={({ isActive }) =>
-                isActive
-                  ? "text-slate-300"
-                  : "block mt-2 md:mt-0  hover:text-slate-300"
-              }
-            >
-              Admin
-            </NavLink>
+
             {isAuthenticated ? (
               <>
                 <NavLink to="/my-profile">
@@ -91,17 +82,15 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <NavLink
-                  to="/login"
-                  className="px-2 py-1 border border-slate-500 bg-slate-900 text-white hover:bg-slate-500 rounded transition-all duration-150 ease-in-out"
-                >
-                  Login
+                <NavLink to="/login">
+                  <Button className="border border-slate-500 bg-slate-900 text-white hover:bg-slate-500">
+                    Login
+                  </Button>
                 </NavLink>
-                <NavLink
-                  to="/register"
-                  className="px-2 py-1 bg-slate-500  text-white hover:bg-slate-700 rounded transition-all duration-150 ease-in-out"
-                >
-                  Register
+                <NavLink to="/register">
+                  <Button className=" bg-slate-200 text-slate-500 hover:bg-slate-500 hover:text-white">
+                    Register
+                  </Button>
                 </NavLink>
               </>
             )}

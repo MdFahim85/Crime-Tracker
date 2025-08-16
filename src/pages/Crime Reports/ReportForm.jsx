@@ -41,7 +41,7 @@ function ReportForm({
       street,
       title,
       details,
-      date: date.toISOString().split("T")[0],
+      date,
       user: user.username,
     };
 
@@ -57,7 +57,6 @@ function ReportForm({
   }
   return (
     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-
       <div className="mb-4">
         <OptionList
           label={"Crime type"}

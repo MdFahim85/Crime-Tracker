@@ -12,7 +12,7 @@ function EditProfile() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const regUsers = useSelector((state) => state.register.users);
-  const { error, success } = useSelector((state) => state.register);
+  const { error } = useSelector((state) => state.register);
   const thisUser = regUsers.filter(
     (regUser) => regUser.username === user?.username
   );
@@ -31,7 +31,7 @@ function EditProfile() {
         confirmPassword: "",
       });
     }
-  }, [thisUser]);
+  }, [thisUser, form.email]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));

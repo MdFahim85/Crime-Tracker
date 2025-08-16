@@ -59,9 +59,32 @@ const registerSlice = createSlice({
         state.error = "User not found";
       }
     },
+    updateRole: (state, action) => {
+      const updatedUser = action.payload;
+      const user = state.users.find(
+        (user) => user.username == updatedUser.username
+      );
+      if (user) {
+        user.role = updatedUser.role;
+
+        localStorage.setItem("registeredUsers", JSON.stringify(state.users));
+        state.success = true;
+        state.error = null;
+        toast.success("User Role updated successfully!");
+      } else {
+        state.error = "User not found";
+      }
+    },
+    deleteUser: (state, action) => {
+      state.users = state.users.filter(
+        (user) => user.username != action.payload
+      );
+      localStorage.setItem("registeredUsers", JSON.stringify(state.users));
+    },
   },
 });
 
-export const { registerUser, resetState, updateUser } = registerSlice.actions;
+export const { registerUser, resetState, updateUser, updateRole, deleteUser } =
+  registerSlice.actions;
 
 export default registerSlice.reducer;

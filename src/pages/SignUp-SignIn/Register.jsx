@@ -51,6 +51,7 @@ export default function Register() {
         email: form.email,
         password: form.password,
         date: new Date().toLocaleDateString(),
+        role: "user",
       })
     );
   };
