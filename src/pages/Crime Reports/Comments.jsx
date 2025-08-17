@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addComment, deleteComment } from "../../feature/commentSlice";
+import { addComment, deleteComment } from "../../feature/reportSlice";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,6 @@ import CommentList from "./CommentList";
 
 function Comments({ comment, setComment, user, report }) {
   const dispatch = useDispatch();
-  const comments = useSelector((state) => state.comment.comments);
-  const filterComments = useMemo(() => {
-    return comments.filter((comment) => comment.reportId === report.id);
-  }, [comments, report.id]);
 
   function addCommentHandler() {
     if (!user) {
@@ -33,15 +29,15 @@ function Comments({ comment, setComment, user, report }) {
   }
 
   function deleteCommentHandler(id) {
-    dispatch(deleteComment(id));
+    dispatch(deleteComment({ reportId: report.id, id }));
     toast.success("Comment Deleted Successfully");
   }
   return (
     <>
       <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[400px]">
         <ul>
-          {filterComments.length ? (
-            filterComments.map((comment) => (
+          {report.comments.length ? (
+            report.comments.map((comment) => (
               <CommentList
                 comment={comment}
                 deleteCommentHandler={deleteCommentHandler}

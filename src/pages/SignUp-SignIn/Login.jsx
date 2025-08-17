@@ -36,7 +36,12 @@ function Login() {
 
     const from = location.state?.from?.pathname || "/allreports";
     const fakeToken = btoa(username + "_fakejwt");
-    const user = { username: existingUser.username, fakeToken };
+    const user = {
+      username: existingUser.username,
+      fakeToken,
+      image: existingUser.image,
+      role: existingUser.role,
+    };
 
     dispatch(loginSuccess(user));
     toast.success(`Welcome Back ${user.username}`);

@@ -17,14 +17,21 @@ function ViewProfile() {
     (report) => report.user === user?.username
   );
   const approvedReports = userReports.filter((r) => r.status === "approved");
+  const pendingReports = userReports.filter((r) => r.status === "pending");
+  const rejectedReports = userReports.filter((r) => r.status === "rejected");
 
   return (
-    <div className="flex flex-col px-4 sm:px-8 py-10 max-w-7xl mx-auto gap-6 sm:mt-10">
+    <div className="flex flex-col px-4 sm:px-8 py-10 max-w-7xl mx-auto gap-6 sm:mt-10 md:mt-16">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-1/4 bg-slate-100 shadow-lg rounded-lg p-6 mt-10 sm:mt-0 ">
           <div className="flex justify-between items-center border-b pb-3 mb-4">
-            <h2 className="text-xl font-bold text-slate-900">
-              👤 {thisUser[0]?.username}
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-x-2">
+              <img
+                className="size-12 rounded-full"
+                src={thisUser[0]?.image}
+                alt="Profile Picture"
+              />
+              {thisUser[0]?.username}
             </h2>
             <Link to="/edit-profile">
               <Button className="border border-slate-500 bg-slate-100 text-slate-500 hover:bg-slate-500 hover:text-white">
@@ -65,7 +72,15 @@ function ViewProfile() {
                     <p className="text-gray-500">
                       ⌛ Pending :{" "}
                       <span className="font-bold ">
-                        {userReports.length - approvedReports.length}
+                        {pendingReports.length}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="py-2 rounded">
+                    <p className="text-gray-500">
+                      ❌ Rejected :{" "}
+                      <span className="font-bold ">
+                        {rejectedReports.length}
                       </span>
                     </p>
                   </div>

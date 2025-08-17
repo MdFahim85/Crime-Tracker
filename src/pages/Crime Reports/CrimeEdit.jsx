@@ -46,6 +46,7 @@ function CrimeEdit() {
         details,
         date,
         user,
+        status: "pending",
       })
     );
 
@@ -83,8 +84,6 @@ function CrimeEdit() {
           />
         </div>
 
-
-
         <div className="mb-4">
           <DateSelector date={date} setDate={setDate} />
         </div>
@@ -93,7 +92,12 @@ function CrimeEdit() {
           <label className="block font-semibold mb-1 text-slate-700">
             Select Location on Map:
           </label>
-          <ReportMap latlng={latlng} setLatLng={setLatLng} street={street} setStreet={setStreet} />
+          <ReportMap
+            latlng={latlng}
+            setLatLng={setLatLng}
+            street={street}
+            setStreet={setStreet}
+          />
         </div>
 
         <p className="text-sm text-gray-500">

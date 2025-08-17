@@ -51,6 +51,9 @@ const registerSlice = createSlice({
         if (updatedUser.password) {
           user.password = updatedUser.password;
         }
+        if (updatedUser.image) {
+          user.image = updatedUser.image;
+        }
         localStorage.setItem("registeredUsers", JSON.stringify(state.users));
         state.success = true;
         state.error = null;

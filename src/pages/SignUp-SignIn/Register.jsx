@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { loginSuccess } from "../../feature/authSlice";
+import { set } from "date-fns/set";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -15,6 +16,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    image: "",
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,13 +27,24 @@ export default function Register() {
     if (success) {
       const username = form.username;
       const fakeToken = btoa(username + "_fakejwt");
-      const user = { username, fakeToken };
+      const user = { username, fakeToken, image: form.image, role: "user" };
       dispatch(loginSuccess(user));
       dispatch(resetState());
       localStorage.setItem("user", JSON.stringify(user));
       navigate("/allreports");
     }
   }, [success, navigate, dispatch, form.username]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prev) => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -51,6 +64,7 @@ export default function Register() {
         email: form.email,
         password: form.password,
         date: new Date().toLocaleDateString(),
+        image: form.image,
         role: "user",
       })
     );
@@ -88,6 +102,17 @@ export default function Register() {
             onChange={handleChange}
             placeholder="Enter email"
             required
+          />
+
+          <Label htmlFor="picture" className="mb-2">
+            Profile Image
+          </Label>
+          <Input
+            id="picture"
+            name="picture"
+            type="file"
+            onChange={handleImageChange}
+            accept="image/*"
           />
 
           <Label htmlFor="password" className="mb-2">

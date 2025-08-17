@@ -133,11 +133,20 @@ function Home() {
                         {report.title || report.crimeType}
                       </h3>
                       <p className="text-slate-600 mt-1">{report.street}</p>
-                      <div className="mt-2 text-sm text-slate-700">
+                      <div className="mt-2 text-sm text-slate-700 space-y-1 pt-2">
                         <p>
-                          Date: {new Date(report.date).toLocaleDateString()}
+                          <strong>Date:</strong>{" "}
+                          {new Date(report.date).toLocaleDateString("en-GB")}
                         </p>
-                        <p>Reported By: {report.user}</p>
+                        <p>
+                          <strong>Author:</strong> {report.user}
+                        </p>
+                        <p>
+                          <strong>Total Comments:</strong>{" "}
+                          {report.comments.length > 0
+                            ? report.comments.length
+                            : "No comments yet"}
+                        </p>
                       </div>
                     </div>
                   </div>

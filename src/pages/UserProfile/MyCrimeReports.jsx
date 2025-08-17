@@ -38,6 +38,7 @@ function MyCrimeReports() {
             <SelectItem value="all">All Reports</SelectItem>
             <SelectItem value="approved">Approved</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="rejected">Rejected</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -76,18 +77,41 @@ function MyCrimeReports() {
                       <Marker position={report.position}></Marker>
                     </MapContainer>
                   </div>
-
+                  <div className="p-4 pt-0 bg-white flex justify-end">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        report.status === "approved"
+                          ? "bg-green-100 text-green-800"
+                          : report.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : report.status === "rejected"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {report.status}
+                    </span>
+                  </div>
                   <div className="p-4 pt-0">
                     <h3 className="font-semibold text-lg text-slate-900">
                       {report.title}
                     </h3>
+
                     <p className="text-slate-600 mt-1">{report.street}</p>
-                    <div className="mt-2 text-sm text-slate-700">
+                    <div className="mt-2 text-sm text-slate-700 space-y-1 pt-2">
                       <p>
-                        Date:{" "}
+                        <strong>Date:</strong>{" "}
                         {new Date(report.date).toLocaleDateString("en-GB")}
                       </p>
-                      <p>Reported By: {report.user}</p>
+                      <p>
+                        <strong>Author:</strong> {report.user}
+                      </p>
+                      <p>
+                        <strong>Total Comments:</strong>{" "}
+                        {report.comments.length > 0
+                          ? report.comments.length
+                          : "No comments yet"}
+                      </p>
                     </div>
                   </div>
                 </div>

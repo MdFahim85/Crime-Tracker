@@ -9,16 +9,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDispatch, useSelector } from "react-redux";
-import { approveReport, deleteReport } from "../../feature/reportSlice";
+import { approveReport, rejectReport } from "../../feature/reportSlice";
 import { Link } from "react-router-dom";
+import SuggestionTrigger from "./SuggestionTrigger";
+import { useState } from "react";
+import ReportModal from "./ReportModal";
 
 export default function PendingReportTable() {
   const reports = useSelector((state) => state.report.reports);
   const pendingReports = reports.filter((report) => report.status == "pending");
   const dispatch = useDispatch();
+  const [suggestion, setSuggestion] = useState("");
+  const [selectedReport, setSelectedReport] = useState(null);
 
-  const handleDelete = (id) => {
-    dispatch(deleteReport(id));
+  const handleReject = (id) => {
+    dispatch(rejectReport({ id, suggestion }));
   };
 
   const handleApprove = (id) => {
@@ -43,6 +48,8 @@ export default function PendingReportTable() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Title</TableHead>
+              <TableHead>Author</TableHead>
+              <TableHead>Crime Type</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
@@ -51,19 +58,22 @@ export default function PendingReportTable() {
           <TableBody>
             {pendingReports.map((r) => (
               <TableRow key={r.id}>
+                <TableCell>{r.id}</TableCell>
                 <TableCell>
-                  <Link to={`/crime/${r.id}`} className="block w-full h-full">
-                    {r.id}
-                  </Link>
+                  {r.title}
+                  <Button
+                    variant="link"
+                    onClick={() => setSelectedReport(r)}
+                    className=" px-2 "
+                  >
+                    🔗
+                  </Button>
                 </TableCell>
-                <TableCell>
-                  <Link to={`/crime/${r.id}`} className="block w-full h-full">
-                    {r.title}
-                  </Link>
-                </TableCell>
+                <TableCell>{r.user}</TableCell>
+                <TableCell>{r.crimeType}</TableCell>
                 <TableCell>{new Date(r.date).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <span className="px-2 py-1 rounded text-sm bg-yellow-200 text-yellow-800">
+                  <span className="text-yellow-600 font-semibold">
                     {r.status}
                   </span>
                 </TableCell>
@@ -76,18 +86,23 @@ export default function PendingReportTable() {
                     Approve
                   </Button>
 
-                  <Button
-                    variant="second"
-                    size="sm"
-                    onClick={() => handleDelete(r.id)}
-                  >
-                    Delete
-                  </Button>
+                  <SuggestionTrigger
+                    r={r}
+                    handleSuggest={handleReject}
+                    suggestion={suggestion}
+                    setSuggestion={setSuggestion}
+                  />
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
+        <ReportModal
+          report={selectedReport}
+          open={!!selectedReport}
+          onClose={() => setSelectedReport(null)}
+        />
       </div>
     </div>
   );

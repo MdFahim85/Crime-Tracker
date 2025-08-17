@@ -22,7 +22,7 @@ function DateSelector({ date, setDate }) {
           <Button
             variant="outline"
             id="date"
-            className="w-48 justify-between font-normal"
+            className="w-48 justify-between font-normal bg-transparent"
           >
             {date ? new Date(date).toLocaleDateString("en-GB") : "Select date"}
             <ChevronDownIcon />

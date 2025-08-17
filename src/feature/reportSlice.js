@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import ReportTable from "../pages/AdminProfile/ReportTable";
 
 const reports = () => {
   const stored = localStorage.getItem("reports");
@@ -27,6 +28,8 @@ const reportSlice = createSlice({
         date: action.payload.date,
         user: action.payload.user,
         status: "pending",
+        comments: [],
+        suggestion: "",
       });
       localStorage.setItem("reports", JSON.stringify(state.reports));
     },
@@ -42,6 +45,7 @@ const reportSlice = createSlice({
         id.title = action.payload.title;
         id.details = action.payload.details;
         id.date = action.payload.date;
+        id.status = action.payload.status;
         localStorage.setItem("reports", JSON.stringify(state.reports));
       }
     },
@@ -56,12 +60,52 @@ const reportSlice = createSlice({
       const report = state.reports.find((r) => r.id === reportId);
       if (report && report.status === "pending") {
         report.status = "approved";
+        report.suggestion = "";
       }
       localStorage.setItem("reports", JSON.stringify(state.reports));
+    },
+    rejectReport: (state, action) => {
+      const reportId = action.payload.id;
+      const report = state.reports.find((r) => r.id === reportId);
+      if (report && report.status === "pending") {
+        report.status = "rejected";
+        report.suggestion = action.payload.suggestion;
+      }
+      localStorage.setItem("reports", JSON.stringify(state.reports));
+    },
+    addComment: (state, action) => {
+      const report = state.reports.find(
+        (r) => r.id === action.payload.reportId
+      );
+      if (report) {
+        report.comments.push({
+          id: Date.now(),
+          user: action.payload.user,
+          comment: action.payload.comment,
+        });
+      }
+      localStorage.setItem("reports", JSON.stringify(state.reports));
+    },
+    deleteComment: (state, action) => {
+      const report = state.reports.find(
+        (r) => r.id === action.payload.reportId
+      );
+      if (report) {
+        report.comments = report.comments.filter(
+          (comment) => comment.id != action.payload.id
+        );
+      }
     },
   },
 });
 
-export const { addReport, editReport, deleteReport, approveReport } =
-  reportSlice.actions;
+export const {
+  addReport,
+  editReport,
+  deleteReport,
+  approveReport,
+  rejectReport,
+  addComment,
+  deleteComment,
+} = reportSlice.actions;
 export default reportSlice.reducer;

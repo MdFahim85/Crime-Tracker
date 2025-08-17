@@ -21,6 +21,7 @@ function EditProfile() {
     email: "",
     password: "",
     confirmPassword: "",
+    image: "",
   });
 
   useEffect(() => {
@@ -32,6 +33,17 @@ function EditProfile() {
       });
     }
   }, [thisUser, form.email]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prev) => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -51,6 +63,7 @@ function EditProfile() {
         username: user.username,
         email: form.email,
         password: form.password || undefined,
+        image: form.image,
       })
     );
     navigate("/my-profile");
@@ -73,8 +86,19 @@ function EditProfile() {
             type="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="Enter username"
+            placeholder="Update user email"
             required
+          />
+
+          <Label htmlFor="picture" className="mb-2">
+            Profile Image
+          </Label>
+          <Input
+            id="picture"
+            name="picture"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
           />
 
           <Label htmlFor="password" className="mb-2">
@@ -86,7 +110,7 @@ function EditProfile() {
             type="password"
             value={form.password}
             onChange={handleChange}
-            placeholder="Enter new password (optional)"
+            placeholder="Update password (optional)"
           />
 
           <Label htmlFor="confirmPassword" className="mb-2">
@@ -98,7 +122,7 @@ function EditProfile() {
             type="password"
             value={form.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm Password"
+            placeholder="Confirm updated password"
           />
 
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}

@@ -25,9 +25,10 @@ const Navbar = () => {
   return (
     <nav className="bg-slate-900 text-white shadow-md px-4 py-3 fixed top-0 left-0 right-0 z-999">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold self-start ">
+        <Link to="/" className="text-2xl font-bold  ">
           CrimeTracker
         </Link>
+
         <div className="block justify-end text-end">
           <div className="md:hidden">
             <Button
@@ -68,14 +69,16 @@ const Navbar = () => {
             {isAuthenticated ? (
               <>
                 <NavLink to="/my-profile">
-                  <Button className="border border-slate-500 bg-slate-900 text-white hover:bg-slate-500">
-                    View Profile
-                  </Button>
+                  <img
+                    className="size-12 rounded-full border-2 border-slate-300  hover:border-slate-500 transition duration-300 ease-in-out cursor-pointer"
+                    src={currentUser?.image}
+                    alt="Profile Picture"
+                  />
                 </NavLink>
 
                 <Button
                   onClick={() => handleLogout()}
-                  className="border border-red-500 bg-slate-900 text-white hover:bg-red-500"
+                  className="border border-red-500 bg-slate-900 text-white hover:bg-red-500 cursor-pointer"
                 >
                   Logout
                 </Button>

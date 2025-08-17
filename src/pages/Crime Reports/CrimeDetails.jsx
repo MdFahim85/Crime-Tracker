@@ -53,14 +53,22 @@ export default function CrimeDetails() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto mt-15 px-2 py-4 space-y-6">
-      <Button onClick={() => navigate("/allreports")} variant="primary">
-        Back to reports
+    <div className="max-w-7xl mx-auto mt-10 md:mt-20 px-2 py-4 space-y-6 ">
+      <Button onClick={() => navigate(-1)} variant="primary">
+        Back
       </Button>
 
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-2/3 space-y-4">
           <div className="bg-white rounded-md border border-slate-200 shadow-sm p-4">
+            {user &&
+              (user.username === report.user || user.role === "admin") &&
+              report.suggestion && (
+                <h1 className="text-sm w-fit rounded font-bold mb-4 flex justify-end px-2 py-1 text-yellow-800 bg-yellow-100">
+                  Suggestion - {report.suggestion}
+                </h1>
+              )}
+
             <div className="relative">
               <MapContainer
                 center={[report.position.lat, report.position.lng]}
@@ -92,7 +100,6 @@ export default function CrimeDetails() {
                 {report.crimeType}
               </div>
             </div>
-
             <div className="mt-4">
               <h2 className="text-2xl font-bold">{report.title}</h2>
               <p className="text-gray-600 mt-2">{report.details}</p>
@@ -105,7 +112,7 @@ export default function CrimeDetails() {
                   {new Date(report.date).toLocaleDateString("en-GB")}
                 </p>
                 <p>
-                  <strong>Reported By:</strong> {report.user}
+                  <strong>Author:</strong> {report.user}
                 </p>
               </div>
 
@@ -134,18 +141,19 @@ export default function CrimeDetails() {
             </div>
           </div>
         </div>
-
-        <div className="md:w-1/3">
-          <div className="bg-white rounded-md border border-slate-200 shadow p-4 flex flex-col max-h-[500px] overflow-y-auto">
-            <h3 className="text-xl font-semibold mb-4">Comments</h3>
-            <Comments
-              comment={comment}
-              setComment={setComment}
-              user={user}
-              report={report}
-            />
+        {report.status === "approved" && (
+          <div className="md:w-1/3">
+            <div className="bg-white rounded-md border border-slate-200 shadow p-4 flex flex-col max-h-[500px] overflow-y-auto">
+              <h3 className="text-xl font-semibold mb-4">Comments</h3>
+              <Comments
+                comment={comment}
+                setComment={setComment}
+                user={user}
+                report={report}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

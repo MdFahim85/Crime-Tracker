@@ -15,9 +15,9 @@ export default function AdminDashboard() {
   const [view, setView] = useState("dashboard");
 
   return (
-    <div className="flex flex-col md:flex-row h-screen mt-10 sm:mt-15 md:mt-20 mx-8">
+    <div className="flex flex-col md:flex-row h-screen mt-10 sm:mt-16 md:mt-24 mx-8 mb-16">
       <Sidebar onMenuClick={setView} />
-      <main className="flex-1 px-4 sm:px-8 overflow-y-auto">
+      <main className="flex-1 px-4 sm:px-8 ">
         <StatsCards
           totalUsers={users?.length || 0}
           totalReports={reports?.length || 0}
@@ -39,7 +39,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="w-full">
-              <PendingReportTable />
+              <ReportTable />
             </div>
           </>
         )}
