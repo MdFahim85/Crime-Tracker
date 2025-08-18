@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import ReportTable from "../pages/AdminProfile/ReportTable";
 
 const reports = () => {
   const stored = localStorage.getItem("reports");
@@ -25,6 +24,7 @@ const reportSlice = createSlice({
         crimeType: action.payload.crimeType,
         title: action.payload.title,
         details: action.payload.details,
+        document: action.payload.document,
         date: action.payload.date,
         user: action.payload.user,
         status: "pending",
@@ -44,6 +44,7 @@ const reportSlice = createSlice({
         id.crimeType = action.payload.crimeType;
         id.title = action.payload.title;
         id.details = action.payload.details;
+        id.document = action.payload.document;
         id.date = action.payload.date;
         id.status = action.payload.status;
         localStorage.setItem("reports", JSON.stringify(state.reports));

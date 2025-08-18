@@ -10,23 +10,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-function ReportForm({
-  latlng,
-  setLatLng,
-  street,
-  setStreet,
-  title,
-  setTitle,
-  details,
-  setDetails,
-}) {
+function ReportForm({ reportData, setReportData }) {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const [crimeType, setCrimeType] = useState("Select a crime type");
-  const [date, setDate] = useState("");
   const navigate = useNavigate();
+
+  const [date, setDate] = useState("");
+
+  const handleDocumentChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setReportData((prev) => ({ ...prev, document: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   function handleSubmit() {
-    if (!latlng || !street || !details) {
+    if (!reportData.latlng || !reportData.street || !reportData.details) {
       toast.error("Please fill out all fields and select a location.");
       return;
     }
@@ -34,39 +36,51 @@ function ReportForm({
     const report = {
       id: Date.now(),
       latlng: {
-        lat: latlng.lat,
-        lng: latlng.lng,
+        lat: reportData.latlng.lat,
+        lng: reportData.latlng.lng,
       },
-      crimeType,
-      street,
-      title,
-      details,
+      crimeType: reportData.crimeType,
+      street: reportData.street,
+      title: reportData.title,
+      details: reportData.details,
+      document: reportData.document,
       date,
-      user: user.username,
+      user: reportData.user,
     };
 
     dispatch(addReport(report));
-    toast.success("Report Added Successfully");
+    toast.success("Your report has been submitted and is under review.");
     navigate("/allreports");
-
-    setLatLng(null);
-    setStreet("");
-    setTitle("");
-    setDetails("");
-    setCrimeType("");
   }
   return (
     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
       <div className="mb-4">
         <OptionList
           label={"Crime type"}
-          crimeType={crimeType}
-          setCrimeType={setCrimeType}
+          crimeType={reportData.crimeType}
+          setCrimeType={(data) =>
+            setReportData({ ...reportData, crimeType: data })
+          }
         />
       </div>
       <div className="mb-4">
         <DateSelector date={date} setDate={setDate} />
       </div>
+
+      <div className="mb-4">
+        <Label htmlFor="document" className="mb-2">
+          Add a Document / Image (Optional)
+        </Label>
+        <Input
+          id="document"
+          name="document"
+          type="file"
+          accept="image/*, application/pdf"
+          placeholder="Upload a document or image"
+          onChange={handleDocumentChange}
+        />
+      </div>
+
       <div className="z-99">
         <Label htmlFor="title" className="mb-2">
           Add a crime title
@@ -75,8 +89,10 @@ function ReportForm({
           type="text"
           id="title"
           placeholder="Add a title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={reportData.title}
+          onChange={(e) =>
+            setReportData({ ...reportData, title: e.target.value })
+          }
         />
       </div>
       <div>
@@ -86,8 +102,10 @@ function ReportForm({
         <Textarea
           placeholder="Describe the incident"
           id="message"
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          value={reportData.details}
+          onChange={(e) =>
+            setReportData({ ...reportData, details: e.target.value })
+          }
         />
       </div>
       <Button

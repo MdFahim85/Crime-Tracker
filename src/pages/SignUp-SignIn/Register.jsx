@@ -65,7 +65,7 @@ export default function Register() {
         password: form.password,
         date: new Date().toLocaleDateString(),
         image: form.image,
-        role: "user",
+        role: "admin",
       })
     );
   };

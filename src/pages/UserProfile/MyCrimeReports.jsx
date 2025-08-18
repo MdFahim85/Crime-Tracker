@@ -10,6 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import NoReportFound from "../../components/NoReportFound";
 
 function MyCrimeReports() {
   const user = useSelector((state) => state.auth.user);
@@ -45,9 +47,9 @@ function MyCrimeReports() {
 
       <ul className="grid grid-cols-12 gap-4">
         {filteredReports.length === 0 ? (
-          <p className="col-span-12 text-gray-800 text-center">
-            No reports found.
-          </p>
+          <div className="col-span-12">
+            <NoReportFound />
+          </div>
         ) : (
           filteredReports.map((report) => (
             <li
@@ -77,7 +79,11 @@ function MyCrimeReports() {
                       <Marker position={report.position}></Marker>
                     </MapContainer>
                   </div>
-                  <div className="p-4 pt-0 bg-white flex justify-end">
+
+                  <div className="p-4 pt-0 bg-white flex justify-between">
+                    <Label className="block text-slate-700 text-xl">
+                      Crime Location
+                    </Label>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         report.status === "approved"

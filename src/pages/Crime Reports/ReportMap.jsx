@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -16,11 +16,11 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png",
 });
 
-function LocationPicker({ setLatLng, setStreet }) {
+function LocationPicker({ setReportData }) {
   useMapEvents({
     async click(e) {
       const latlng = e.latlng;
-      setLatLng(latlng);
+      setReportData((prev) => ({ ...prev, latlng }));
 
       try {
         const res = await fetch(
@@ -28,13 +28,16 @@ function LocationPicker({ setLatLng, setStreet }) {
         );
         const data = await res.json();
         if (data && data.display_name) {
-          setStreet(data.display_name);
+          setReportData((prev) => ({ ...prev, street: data.display_name }));
         } else {
-          setStreet("");
+          setReportData((prev) => ({ ...prev, street: "Unknown location" }));
         }
       } catch (err) {
         console.error("Reverse geocoding failed", err);
-        setStreet("");
+        setReportData((prev) => ({
+          ...prev,
+          street: "Error fetching location",
+        }));
       }
     },
   });
@@ -51,22 +54,23 @@ function SearchFly({ latlng }) {
   return null;
 }
 
-function ReportMap({ latlng, setLatLng, street, setStreet }) {
-  
-
+function ReportMap({ reportData, setReportData }) {
   const handleSearch = async () => {
-    if (!street.trim()) return;
+    if (!reportData.street.trim()) return;
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-          street
+          reportData.street
         )}&format=json`
       );
       const data = await response.json();
 
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
-        setLatLng({ lat: parseFloat(lat), lng: parseFloat(lon) });
+        setReportData((prev) => ({
+          ...prev,
+          latlng: { lat: parseFloat(lat), lng: parseFloat(lon) },
+        }));
       } else {
         alert("Location not found.");
       }
@@ -86,8 +90,10 @@ function ReportMap({ latlng, setLatLng, street, setStreet }) {
       <div className="flex mb-2 gap-2">
         <Input
           type="text"
-          value={street}
-          onChange={(e) => setStreet(e.target.value)}
+          value={reportData.street}
+          onChange={(e) =>
+            setReportData({ ...reportData, street: e.target.value })
+          }
           onKeyDown={handleKeyDown}
           placeholder="Search for a location..."
           className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
@@ -113,9 +119,9 @@ function ReportMap({ latlng, setLatLng, street, setStreet }) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          <LocationPicker setLatLng={setLatLng} setStreet={setStreet} />
-          {latlng && <SearchFly latlng={latlng} />}
-          {latlng && <Marker position={latlng} />}
+          <LocationPicker setReportData={setReportData} />
+          {reportData.latlng && <SearchFly latlng={reportData.latlng} />}
+          {reportData.latlng && <Marker position={reportData.latlng} />}
         </MapContainer>
       </div>
     </div>

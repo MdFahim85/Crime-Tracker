@@ -7,11 +7,11 @@ import LineChartStats from "./LineChartStats";
 import ReportTable from "./ReportTable";
 import UserTable from "./UserTable";
 import PendingReportTable from "./PendingReportTable";
+import RegionTable from "./RegionTable";
 
 export default function AdminDashboard() {
   const users = useSelector((state) => state.register.users);
   const reports = useSelector((state) => state.report.reports);
-
   const [view, setView] = useState("dashboard");
 
   return (
@@ -46,6 +46,7 @@ export default function AdminDashboard() {
         {view === "reports" && <ReportTable />}
         {view === "pending" && <PendingReportTable />}
         {view === "users" && <UserTable />}
+        {view === "regions" && <RegionTable />}
       </main>
     </div>
   );

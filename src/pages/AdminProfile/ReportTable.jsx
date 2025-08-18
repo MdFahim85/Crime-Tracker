@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteReport } from "../../feature/reportSlice";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import NoReportFound from "../../components/NoReportFound";
 
 export default function ReportTable() {
   const reports = useSelector((state) => state.report.reports);
@@ -62,7 +63,7 @@ export default function ReportTable() {
         </div>
       </div>
       {filteredReports.length === 0 ? (
-        <p className="text-gray-500">No reports Found.</p>
+        <NoReportFound />
       ) : (
         <Table>
           <TableHeader>

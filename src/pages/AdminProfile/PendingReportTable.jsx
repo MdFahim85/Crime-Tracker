@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/table";
 import { useDispatch, useSelector } from "react-redux";
 import { approveReport, rejectReport } from "../../feature/reportSlice";
-import { Link } from "react-router-dom";
 import SuggestionTrigger from "./SuggestionTrigger";
 import { useState } from "react";
 import ReportModal from "./ReportModal";
+import NoReportFound from "../../components/NoReportFound";
 
 export default function PendingReportTable() {
   const reports = useSelector((state) => state.report.reports);
@@ -34,7 +34,7 @@ export default function PendingReportTable() {
     return (
       <Card className="w-full h-fit max-w-8xl p-4 bg-slate-100 shadow-md">
         <h2 className="text-xl font-semibold mb-4">Pending Reports</h2>
-        <p className="text-gray-500">No reports Pending.</p>
+        <NoReportFound />
       </Card>
     );
   }

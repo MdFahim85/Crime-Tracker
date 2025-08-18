@@ -1,19 +1,29 @@
+import { ReportCard } from "./ReportCard";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+
 import { useState, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import OptionList from "./OptionList";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import DateSelector from "./DateSelector";
+import NoReportFound from "../../components/NoReportFound";
+import RegionFilter from "./RegionFilter";
 
 function AllCrimeReports() {
   const reports = useSelector((state) => state.report.reports);
+  const regions = useSelector((state) => state.region.regionList);
   const [filterType, setFilterType] = useState("Select a crime type");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
+
+  const selectedRegion = () => {
+    return regions.find((region) => region.name == filterStreet);
+  };
+
+  const region = selectedRegion();
+  console.log(region);
 
   const cardRefs = useRef({});
   const [selectedId, setSelectedId] = useState(null);
@@ -62,16 +72,7 @@ function AllCrimeReports() {
           </div>
 
           <div className="mb-4">
-            <div className="grid w-full max-w-sm items-center gap-3">
-              <Label htmlFor="search">Search by street</Label>
-              <Input
-                type="text"
-                id="search"
-                placeholder="eg. Mirpur-10"
-                value={filterStreet}
-                onChange={(e) => setFilterStreet(e.target.value)}
-              />
-            </div>
+            <RegionFilter street={filterStreet} setStreet={setFilterStreet} />
           </div>
 
           <div>
@@ -96,13 +97,31 @@ function AllCrimeReports() {
                     Crime Locations Map
                   </Label>
                   <MapContainer
-                    center={[23.8041, 90.4152]}
-                    zoom={11}
+                    center={
+                      region
+                        ? [region.latlng[0], region.latlng[1]]
+                        : [23.8041, 90.4152]
+                    }
+                    zoom={region ? 14 : 11}
                     zoomControl={false}
                     style={{ height: "400px", width: "100%" }}
                     className="rounded-md shadow"
+                    key={region ? region.name : "default"}
                   >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {region && (
+                      <Circle
+                        center={[region.latlng[0], region.latlng[1]]}
+                        radius={2000}
+                        pathOptions={{
+                          color: "#eb5247",
+                          fillColor: "#eb5247",
+                          fillOpacity: 0.1,
+                          weight: 2,
+                          dashArray: "3, 3",
+                        }}
+                      />
+                    )}
                     {filteredReports
                       .filter((report) => report.status === "approved")
                       .map((report) => (
@@ -136,99 +155,19 @@ function AllCrimeReports() {
                 {filteredReports
                   .filter((report) => report.status === "approved")
                   .map((report) => (
-                    <li
+                    <ReportCard
                       key={report.id}
-                      ref={(el) => (cardRefs.current[report.id] = el)}
-                      className={`
-                col-span-12 sm:col-span-6 lg:col-span-4
-                rounded-lg overflow-hidden bg-white border border-slate-200
-                shadow-sm hover:shadow-md transition
-                ${selectedId === report.id ? "ring-2 ring-sky-500" : ""}
-              `}
-                    >
-                      <Link to={`/crime/${report.id}`} className="block h-full">
-                        <div className="grid grid-rows-[220px_auto] h-full">
-                          <div className="relative p-3 pb-0">
-                            <div className="relative rounded-md shadow overflow-hidden">
-                              <MapContainer
-                                center={[
-                                  report.position.lat,
-                                  report.position.lng,
-                                ]}
-                                zoom={16}
-                                minZoom={16}
-                                maxZoom={16}
-                                zoomControl={false}
-                                scrollWheelZoom={false}
-                                doubleClickZoom={false}
-                                dragging={false}
-                                touchZoom={false}
-                                boxZoom={false}
-                                keyboard={false}
-                                tap={false}
-                                style={{ height: "180px", width: "100%" }}
-                              >
-                                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                <Marker position={report.position} />
-                              </MapContainer>
-
-                              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-900 text-md font-medium px-2 py-1 rounded shadow z-[9999]">
-                                {report.crimeType}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="p-4 pt-0">
-                            <h3 className="font-semibold text-lg text-slate-900">
-                              {report.title}
-                            </h3>
-                            <p className="text-slate-600 mt-1">
-                              {report.street}
-                            </p>
-                            <div className="mt-2 text-sm text-slate-700 space-y-1 pt-2">
-                              <p>
-                                <strong>Date:</strong>{" "}
-                                {new Date(report.date).toLocaleDateString(
-                                  "en-GB"
-                                )}
-                              </p>
-                              <p>
-                                <strong>Author:</strong> {report.user}
-                              </p>
-                              <p>
-                                <strong>Total Comments:</strong>{" "}
-                                {report.comments.length > 0
-                                  ? report.comments.length
-                                  : "No comments yet"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </li>
+                      cardRefs={cardRefs}
+                      report={report}
+                      selectedId={selectedId}
+                    />
                   ))}
               </ul>
             </section>
           </>
         ) : (
           <div className="col-span-12 md:col-span-9 space-y-4">
-            <div className="flex flex-col items-center justify-center py-12 text-center text-slate-500 text-nowrap">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-slate-400 mb-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-xl font-medium">No reports found</p>
-            </div>
+            <NoReportFound />
           </div>
         )}
       </div>

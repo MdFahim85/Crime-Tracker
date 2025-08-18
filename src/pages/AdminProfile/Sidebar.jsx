@@ -2,6 +2,7 @@ const menu = [
   { name: "Dashboard", icon: "📊" },
   { name: "Reports", icon: "📝" },
   { name: "Users", icon: "👤" },
+  { name: "Regions", icon: "🗺️" },
 ];
 
 export default function Sidebar({ onMenuClick }) {
