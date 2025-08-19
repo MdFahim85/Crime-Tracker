@@ -42,6 +42,22 @@ function CrimeEdit() {
     );
   }
 
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    if (!reportData.title || reportData.title.length < 5)
+      newErrors.title = "Please provide a valid title.";
+    if (!reportData.details || reportData.details.length < 10)
+      newErrors.details = "Please provide more details.";
+    if (reportData.crimeType == "Select a crime type")
+      newErrors.crimeType = "Please select a crime type.";
+    if (!reportData.date) newErrors.date = "Please select a date.";
+
+    setErrors(newErrors);
+    return newErrors.length === 0;
+  };
+
   const handleDocumentChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -54,6 +70,15 @@ function CrimeEdit() {
   };
 
   function handleEdit() {
+    if (reportData.latlng == null || reportData.street == "") {
+      toast.error("Please select a location");
+      return;
+    }
+    if (!validate()) {
+      toast.error("Please fix the errors in the form.");
+      return;
+    }
+
     toast.success("Successfully Editted!");
 
     dispatch(
@@ -79,43 +104,27 @@ function CrimeEdit() {
       <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
         <div className="mb-4">
           <OptionList
+            label={"Crime type"}
             crimeType={reportData.crimeType}
             setCrimeType={(data) =>
               setReportData({ ...reportData, crimeType: data })
             }
           />
+          {errors.crimeType &&
+            reportData.crimeType == "Select a crime type" && (
+              <p className="text-red-500">{errors.crimeType}</p>
+            )}
         </div>
-
-        <div>
-          <Label htmlFor="title" className="mb-2">
-            Add a crime title
-          </Label>
-          <Input
-            type="text"
-            id="title"
-            placeholder="Add a title"
-            value={reportData.title}
-            onChange={(e) =>
-              setReportData({ ...reportData, title: e.target.value })
-            }
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="message" className="mb-2">
-            Description
-          </Label>
-          <Textarea
-            value={reportData.details}
-            onChange={(e) =>
-              setReportData({ ...reportData, details: e.target.value })
-            }
-          />
+        <div className="mb-4">
+          <DateSelector date={date} setDate={setDate} />
+          {errors.crimeType && date == "" && (
+            <p className="text-red-500">{errors.date}</p>
+          )}
         </div>
 
         <div className="mb-4">
           <Label htmlFor="document" className="mb-2">
-            Add a Document / Image (Optional)
+            Add an Image (Optional)
           </Label>
           <Input
             id="document"
@@ -127,8 +136,50 @@ function CrimeEdit() {
           />
         </div>
 
-        <div className="mb-4">
-          <DateSelector date={date} setDate={setDate} />
+        <div className="z-99">
+          <Label htmlFor="title" className="mb-2">
+            Add a crime title
+          </Label>
+          <Input
+            type="text"
+            id="title"
+            placeholder={`${
+              reportData.title == "" && errors.title
+                ? errors.title
+                : "Add a title"
+            }`}
+            value={reportData.title}
+            onChange={(e) => {
+              setReportData({ ...reportData, title: e.target.value });
+            }}
+            className={`${
+              reportData.title == "" && errors.title
+                ? "border-2 border-red-500"
+                : ""
+            }`}
+          />
+        </div>
+        <div>
+          <Label htmlFor="message" className="mb-2">
+            Description
+          </Label>
+          <Textarea
+            placeholder={`${
+              reportData.details == "" && errors.details
+                ? errors.details
+                : "Describe the incident..."
+            }`}
+            id="message"
+            value={reportData.details}
+            onChange={(e) =>
+              setReportData({ ...reportData, details: e.target.value })
+            }
+            className={`${
+              reportData.details == "" && errors.details
+                ? "border-2 border-red-500"
+                : ""
+            }`}
+          />
         </div>
 
         <div>

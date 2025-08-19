@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.6",
+    "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
@@ -29,17 +30,20 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "leaflet": "^1.9.4",
+    "leaflet.heat": "^0.2.0",
     "lucide-react": "^0.539.0",
     "react": "^19.1.0",
     "react-day-picker": "^9.8.1",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.62.0",
     "react-hot-toast": "^2.5.2",
     "react-leaflet": "^5.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.1",
     "recharts": "^3.1.2",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

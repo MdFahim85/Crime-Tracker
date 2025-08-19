@@ -14,6 +14,7 @@ function OptionList({ crimeType, setCrimeType, label }) {
     "Theft",
     "Assault",
     "Robbery",
+    "Murder",
     "Vandalism",
     "Drug-related",
     "Other",

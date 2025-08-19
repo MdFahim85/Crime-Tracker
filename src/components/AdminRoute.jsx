@@ -9,8 +9,6 @@ function AdminRoute({ children }) {
   const navigate = useNavigate();
 
   const [authorized, setAuthorized] = useState(null);
-
-  // find current user
   const thisUser = users.find((u) => u.username === authuser?.username);
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import DateSelector from "./DateSelector";
 import NoReportFound from "../../components/NoReportFound";
 import RegionFilter from "./RegionFilter";
+import Heatmap from "./Heatmap";
 
 function AllCrimeReports() {
   const reports = useSelector((state) => state.report.reports);
@@ -17,6 +18,7 @@ function AllCrimeReports() {
   const [filterType, setFilterType] = useState("Select a crime type");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  const [isHeatmap, setIsHeatmap] = useState(false);
 
   const selectedRegion = () => {
     return regions.find((region) => region.name == filterStreet);
@@ -92,7 +94,7 @@ function AllCrimeReports() {
           <>
             <main className="col-span-12 md:col-span-9 space-y-4">
               {filteredReports.some((r) => r.status === "approved") && (
-                <div>
+                <div className="relative">
                   <Label className="block text-slate-700 mb-2 text-xl">
                     Crime Locations Map
                   </Label>
@@ -109,6 +111,8 @@ function AllCrimeReports() {
                     key={region ? region.name : "default"}
                   >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {isHeatmap ? <Heatmap points={filteredReports} /> : ""}
+
                     {region && (
                       <Circle
                         center={[region.latlng[0], region.latlng[1]]}
@@ -122,26 +126,39 @@ function AllCrimeReports() {
                         }}
                       />
                     )}
-                    {filteredReports
-                      .filter((report) => report.status === "approved")
-                      .map((report) => (
-                        <Marker
-                          key={report.id}
-                          position={report.position}
-                          eventHandlers={{
-                            click: () => scrollToCard(report.id),
-                          }}
-                        >
-                          <Popup>
-                            <strong>{report.title}</strong>
-                            <br />
-                            {report.street}
-                            <br />
-                            {new Date(report.date).toLocaleDateString("en-GB")}
-                          </Popup>
-                        </Marker>
-                      ))}
+                    {isHeatmap == false &&
+                      filteredReports
+                        .filter((report) => report.status === "approved")
+                        .map((report) => (
+                          <Marker
+                            key={report.id}
+                            position={report.position}
+                            eventHandlers={{
+                              click: () => scrollToCard(report.id),
+                            }}
+                          >
+                            <Popup>
+                              <strong>{report.title}</strong>
+                              <br />
+                              {report.street}
+                              <br />
+                              {new Date(report.date).toLocaleDateString(
+                                "en-GB"
+                              )}
+                            </Popup>
+                          </Marker>
+                        ))}
                   </MapContainer>
+                  <Button
+                    className={`${
+                      isHeatmap
+                        ? "bg-slate-500 text-white"
+                        : "bg-slate-200 text-slate-500"
+                    } cursor-pointer absolute top-12 right-2 z-9998 hover:bg-slate-400 hover:text-white transition duration-300 ease-in-out`}
+                    onClick={() => setIsHeatmap(!isHeatmap)}
+                  >
+                    HeatMap
+                  </Button>
                 </div>
               )}
             </main>

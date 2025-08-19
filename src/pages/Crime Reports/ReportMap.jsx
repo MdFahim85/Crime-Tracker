@@ -9,6 +9,7 @@ import {
 import L from "leaflet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -56,7 +57,10 @@ function SearchFly({ latlng }) {
 
 function ReportMap({ reportData, setReportData }) {
   const handleSearch = async () => {
-    if (!reportData.street.trim()) return;
+    if (!reportData.street.trim()) {
+      toast.error("Please enter a location");
+      return;
+    }
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(

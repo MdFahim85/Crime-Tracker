@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,72 +7,90 @@ import toast from "react-hot-toast";
 import { updateUser } from "../../feature/registerSlice";
 import { useNavigate } from "react-router-dom";
 
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const editProfileSchema = z
+  .object({
+    email: z.string().email("Invalid email address"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(50, "Password must be at most 50 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+        "Password must contain at least one lowercase letter, one uppercase letter, and one number"
+      )
+      .optional()
+      .or(z.literal("")),
+    confirmPassword: z.string().optional(),
+  })
+  .refine((data) => !data.password || data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 function EditProfile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const regUsers = useSelector((state) => state.register.users);
   const { error } = useSelector((state) => state.register);
-  const thisUser = regUsers.filter(
+
+  const [image, setImage] = useState("");
+
+  const thisUser = regUsers.find(
     (regUser) => regUser.username === user?.username
   );
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    image: "",
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(editProfileSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   useEffect(() => {
-    if (thisUser.length > 0 && form.email === "") {
-      setForm({
-        email: thisUser[0].email || "",
-        password: "",
-        confirmPassword: "",
-      });
+    if (thisUser) {
+      setValue("email", thisUser.email || "");
+      setImage(thisUser.image || "");
     }
-  }, [thisUser, form.email]);
+  }, [thisUser, setValue]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, image: reader.result }));
-      };
+      reader.onloadend = () => setImage(reader.result);
       reader.readAsDataURL(file);
     }
   };
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (form.password.length > 0) {
-      if (form.password !== form.confirmPassword) {
-        toast.error("Passwords don't match!");
-        return;
-      }
-    }
-
+  const onSubmit = (data) => {
     dispatch(
       updateUser({
         username: user.username,
-        email: form.email,
-        password: form.password || undefined,
-        image: form.image,
+        email: data.email,
+        password: data.password || undefined,
+        image,
       })
     );
+    toast.success("Profile updated successfully!");
     navigate("/my-profile");
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md"
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
@@ -82,48 +100,58 @@ function EditProfile() {
           </Label>
           <Input
             id="email"
-            name="email"
             type="email"
-            value={form.email}
-            onChange={handleChange}
+            {...register("email")}
             placeholder="Update user email"
-            required
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
 
           <Label htmlFor="picture" className="mb-2">
             Profile Image
           </Label>
           <Input
             id="picture"
-            name="picture"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
           />
+          {image && (
+            <img
+              src={image}
+              alt="Profile Preview"
+              className="mt-2 w-20 h-20 rounded-full object-cover"
+            />
+          )}
 
           <Label htmlFor="password" className="mb-2">
             Password
           </Label>
           <Input
             id="password"
-            name="password"
             type="password"
-            value={form.password}
-            onChange={handleChange}
+            {...register("password")}
             placeholder="Update password (optional)"
           />
+          {errors.password && (
+            <p className="text-red-500 text-sm">{errors.password.message}</p>
+          )}
 
           <Label htmlFor="confirmPassword" className="mb-2">
             Confirm Password
           </Label>
           <Input
             id="confirmPassword"
-            name="confirmPassword"
             type="password"
-            value={form.confirmPassword}
-            onChange={handleChange}
+            {...register("confirmPassword")}
             placeholder="Confirm updated password"
           />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm">
+              {errors.confirmPassword.message}
+            </p>
+          )}
 
           {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
 

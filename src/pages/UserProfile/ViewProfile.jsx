@@ -28,7 +28,11 @@ function ViewProfile() {
             <h2 className="text-xl font-bold text-slate-900 flex items-center gap-x-2">
               <img
                 className="size-12 rounded-full"
-                src={thisUser[0]?.image}
+                src={
+                  thisUser[0]?.image
+                    ? thisUser[0].image
+                    : "https://imgs.search.brave.com/6G4l561oIhgssjfbYvozwAIa5jx6fv6YhMrFjEGbdhM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvYXZhdGFyLXZv/bC05LzUxMi80LTEy/OC5wbmc"
+                }
                 alt="Profile Picture"
               />
               {thisUser[0]?.username}

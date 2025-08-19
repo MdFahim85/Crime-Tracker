@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { ReportCardDetails } from "../components/ReportCardDetails";
 import "leaflet/dist/leaflet.css";
 import {
   LineChart,
@@ -105,52 +105,7 @@ function Home() {
                   flex flex-col h-full
                 "
               >
-                <Link to={`/crime/${report.id}`} className="block h-full">
-                  <div className="grid grid-rows-[220px_auto] h-full">
-                    <div className="p-3 pb-0">
-                      <MapContainer
-                        center={[report.position.lat, report.position.lng]}
-                        zoom={16}
-                        minZoom={16}
-                        maxZoom={16}
-                        zoomControl={false}
-                        scrollWheelZoom={false}
-                        doubleClickZoom={false}
-                        dragging={false}
-                        touchZoom={false}
-                        boxZoom={false}
-                        keyboard={false}
-                        tap={false}
-                        style={{ height: "180px", width: "100%" }}
-                        className="rounded-md shadow"
-                      >
-                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <Marker position={report.position} />
-                      </MapContainer>
-                    </div>
-                    <div className="p-4 pt-0">
-                      <h3 className="font-semibold text-lg text-slate-900">
-                        {report.title || report.crimeType}
-                      </h3>
-                      <p className="text-slate-600 mt-1">{report.street}</p>
-                      <div className="mt-2 text-sm text-slate-700 space-y-1 pt-2">
-                        <p>
-                          <strong>Date:</strong>{" "}
-                          {new Date(report.date).toLocaleDateString("en-GB")}
-                        </p>
-                        <p>
-                          <strong>Author:</strong> {report.user}
-                        </p>
-                        <p>
-                          <strong>Total Comments:</strong>{" "}
-                          {report.comments.length > 0
-                            ? report.comments.length
-                            : "No comments yet"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+                <ReportCardDetails report={report} />
               </li>
             ))}
           </ul>

@@ -23,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-900 text-white shadow-md px-4 py-3 fixed top-0 left-0 right-0 z-999">
+    <nav className="bg-slate-900 text-white shadow-md px-4 py-3 fixed top-0 left-0 right-0 z-9999">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold  ">
           CrimeTracker
@@ -71,7 +71,11 @@ const Navbar = () => {
                 <NavLink to="/my-profile">
                   <img
                     className="size-12 rounded-full border-2 border-slate-300  hover:border-slate-500 transition duration-300 ease-in-out cursor-pointer"
-                    src={currentUser?.image}
+                    src={
+                      currentUser?.image
+                        ? currentUser.image
+                        : "https://imgs.search.brave.com/6G4l561oIhgssjfbYvozwAIa5jx6fv6YhMrFjEGbdhM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvYXZhdGFyLXZv/bC05LzUxMi80LTEy/OC5wbmc"
+                    }
                     alt="Profile Picture"
                   />
                 </NavLink>
