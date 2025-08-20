@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const Report = require("../Models/reportModel");
+const Report = require("../models/reportModel");
 
 // Get Reports
 const getReports = asyncHandler(async (req, res) => {
@@ -50,6 +50,7 @@ const setReport = asyncHandler(async (req, res) => {
 // Update Report
 const updateReport = asyncHandler(async (req, res) => {
   const report = await Report.findById(req.params.id);
+  const { title, details, crimeType } = req.body;
   if (!report) {
     res.status(404);
     throw new Error("Report not found");
@@ -60,7 +61,7 @@ const updateReport = asyncHandler(async (req, res) => {
   }
   const updatedReport = await Report.findByIdAndUpdate(
     req.params.id,
-    req.body.report,
+    { title, details, crimeType },
     { new: true }
   );
   res

@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const User = require("../Models/userModel");
+const User = require("../models/userModel");
 
 // User registration
 const registerUser = asyncHandler(async (req, res) => {
@@ -64,8 +64,40 @@ const loginUser = asyncHandler(async (req, res) => {
 // User details
 const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
-  console.log(user);
   res.json({ id: user._id, name: user.name, email: user.email });
+});
+
+// User Profile Update
+const updateUser = asyncHandler(async (req, res) => {
+  const currentUser = await User.findById(req.user.id);
+  const { name, email, oldPassword, password } = req.body;
+  if (!name || !email) {
+    res.status(400);
+    throw new Error("Please complete all the fields");
+  }
+
+  if (!currentUser) {
+    res.status(404);
+    throw new Error("No User Found");
+  }
+  const match = await bcrypt.compare(password, process.env.JWT_SECRET);
+  if (!match) {
+    res.status(400);
+    throw new Error("Password doesn't match");
+  }
+
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, {
+    name,
+    email,
+    hashedPassword,
+  });
+  if (updateUser) {
+    res.json({ message: "User updated successfully", updatedUser });
+  } else {
+    res.status(404);
+    throw new Error("Something went wrong");
+  }
 });
 
 // JWT token generation
@@ -75,4 +107,4 @@ const generateToken = (id) => {
   });
 };
 
-module.exports = { registerUser, loginUser, getUser };
+module.exports = { registerUser, loginUser, getUser, updateUser };
