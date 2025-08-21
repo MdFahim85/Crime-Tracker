@@ -1,0 +1,59 @@
+const asyncHandler = require("express-async-handler");
+const Comment = require("../models/commentModel");
+
+// Get comments for a specific report
+const getComments = asyncHandler(async (req, res) => {
+  const reportId = req.params.id;
+  const comments = await Comment.find({ report: reportId }).populate(
+    "user",
+    "username"
+  );
+  if (!comments.length) {
+    res.status(404);
+    throw new Error("No comments found for this report");
+  }
+  res.status(200).json({ message: "Comments found", comments });
+});
+
+// Post a new comment
+const setComment = asyncHandler(async (req, res) => {
+  const { comment } = req.body;
+  const report = req.params.id;
+  const user = req.user.id;
+
+  if (!comment) {
+    res.status(400);
+    throw new Error("Comment text is required");
+  }
+
+  const newComment = await Comment.create({ comment, user, report });
+
+  res.status(201).json({ message: "Comment added successfully", newComment });
+});
+
+// Delete a comment
+const deleteComment = asyncHandler(async (req, res) => {
+  const comment = await Comment.findById(req.params.commentId);
+
+  if (!comment) {
+    res.status(404);
+    throw new Error("Comment not found");
+  }
+
+  // Only author or admin can delete
+  if (comment.user.toString() !== req.user.id && req.user.role !== "admin") {
+    res.status(401);
+    throw new Error("You are not allowed to delete this comment");
+  }
+
+  if (comment.report.toString() !== req.params.id) {
+    res.status(400);
+    throw new Error("This comment does not belong to this report");
+  }
+
+  await comment.deleteOne();
+
+  res.status(200).json({ message: "Comment deleted successfully" });
+});
+
+module.exports = { getComments, setComment, deleteComment };

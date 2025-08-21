@@ -3,108 +3,196 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 
-// User registration
+// Register User
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  const { username, email, password, image } = req.body;
+
+  if (!username || !email || !password) {
     res.status(400);
     throw new Error("Please fill out all the fields");
   }
 
   const userExists = await User.findOne({ email });
   if (userExists) {
+    res.status(400);
     throw new Error("User already exists");
   }
-  const hashedPassword = await bcrypt.hashSync(password, 10);
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
-    name,
+    username,
     email,
     password: hashedPassword,
+    image: image || "",
+    role: "user",
+    date: new Date(),
   });
 
   if (user) {
-    res.json({
+    res.status(201).json({
       _id: user.id,
-      name: user.name,
+      username: user.username,
       email: user.email,
       token: generateToken(user._id),
     });
   } else {
-    res.status(401);
+    res.status(400);
     throw new Error("Invalid user data");
   }
 });
 
-// User login
+// Login User
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
-    res.status(401);
+    res.status(400);
     throw new Error("Missing credentials");
   }
+
   const user = await User.findOne({ email });
-  if (user && email != user.email) {
+  if (!user) {
     res.status(401);
-    throw new Error("Invalid email");
+    throw new Error("Invalid email or password");
   }
+
   const match = await bcrypt.compare(password, user.password);
-  if (user && match) {
-    res.json({
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
-  } else {
+  if (!match) {
     res.status(401);
-    throw new Error("Invalid credentials");
+    throw new Error("Invalid email or password");
   }
+
+  res.json({
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    token: generateToken(user._id),
+  });
 });
 
-// User details
+// Get Current User
 const getUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id);
-  res.json({ id: user._id, name: user.name, email: user.email });
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  res.json({
+    _id: user._id,
+    username: user.username,
+    email: user.email,
+    image: user.image,
+    role: user.role,
+  });
 });
 
-// User Profile Update
+// Update User Profile
 const updateUser = asyncHandler(async (req, res) => {
   const currentUser = await User.findById(req.user.id);
-  const { name, email, oldPassword, password } = req.body;
-  if (!name || !email) {
-    res.status(400);
-    throw new Error("Please complete all the fields");
-  }
-
   if (!currentUser) {
     res.status(404);
-    throw new Error("No User Found");
-  }
-  const match = await bcrypt.compare(password, process.env.JWT_SECRET);
-  if (!match) {
-    res.status(400);
-    throw new Error("Password doesn't match");
+    throw new Error("User not found");
   }
 
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, {
-    name,
-    email,
-    hashedPassword,
-  });
-  if (updateUser) {
-    res.json({ message: "User updated successfully", updatedUser });
-  } else {
-    res.status(404);
-    throw new Error("Something went wrong");
+  const { username, email, oldPassword, password, image } = req.body;
+
+  if (!username || !email) {
+    res.status(400);
+    throw new Error("Please provide username and email");
   }
+
+  // If changing password, check old password
+  let updatedPassword = currentUser.password;
+  if (password) {
+    if (!oldPassword) {
+      res.status(400);
+      throw new Error("Old password is required to change password");
+    }
+    const match = await bcrypt.compare(oldPassword, currentUser.password);
+    if (!match) {
+      res.status(401);
+      throw new Error("Old password does not match");
+    }
+    if (oldPassword === password) {
+      res.status(400);
+      throw new Error("New password cannot be same as old password");
+    }
+    updatedPassword = await bcrypt.hash(password, 10);
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      username,
+      email,
+      password: updatedPassword,
+      image: image || currentUser.image,
+    },
+    { new: true }
+  );
+
+  res.json({
+    message: "User updated successfully",
+    _id: updatedUser._id,
+    username: updatedUser.username,
+    email: updatedUser.email,
+    image: updatedUser.image,
+    role: updatedUser.role,
+  });
 });
 
-// JWT token generation
+// Get all users (Admin)
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().select("-password"); // exclude passwords
+  res.status(200).json({ users });
+});
+
+// Update user info / role (Admin)
+const updateUserByAdmin = asyncHandler(async (req, res) => {
+  const { name, email, role } = req.body;
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  user.name = name || user.name;
+  user.email = email || user.email;
+  user.role = role || user.role;
+
+  await user.save();
+
+  res.status(200).json({ message: "User updated successfully", user });
+});
+
+// Delete user (Admin)
+const deleteUserByAdmin = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  await user.deleteOne();
+
+  res.status(200).json({ message: "User deleted successfully" });
+});
+
+// JWT Token Generation
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "5d",
-  });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "5d" });
 };
 
-module.exports = { registerUser, loginUser, getUser, updateUser };
+module.exports = {
+  registerUser,
+  loginUser,
+  getUser,
+  updateUser,
+  getAllUsers,
+  updateUserByAdmin,
+  deleteUserByAdmin,
+};

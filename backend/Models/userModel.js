@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
-    name: {
+    username: {
       type: String,
-      required: [true, "Enter your name"],
+      required: [true, "Enter your username"],
     },
     email: {
       type: String,
@@ -14,6 +14,19 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: [true, "Enter your password"],
+    },
+    image: {
+      type: String,
+      default: "",
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    date: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
