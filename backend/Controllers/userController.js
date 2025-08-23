@@ -96,11 +96,11 @@ const updateUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  const { username, email, oldPassword, password, image } = req.body;
+  const { username, oldPassword, password, image } = req.body;
 
-  if (!username || !email) {
+  if (!username) {
     res.status(400);
-    throw new Error("Please provide username and email");
+    throw new Error("Please provide username");
   }
 
   // If changing password, check old password
@@ -126,7 +126,6 @@ const updateUser = asyncHandler(async (req, res) => {
     req.user.id,
     {
       username,
-      email,
       password: updatedPassword,
       image: image || currentUser.image,
     },
@@ -151,35 +150,102 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 // Update user info / role (Admin)
 const updateUserByAdmin = asyncHandler(async (req, res) => {
-  const { name, email, role } = req.body;
+  const { role } = req.body;
   const user = await User.findById(req.params.id);
+  const actingUser = await User.findById(req.user.id);
 
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
-  user.name = name || user.name;
-  user.email = email || user.email;
-  user.role = role || user.role;
+  // Prevent changing your own role
+  if (user._id.toString() === req.user.id.toString()) {
+    res.status(403);
+    throw new Error("You cannot change your own role");
+  }
 
-  await user.save();
+  // MASTER ADMIN can change any role
+  if (actingUser.role === "master_admin") {
+    if (user.role === "master_admin") {
+      return res
+        .status(403)
+        .json({ message: "Cannot change master admin role" });
+    }
+    user.role = role || user.role;
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "User role updated successfully", user });
+  }
 
-  res.status(200).json({ message: "User updated successfully", user });
+  // ADMIN rules
+  if (actingUser.role === "admin") {
+    if (user.role === "master_admin") {
+      return res
+        .status(403)
+        .json({ message: "You cannot change master admin role" });
+    }
+
+    if (user.role === "admin") {
+      return res
+        .status(403)
+        .json({ message: "Admins cannot demote other admins" });
+    }
+
+    // Only promote user -> admin
+    if (user.role === "user" && role === "admin") {
+      user.role = "admin";
+      await user.save();
+      return res.status(200).json({ message: "User promoted to admin", user });
+    }
+
+    return res
+      .status(403)
+      .json({ message: "Admins can only promote users to admin" });
+  }
+
+  res.status(403).json({ message: "Not authorized to update roles" });
 });
 
 // Delete user (Admin)
 const deleteUserByAdmin = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
+  const actingUser = await User.findById(req.user.id);
 
   if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
 
-  await user.deleteOne();
+  // Prevent deleting yourself
+  if (user._id.toString() === req.user.id.toString()) {
+    return res.status(403).json({ message: "You cannot delete yourself" });
+  }
 
-  res.status(200).json({ message: "User deleted successfully" });
+  // MASTER ADMIN can delete anyone except another master admin
+  if (actingUser.role === "master_admin") {
+    if (user.role === "master_admin") {
+      return res
+        .status(403)
+        .json({ message: "You cannot delete master admin" });
+    }
+    await user.deleteOne();
+    return res.status(200).json({ message: "User deleted successfully" });
+  }
+
+  // ADMIN rules
+  if (actingUser.role === "admin") {
+    if (user.role === "master_admin" || user.role === "admin") {
+      return res
+        .status(403)
+        .json({ message: "Admins cannot delete other admins or master admin" });
+    }
+    await user.deleteOne();
+    return res.status(200).json({ message: "User deleted successfully" });
+  }
+
+  res.status(403).json({ message: "Not authorized to delete users" });
 });
 
 // JWT Token Generation

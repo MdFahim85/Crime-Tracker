@@ -69,33 +69,31 @@ const updateReport = asyncHandler(async (req, res) => {
   }
 
   // Only author or admin can update
-  if (report.user.toString() !== req.user.id && req.user.role !== "admin") {
-    res.status(401);
+  if (
+    report.user.toString() !== req.user.id &&
+    req.user.role !== "admin" &&
+    req.user.role !== "master_admin"
+  ) {
+    res.status(403);
     throw new Error("You are not allowed to edit this report");
   }
 
-  const {
-    title,
-    details,
-    crimeType,
-    position,
-    street,
-    document,
-    status,
-    suggestion,
-  } = req.body;
+  const { title, details, crimeType, position, street, document, date } =
+    req.body;
 
   const updatedReport = await Report.findByIdAndUpdate(
     req.params.id,
     {
-      title,
-      details,
-      crimeType,
-      position,
-      street,
-      document,
-      status,
-      suggestion,
+      title: title || report.title,
+      details: details || report.details,
+      crimeType: crimeType || report.crimeType,
+      position: position || report.position,
+      street: street || report.street,
+      document: document || report.document,
+      date: date || report.date,
+      ...(report.user.toString() === req.user.id
+        ? { status: "pending", suggestion: "" }
+        : {}),
     },
     { new: true }
   );
@@ -108,6 +106,7 @@ const updateReportSuggestion = asyncHandler(async (req, res) => {
   const { status, suggestion } = req.body;
   const reportId = req.params.id;
 
+  // Validate status
   if (!status || !["pending", "approved", "rejected"].includes(status)) {
     res.status(400);
     throw new Error("Status must be 'pending', 'approved' or 'rejected'");
@@ -119,16 +118,27 @@ const updateReportSuggestion = asyncHandler(async (req, res) => {
     throw new Error("Report not found");
   }
 
-  if (req.user.role !== "admin") {
-    res.status(401);
-    throw new Error("Only admin can update report status");
+  // Only admin or master_admin can update
+  if (req.user.role !== "admin" && req.user.role !== "master_admin") {
+    res.status(403);
+    throw new Error("Only admin or master admin can update report status");
   }
 
+  // Optional: prevent admins from updating other admins' reports
+  const reportOwner = await User.findById(report.user);
+  if (reportOwner.role === "admin" && req.user.role !== "master_admin") {
+    res.status(403);
+    throw new Error("Admins cannot update reports of other admins");
+  }
+
+  // Update
   report.status = status;
   report.suggestion = suggestion || "";
   await report.save();
 
-  res.status(200).json({ message: "Report status updated", report });
+  res
+    .status(200)
+    .json({ message: "Report status updated successfully", report });
 });
 
 // Delete a report
@@ -140,7 +150,11 @@ const deleteReport = asyncHandler(async (req, res) => {
   }
 
   // Only author or admin can delete
-  if (report.user.toString() !== req.user.id && req.user.role !== "admin") {
+  if (
+    report.user.toString() !== req.user.id &&
+    req.user.role !== "admin" &&
+    req.user.role !== "master_admin"
+  ) {
     res.status(401);
     throw new Error("You are not allowed to delete this report");
   }

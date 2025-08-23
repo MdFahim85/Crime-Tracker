@@ -17,7 +17,7 @@ router.route("/users").post(registerUser);
 router.route("/users/login").post(loginUser);
 
 // User Routes
-router.route("/users/profile").get(protect, getUser).post(updateUser);
+router.route("/users/profile").get(protect, getUser).put(protect, updateUser);
 
 // Admin Routes
 

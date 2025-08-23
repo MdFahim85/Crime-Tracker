@@ -41,8 +41,12 @@ const deleteComment = asyncHandler(async (req, res) => {
   }
 
   // Only author or admin can delete
-  if (comment.user.toString() !== req.user.id && req.user.role !== "admin") {
-    res.status(401);
+  if (
+    comment.user.toString() !== req.user.id &&
+    req.user.role !== "admin" &&
+    req.user.role !== "master_admin"
+  ) {
+    res.status(403);
     throw new Error("You are not allowed to delete this comment");
   }
 

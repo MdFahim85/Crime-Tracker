@@ -18,13 +18,13 @@ const router = express.Router();
 
 // Report Routes
 router.route("/reports").get(getReports).post(protect, setReport);
+router.route("/reports/my").get(protect, getUserReports);
 router
   .route("/reports/:id")
   .get(getReportDetails)
   .put(protect, updateReport)
   .delete(protect, deleteReport);
 router.route("/reports/:id/status").patch(protect, updateReportSuggestion);
-router.route("/reports/my").get(protect, getUserReports);
 
 // Comment Routes
 router
