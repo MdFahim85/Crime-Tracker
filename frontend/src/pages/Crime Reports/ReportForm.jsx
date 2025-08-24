@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux";
-import { addReport } from "../../feature/reportSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import DateSelector from "./DateSelector";
@@ -9,10 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Eraser } from "lucide-react";
+import API from "../../api/axios";
 
 function ReportForm({ reportData, setReportData }) {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [date, setDate] = useState("");
@@ -27,10 +25,10 @@ function ReportForm({ reportData, setReportData }) {
       newErrors.details = "Please provide more details.";
     if (reportData.crimeType == "Select a crime type")
       newErrors.crimeType = "Please select a crime type.";
-    if (!reportData.date) newErrors.date = "Please select a date.";
+    if (!date) newErrors.date = "Please select a date.";
 
     setErrors(newErrors);
-    return newErrors.length === 0;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleDocumentChange = (e) => {
@@ -44,7 +42,7 @@ function ReportForm({ reportData, setReportData }) {
     }
   };
 
-  function handleSubmit() {
+  const handleSubmit = async () => {
     if (reportData.latlng == null || reportData.street == "") {
       toast.error("Please select a location");
       return;
@@ -55,8 +53,7 @@ function ReportForm({ reportData, setReportData }) {
     }
 
     const report = {
-      id: Date.now(),
-      latlng: {
+      position: {
         lat: reportData.latlng.lat,
         lng: reportData.latlng.lng,
       },
@@ -66,13 +63,19 @@ function ReportForm({ reportData, setReportData }) {
       details: reportData.details,
       document: reportData.document,
       date,
-      user: reportData.user,
     };
 
-    dispatch(addReport(report));
-    toast.success("Your report has been submitted and is under review.");
-    navigate("/allreports");
-  }
+    try {
+      const response = await API.post("/reports", report);
+      toast.success(response.data.message || "Report submitted successfully");
+      navigate("/allreports");
+    } catch (error) {
+      console.log(error);
+      const msg = error.response?.data?.message || "Failed to submit report";
+      toast.error(msg);
+    }
+  };
+
   return (
     <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
       <div className="mb-4">

@@ -13,7 +13,6 @@ export default function ReportCrime() {
     details: "",
     document: "",
     crimeType: "Select a crime type",
-    user: user ? user.username : "",
   });
 
   return (

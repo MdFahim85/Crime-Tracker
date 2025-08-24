@@ -1,7 +1,7 @@
 import { ReportCard } from "./ReportCard";
 import { useSelector } from "react-redux";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import OptionList from "./OptionList";
@@ -11,21 +11,22 @@ import DateSelector from "./DateSelector";
 import NoReportFound from "../../components/NoReportFound";
 import RegionFilter from "./RegionFilter";
 import Heatmap from "./Heatmap";
+import { useReports } from "../../hooks/useReports";
 
 function AllCrimeReports() {
-  const reports = useSelector((state) => state.report.reports);
   const regions = useSelector((state) => state.region.regionList);
   const [filterType, setFilterType] = useState("Select a crime type");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [isHeatmap, setIsHeatmap] = useState(false);
 
+  const { reports, loading, error, fetchReports } = useReports();
+
   const selectedRegion = () => {
     return regions.find((region) => region.name == filterStreet);
   };
 
   const region = selectedRegion();
-  console.log(region);
 
   const cardRefs = useRef({});
   const [selectedId, setSelectedId] = useState(null);
@@ -54,6 +55,9 @@ function AllCrimeReports() {
     setFilterType("Select a crime type");
   }
 
+  if (loading) return <p>Loading...</p>;
+
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
   return (
     <div className="px-5">
       <div>
@@ -134,7 +138,7 @@ function AllCrimeReports() {
                             key={report.id}
                             position={report.position}
                             eventHandlers={{
-                              click: () => scrollToCard(report.id),
+                              click: () => scrollToCard(report._id),
                             }}
                           >
                             <Popup>

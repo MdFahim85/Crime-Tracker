@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser, resetState } from "../../feature/registerSlice";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { loginSuccess } from "../../feature/authSlice";
-
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { registerUser, reset } from "../../feature/authSlice";
 
 const registerSchema = z.object({
   username: z
@@ -39,7 +38,9 @@ export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { error, success, users } = useSelector((state) => state.register);
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
   const { image, setImage } = useState("");
 
   const {
@@ -51,16 +52,15 @@ export default function Register() {
   });
 
   useEffect(() => {
-    if (success) {
-      const username = users[users.length - 1].username;
-      const fakeToken = btoa(username + "_fakejwt");
-      const user = { username, fakeToken, image, role: "user" };
-      dispatch(loginSuccess(user));
-      dispatch(resetState());
-      localStorage.setItem("user", JSON.stringify(user));
-      navigate("/allreports");
+    if (isError) {
+      toast.error(message);
     }
-  }, [success, navigate, dispatch, users]);
+    if (isSuccess || user) {
+      toast.success("Registration Successful");
+      navigate("/");
+    }
+    dispatch(reset());
+  }, [dispatch, isError, isSuccess, user, navigate]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -90,6 +90,10 @@ export default function Register() {
       })
     );
   };
+
+  if (isLoading) {
+    return <div>Loading....</div>;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -172,8 +176,6 @@ export default function Register() {
               {errors.confirmPassword.message}
             </p>
           )}
-
-          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
 
           <div className="flex justify-between items-center">
             <Button variant="primary" type="submit">

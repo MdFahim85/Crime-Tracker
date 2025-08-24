@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess } from "../../feature/authSlice";
+import { loginUser } from "../../feature/authSlice";
 import toast from "react-hot-toast";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { Input } from "@/components/ui/input";
@@ -13,10 +13,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const loginSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username must be at most 20 characters"),
+  email: z.string().email("Enter a valid email"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -30,7 +27,9 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const users = useSelector((state) => state.register.users);
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
 
   const {
     register,
@@ -41,38 +40,26 @@ function Login() {
   });
 
   const onSubmit = (data) => {
-    const { username, password } = data;
-
-    const existingUser = users.find(
-      (u) =>
-        u.username.trim().toLowerCase() === username.trim().toLowerCase() &&
-        u.password === password
-    );
-
-    if (!existingUser) {
-      toast.error("Invalid username or password.");
-      return;
-    }
-
-    const from = location.state?.from?.pathname || "/allreports";
-    const fakeToken = btoa(username + "_fakejwt");
-    const user = {
-      username: existingUser.username,
-      fakeToken,
-      image: existingUser.image,
-      role: existingUser.role,
-    };
-
-    dispatch(loginSuccess(user));
-    toast.success(`Welcome Back ${user.username}`);
-    localStorage.setItem("user", JSON.stringify(user));
-
-    if (existingUser.role === "user") {
-      navigate(from);
-    } else {
-      navigate("/admin");
-    }
+    dispatch(loginUser(data)); // { email, password }
   };
+
+  useEffect(() => {
+    if (isSuccess && user) {
+      toast.success(`Welcome back ${user.username}`);
+
+      const from = location.state?.from?.pathname || "/allreports";
+
+      if (user.role == "user") {
+        navigate(from, { replace: true });
+      } else {
+        navigate("/admin", { replace: true });
+      }
+    }
+
+    if (isError && message) {
+      toast.error(message);
+    }
+  }, [isSuccess, isError, user, message, navigate, location]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -82,24 +69,24 @@ function Login() {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
+        {/* Email */}
         <div className="mb-4">
-          <Label htmlFor="username" className="mb-2">
-            User Name
+          <Label htmlFor="email" className="mb-2">
+            Email
           </Label>
           <Input
             type="text"
-            id="username"
-            placeholder="Enter User Name"
-            {...register("username")}
-            className={`${errors.username ? "focus:ring-red-500" : ""}`}
+            id="email"
+            placeholder="Enter Email"
+            {...register("email")}
+            className={`${errors.email ? "focus:ring-red-500" : ""}`}
           />
-          {errors.username && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.username.message}
-            </p>
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
           )}
         </div>
 
+        {/* Password */}
         <div className="mb-6 relative flex items-end gap-4">
           <div className="flex-1">
             <Label htmlFor="password" className="mb-2">
@@ -131,9 +118,10 @@ function Login() {
           </Button>
         </div>
 
+        {/* Actions */}
         <div className="flex justify-between items-center">
-          <Button variant="primary" type="submit">
-            Log In
+          <Button variant="primary" type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Log In"}
           </Button>
           <div className="flex flex-col items-end text-sm">
             <p className="text-slate-500">Don't have an account?</p>

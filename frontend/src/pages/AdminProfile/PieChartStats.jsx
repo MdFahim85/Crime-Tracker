@@ -8,14 +8,18 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useSelector } from "react-redux";
+import { useReports } from "../../hooks/useReports";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#6372ff"];
 
 export default function PieChartStats() {
-  const reports = useSelector((state) => state.report.reports);
+  const { reports } = useReports();
 
-  const crimeCounts = reports.reduce((acc, report) => {
+  const filterdReports = reports.filter(
+    (report) => report.status === "approved"
+  );
+
+  const crimeCounts = filterdReports.reduce((acc, report) => {
     acc[report.crimeType] = (acc[report.crimeType] || 0) + 1;
     return acc;
   }, {});

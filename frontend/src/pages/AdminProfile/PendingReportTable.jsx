@@ -8,26 +8,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDispatch, useSelector } from "react-redux";
-import { approveReport, rejectReport } from "../../feature/reportSlice";
 import SuggestionTrigger from "./SuggestionTrigger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReportModal from "./ReportModal";
 import NoReportFound from "../../components/NoReportFound";
+import { useReports } from "../../hooks/useReports";
+import API from "../../api/axios";
 
-export default function PendingReportTable() {
-  const reports = useSelector((state) => state.report.reports);
+export default function PendingReportTable({ reports, fetchReports }) {
   const pendingReports = reports.filter((report) => report.status == "pending");
-  const dispatch = useDispatch();
   const [suggestion, setSuggestion] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
 
-  const handleReject = (id) => {
-    dispatch(rejectReport({ id, suggestion }));
+  const handleReject = async (id) => {
+    try {
+      await API.patch(`/reports/${id}/status`, {
+        status: "rejected",
+        suggestion,
+      });
+      setSuggestion("");
+      fetchReports();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleApprove = (id) => {
-    dispatch(approveReport(id));
+  const handleApprove = async (id) => {
+    await API.patch(`/reports/${id}/status`, {
+      status: "approved",
+    });
+    fetchReports();
   };
 
   if (pendingReports.length === 0) {
@@ -56,9 +66,9 @@ export default function PendingReportTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pendingReports.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell>{r.id}</TableCell>
+            {pendingReports.map((r, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   {r.title}
                   <Button
@@ -69,7 +79,7 @@ export default function PendingReportTable() {
                     🔗
                   </Button>
                 </TableCell>
-                <TableCell>{r.user}</TableCell>
+                <TableCell>{r.user.username}</TableCell>
                 <TableCell>{r.crimeType}</TableCell>
                 <TableCell>{new Date(r.date).toLocaleDateString()}</TableCell>
                 <TableCell>
@@ -81,7 +91,7 @@ export default function PendingReportTable() {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => handleApprove(r.id)}
+                    onClick={() => handleApprove(r._id)}
                   >
                     Approve
                   </Button>

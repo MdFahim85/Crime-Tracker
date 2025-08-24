@@ -46,7 +46,7 @@ export function ReportCardDetails({ report }) {
               {new Date(report.date).toLocaleDateString("en-GB")}
             </p>
             <p>
-              <strong>Author:</strong> {report.user}
+              <strong>Author:</strong> {report.user.username}
             </p>
             <p>
               <strong>Total Comments:</strong>{" "}

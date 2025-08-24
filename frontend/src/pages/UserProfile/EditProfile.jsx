@@ -4,16 +4,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { updateUser } from "../../feature/registerSlice";
+import { updateUser } from "../../feature/registerSlice"; // update to authSlice if you moved updateUser there
 import { useNavigate } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { reset, updateProfile } from "../../feature/authSlice";
 
+// Schema for validation
 const editProfileSchema = z
   .object({
-    email: z.string().email("Invalid email address"),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username must be at most 20 characters"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -34,15 +39,13 @@ const editProfileSchema = z
 function EditProfile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.user);
-  const regUsers = useSelector((state) => state.register.users);
-  const { error } = useSelector((state) => state.register);
 
-  const [image, setImage] = useState("");
-
-  const thisUser = regUsers.find(
-    (regUser) => regUser.username === user?.username
+  // from new authSlice
+  const { user, isError, isLoading, isSuccess, message } = useSelector(
+    (state) => state.auth
   );
+
+  const [image, setImage] = useState(user?.image || "");
 
   const {
     register,
@@ -52,18 +55,31 @@ function EditProfile() {
   } = useForm({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
-      email: "",
+      username: user?.username || "",
       password: "",
       confirmPassword: "",
     },
   });
 
+  // Sync when user updates
   useEffect(() => {
-    if (thisUser) {
-      setValue("email", thisUser.email || "");
-      setImage(thisUser.image || "");
+    if (user) {
+      setValue("username", user.username || "");
+      setImage(user.image || "");
     }
-  }, [thisUser, setValue]);
+  }, [user, setValue]);
+
+  // Handle success/error after dispatch
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Profile updated successfully!");
+      navigate("/my-profile");
+    }
+    if (isError) {
+      toast.error(message || "Failed to update profile");
+    }
+    dispatch(reset());
+  }, [isSuccess, isError, message, navigate]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -75,17 +91,17 @@ function EditProfile() {
   };
 
   const onSubmit = (data) => {
-    dispatch(
-      updateUser({
-        username: user.username,
-        email: data.email,
-        password: data.password || undefined,
-        image,
-      })
-    );
-    toast.success("Profile updated successfully!");
-    navigate("/my-profile");
+    const payload = {
+      username: data.username,
+      image,
+    };
+    if (data.password) payload.password = data.password;
+
+    dispatch(updateProfile(payload));
   };
+
+  if (isLoading) return <div className="text-center py-20">Updating...</div>;
+  if (!user) return <div className="text-center py-20">Loading...</div>;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -95,22 +111,20 @@ function EditProfile() {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
         <div className="space-y-4">
-          <Label htmlFor="email" className="mb-2">
-            User Email
-          </Label>
+          {/* Username */}
+          <Label htmlFor="username">Username</Label>
           <Input
-            id="email"
-            type="email"
-            {...register("email")}
-            placeholder="Update user email"
+            id="username"
+            type="text"
+            {...register("username")}
+            placeholder="Update username"
           />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          {errors.username && (
+            <p className="text-red-500 text-sm">{errors.username.message}</p>
           )}
 
-          <Label htmlFor="picture" className="mb-2">
-            Profile Image
-          </Label>
+          {/* Profile Image */}
+          <Label htmlFor="picture">Profile Image</Label>
           <Input
             id="picture"
             type="file"
@@ -125,9 +139,8 @@ function EditProfile() {
             />
           )}
 
-          <Label htmlFor="password" className="mb-2">
-            Password
-          </Label>
+          {/* Password */}
+          <Label htmlFor="password">Password</Label>
           <Input
             id="password"
             type="password"
@@ -138,9 +151,8 @@ function EditProfile() {
             <p className="text-red-500 text-sm">{errors.password.message}</p>
           )}
 
-          <Label htmlFor="confirmPassword" className="mb-2">
-            Confirm Password
-          </Label>
+          {/* Confirm Password */}
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
           <Input
             id="confirmPassword"
             type="password"
@@ -152,8 +164,6 @@ function EditProfile() {
               {errors.confirmPassword.message}
             </p>
           )}
-
-          {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
 
           <div className="flex justify-center space-x-4">
             <Button

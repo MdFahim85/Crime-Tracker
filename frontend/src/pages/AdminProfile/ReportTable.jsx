@@ -7,20 +7,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteReport } from "../../feature/reportSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import NoReportFound from "../../components/NoReportFound";
+import API from "../../api/axios";
 
-export default function ReportTable() {
-  const reports = useSelector((state) => state.report.reports);
-  const dispatch = useDispatch();
-
+export default function ReportTable({ reports, fetchReports }) {
   const [filter, setFilter] = useState("all"); //
 
-  const handleDelete = (id) => {
-    dispatch(deleteReport(id));
+  const handleDelete = async (id) => {
+    try {
+      await API.delete(`/reports/${id}`);
+      toast.success("Report deleted successfully.");
+      fetchReports();
+    } catch (error) {
+      toast.error("Failed to delete the report.");
+    }
   };
 
   const filteredReports =
@@ -78,15 +80,17 @@ export default function ReportTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredReports.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell className="hidden sm:table-cell">{r.id}</TableCell>
+            {filteredReports.map((r, index) => (
+              <TableRow key={index}>
+                <TableCell className="hidden sm:table-cell">
+                  {index + 1}
+                </TableCell>
                 <TableCell>
-                  <Link to={`/crime/${r.id}`} className="block w-full h-full">
+                  <Link to={`/crime/${r._id}`} className="block w-full h-full">
                     {r.title} 🔗
                   </Link>
                 </TableCell>
-                <TableCell>{r.user}</TableCell>
+                <TableCell>{r.user.username}</TableCell>
                 <TableCell>{r.crimeType}</TableCell>
                 <TableCell className="hidden sm:table-cell">
                   {new Date(r.date).toLocaleDateString()}
@@ -109,7 +113,7 @@ export default function ReportTable() {
                   <Button
                     variant="second"
                     size="sm"
-                    onClick={() => handleDelete(r.id)}
+                    onClick={() => handleDelete(r._id)}
                   >
                     Delete
                   </Button>

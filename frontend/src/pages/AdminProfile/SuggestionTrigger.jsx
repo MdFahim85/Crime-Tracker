@@ -39,7 +39,7 @@ function SuggestionTrigger({ r, handleSuggest, suggestion, setSuggestion }) {
         <AlertDialogFooter className="flex gap-2">
           <AlertDialogAction
             onClick={() => {
-              handleSuggest(r.id, suggestion);
+              handleSuggest(r._id, suggestion);
               setSuggestion("");
             }}
             className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"

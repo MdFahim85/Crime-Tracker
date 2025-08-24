@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
 import StatsCards from "./StatsCards";
@@ -8,11 +8,18 @@ import ReportTable from "./ReportTable";
 import UserTable from "./UserTable";
 import PendingReportTable from "./PendingReportTable";
 import RegionTable from "./RegionTable";
-
+import { useUsers } from "../../hooks/useUsers";
+import { useReports } from "../../hooks/useReports";
 export default function AdminDashboard() {
-  const users = useSelector((state) => state.register.users);
-  const reports = useSelector((state) => state.report.reports);
   const [view, setView] = useState("dashboard");
+
+  const { users, fetchUsers } = useUsers();
+  const { reports, fetchReports } = useReports();
+
+  useEffect(() => {
+    fetchUsers();
+    fetchReports();
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row h-screen mt-10 sm:mt-16 md:mt-24 mx-8 mb-16">
@@ -39,13 +46,19 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="w-full">
-              <ReportTable />
+              <ReportTable reports={reports} fetchReports={fetchReports} />
             </div>
           </>
         )}
-        {view === "reports" && <ReportTable />}
-        {view === "pending" && <PendingReportTable />}
-        {view === "users" && <UserTable />}
+        {view === "reports" && (
+          <ReportTable reports={reports} fetchReports={fetchReports} />
+        )}
+        {view === "pending" && (
+          <PendingReportTable reports={reports} fetchReports={fetchReports} />
+        )}
+        {view === "users" && (
+          <UserTable users={users} fetchUsers={fetchUsers} />
+        )}
         {view === "regions" && <RegionTable />}
       </main>
     </div>

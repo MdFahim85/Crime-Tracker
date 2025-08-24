@@ -1,9 +1,18 @@
 const express = require("express");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const port = process.env.PORT;
 const app = express();
 const { errorHandler } = require("./Middlewares/errorMiddleware");
 const { connectDB } = require("./config/dbConfig");
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

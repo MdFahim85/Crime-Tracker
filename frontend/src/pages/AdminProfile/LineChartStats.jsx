@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
 import {
   AreaChart,
   Area,
@@ -10,9 +9,14 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+import { useReports } from "../../hooks/useReports";
 
 export default function AreaChartStats() {
-  const reports = useSelector((state) => state.report.reports);
+  const { reports } = useReports();
+
+  const filterdReports = reports.filter(
+    (report) => report.status === "approved"
+  );
 
   const crimeTypes = [
     "Theft",
@@ -26,7 +30,7 @@ export default function AreaChartStats() {
   const reportsByDate = useMemo(() => {
     const counts = {};
 
-    reports.forEach(({ date, crimeType }) => {
+    filterdReports.forEach(({ date, crimeType }) => {
       const day = new Date(date).toLocaleDateString("en-US");
 
       if (!counts[day]) {

@@ -1,14 +1,15 @@
 const asyncHandler = require("express-async-handler");
 const Report = require("../models/reportModel");
+const User = require("../models/userModel");
 
 // Get all reports
 const getReports = asyncHandler(async (req, res) => {
   const reports = await Report.find().populate("user", "username");
   if (!reports.length) {
-    res.status(404);
-    throw new Error("No reports found");
+    res.status(404).json({ message: "No reports found" });
+    return;
   }
-  res.status(200).json({ message: "Get reports", reports });
+  res.status(200).json({ reports });
 });
 
 // Get reports of logged-in user
@@ -56,8 +57,10 @@ const setReport = asyncHandler(async (req, res) => {
     comments: [],
     suggestion: "",
   });
-
-  res.status(201).json({ message: "New report added", newReport });
+  if (!newReport) {
+    res.status(500).json({ message: "Failed to create report" });
+  }
+  res.status(201).json({ message: "Report submitted successfully", newReport });
 });
 
 // Update a report

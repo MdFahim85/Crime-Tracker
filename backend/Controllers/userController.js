@@ -33,7 +33,8 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(201).json({
       _id: user.id,
       username: user.username,
-      email: user.email,
+      image: user.image,
+      role: user.role,
       token: generateToken(user._id),
     });
   } else {
@@ -66,7 +67,8 @@ const loginUser = asyncHandler(async (req, res) => {
   res.json({
     _id: user._id,
     username: user.username,
-    email: user.email,
+    image: user.image,
+    role: user.role,
     token: generateToken(user._id),
   });
 });
@@ -80,11 +82,11 @@ const getUser = asyncHandler(async (req, res) => {
   }
 
   res.json({
-    _id: user._id,
     username: user.username,
     email: user.email,
     image: user.image,
     role: user.role,
+    date: user.date,
   });
 });
 
@@ -138,7 +140,6 @@ const updateUser = asyncHandler(async (req, res) => {
     username: updatedUser.username,
     email: updatedUser.email,
     image: updatedUser.image,
-    role: updatedUser.role,
   });
 });
 

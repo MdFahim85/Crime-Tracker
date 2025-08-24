@@ -24,7 +24,7 @@ router.route("/users/profile").get(protect, getUser).put(protect, updateUser);
 router.route("/users").get(protect, admin, getAllUsers);
 router
   .route("/users/:id")
-  .put(protect, admin, updateUserByAdmin)
+  .patch(protect, admin, updateUserByAdmin)
   .delete(protect, admin, deleteUserByAdmin);
 
 module.exports = router;
