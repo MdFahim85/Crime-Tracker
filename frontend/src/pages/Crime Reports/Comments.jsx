@@ -1,15 +1,27 @@
-import { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addComment, deleteComment } from "../../feature/reportSlice";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import CommentList from "./CommentList";
+import API from "../../api/axios";
+import { useEffect, useState } from "react";
 
 function Comments({ comment, setComment, user, report }) {
-  const dispatch = useDispatch();
+  const [comments, setComments] = useState([]);
+  const fetchComments = async () => {
+    try {
+      const res = await API.get(`/reports/${report._id}/comments`);
+      setComments(res.data.comments);
+    } catch (error) {
+      console.log(error);
+      setComments([]);
+    }
+  };
 
-  function addCommentHandler() {
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  async function addCommentHandler() {
     if (!user) {
       toast.error("Please log in to comment");
       return;
@@ -19,29 +31,42 @@ function Comments({ comment, setComment, user, report }) {
       return;
     }
     const commentObj = {
-      user,
+      user: user._id,
       comment,
-      reportId: report.id,
+      report: report._id,
     };
-    dispatch(addComment(commentObj));
+    try {
+      const res = await API.post(`/reports/${report._id}/comments`, commentObj);
+      toast.success(res.data.message);
+      fetchComments();
+    } catch (error) {
+      console.log(error);
+    }
 
     setComment("");
   }
 
-  function deleteCommentHandler(id) {
-    dispatch(deleteComment({ reportId: report.id, id }));
-    toast.success("Comment Deleted Successfully");
+  async function deleteCommentHandler(id) {
+    try {
+      console.log(id);
+      const res = await API.delete(`/reports/${report._id}/comments/${id}`);
+      toast.success(res.data.message);
+      console.log(res.data);
+      fetchComments();
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <>
       <div className="flex-1 overflow-y-auto space-y-4 mb-4 max-h-[400px]">
         <ul>
-          {report.comments.length ? (
-            report.comments.map((comment) => (
+          {comments.length ? (
+            comments.map((comment) => (
               <CommentList
                 comment={comment}
                 deleteCommentHandler={deleteCommentHandler}
-                key={comment.id}
+                key={comment._id}
               />
             ))
           ) : (

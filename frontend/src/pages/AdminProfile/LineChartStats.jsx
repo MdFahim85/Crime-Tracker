@@ -9,11 +9,8 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-import { useReports } from "../../hooks/useReports";
 
-export default function AreaChartStats() {
-  const { reports } = useReports();
-
+export default function AreaChartStats({ reports }) {
   const filterdReports = reports.filter(
     (report) => report.status === "approved"
   );

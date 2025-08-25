@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Comment = require("../models/commentModel");
+const Report = require("../models/reportModel");
 
 // Get comments for a specific report
 const getComments = asyncHandler(async (req, res) => {
@@ -17,6 +18,7 @@ const getComments = asyncHandler(async (req, res) => {
 
 // Post a new comment
 const setComment = asyncHandler(async (req, res) => {
+  const rep = await Report.findById(req.params.id);
   const { comment } = req.body;
   const report = req.params.id;
   const user = req.user.id;
@@ -27,6 +29,8 @@ const setComment = asyncHandler(async (req, res) => {
   }
 
   const newComment = await Comment.create({ comment, user, report });
+  rep.comments.push(newComment._id);
+  await rep.save();
 
   res.status(201).json({ message: "Comment added successfully", newComment });
 });
@@ -55,9 +59,17 @@ const deleteComment = asyncHandler(async (req, res) => {
     throw new Error("This comment does not belong to this report");
   }
 
-  await comment.deleteOne();
+  const deleted = await comment.deleteOne();
+  await Report.findByIdAndUpdate(req.params.id, {
+    $pull: { comments: req.params.commentId },
+  });
 
-  res.status(200).json({ message: "Comment deleted successfully" });
+  if (deleted) {
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } else {
+    res.status(401);
+    throw new Error("something went wrong");
+  }
 });
 
 module.exports = { getComments, setComment, deleteComment };

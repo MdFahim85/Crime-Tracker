@@ -15,13 +15,13 @@ export function CrimeCard({ report, user, handelDelete, navigate }) {
           {new Date(report.date).toLocaleDateString("en-GB")}
         </p>
         <p>
-          <strong>Author:</strong> {report.user}
+          <strong>Author:</strong> {report.user.username}
         </p>
       </div>
 
       <div
         className={
-          user && user.username === report.user
+          user && user.username === report.user.username
             ? "flex justify-start gap-2 pt-3"
             : "hidden"
         }
@@ -29,14 +29,14 @@ export function CrimeCard({ report, user, handelDelete, navigate }) {
         <AlertBtn
           btnText={"Delete"}
           textMsg={"Are you sure to delete this report ?"}
-          onClick={() => handelDelete(report.id)}
+          onClick={() => handelDelete(report._id)}
           textDescription={
             "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
           }
         />
         <Button
           variant="primary"
-          onClick={() => navigate(`/crime/${report.id}/edit`)}
+          onClick={() => navigate(`/crime/${report._id}/edit`)}
         >
           Edit
         </Button>

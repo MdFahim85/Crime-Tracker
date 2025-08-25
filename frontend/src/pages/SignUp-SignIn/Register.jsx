@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 import { registerUser, reset } from "../../feature/authSlice";
 
@@ -55,7 +56,7 @@ export default function Register() {
     if (isError) {
       toast.error(message);
     }
-    if (isSuccess || user) {
+    if (isSuccess) {
       toast.success("Registration Successful");
       navigate("/");
     }
@@ -92,7 +93,7 @@ export default function Register() {
   };
 
   if (isLoading) {
-    return <div>Loading....</div>;
+    return <LoadingSpinner />;
   }
 
   return (

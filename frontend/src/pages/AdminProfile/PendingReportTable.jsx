@@ -9,10 +9,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import SuggestionTrigger from "./SuggestionTrigger";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReportModal from "./ReportModal";
 import NoReportFound from "../../components/NoReportFound";
-import { useReports } from "../../hooks/useReports";
 import API from "../../api/axios";
 
 export default function PendingReportTable({ reports, fetchReports }) {

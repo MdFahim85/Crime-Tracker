@@ -5,10 +5,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteReport } from "../../feature/reportSlice";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Comments from "./Comments";
 import L from "leaflet";
 import FileReader from "./FileReader";
+import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -20,34 +22,47 @@ L.Icon.Default.mergeOptions({
 
 export default function CrimeDetails() {
   const [comment, setComment] = useState("");
-  const [activeTab, setActiveTab] = useState("location"); // 👈 new state
+  const [activeTab, setActiveTab] = useState("location");
+  const [report, setReport] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { id } = useParams();
-  const report = useSelector((state) =>
-    state.report.reports.find((r) => r.id == id)
-  );
+
   const user = useSelector((state) => state.auth.user);
 
-  function handelDelete(id) {
-    dispatch(deleteReport(id));
-    toast.success("Successfully Deleted");
-    navigate("/allreports");
+  const fetchReport = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get(`/reports/${id}`);
+      setReport(res.data);
+      setLoading(false);
+    } catch (error) {
+      setReport("");
+    }
+  };
+
+  useEffect(() => {
+    fetchReport();
+  }, []);
+
+  async function handelDelete(id) {
+    try {
+      setLoading(true);
+      await API.delete(`/reports/${id}`);
+      toast.success("Report deleted successfully");
+      navigate("/allreports");
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+      setLoading(false);
+    }
   }
 
-  if (!report) {
+  if (loading) {
     return (
-      <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
-        <div className="p-4 text-red-600 font-semibold">
-          Report not found.
-          <Button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="text-slate-600 border-2 border-slate-600 hover:bg-slate-600 hover:text-white px-2 py-1 rounded"
-          >
-            Go Back
-          </Button>
-        </div>
+      <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6 flex justify-center items-center">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -58,11 +73,27 @@ export default function CrimeDetails() {
         Back
       </Button>
 
+      {!report && (
+        <div className="max-w-3xl mx-auto mt-15 p-4 space-y-6">
+          <div className="p-4 text-red-600 font-semibold">
+            Report not found.
+            <Button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="text-slate-600 border-2 border-slate-600 hover:bg-slate-600 hover:text-white px-2 py-1 rounded"
+            >
+              Go Back
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-2/3 space-y-4">
           <div className="bg-white rounded-md border border-slate-200 shadow-sm p-4">
             {user &&
-              (user.username === report.user || user.role === "admin") &&
+              (user.username === report.user.username ||
+                user.role === "admin") &&
               report.suggestion && (
                 <h1 className="text-sm w-fit rounded font-bold mb-4 flex justify-end px-2 py-1 text-yellow-800 bg-yellow-100">
                   Suggestion - {report.suggestion}
@@ -79,15 +110,17 @@ export default function CrimeDetails() {
               >
                 Location
               </Button>
-              <Button
-                variant="primary"
-                className={`${
-                  activeTab === "document" ? "bg-slate-500 text-white" : ""
-                }`}
-                onClick={() => setActiveTab("document")}
-              >
-                Image
-              </Button>
+              {report.document && (
+                <Button
+                  variant="primary"
+                  className={`${
+                    activeTab === "document" ? "bg-slate-500 text-white" : ""
+                  }`}
+                  onClick={() => setActiveTab("document")}
+                >
+                  Image
+                </Button>
+              )}
             </div>
 
             <div className="relative">

@@ -19,10 +19,8 @@ function ReportForm({ reportData, setReportData }) {
 
   const validate = () => {
     const newErrors = {};
-    if (!reportData.title || reportData.title.length < 5)
-      newErrors.title = "Please provide a valid title.";
-    if (!reportData.details || reportData.details.length < 10)
-      newErrors.details = "Please provide more details.";
+    if (!reportData.title) newErrors.title = "Please provide a valid title.";
+    if (!reportData.details) newErrors.details = "Please provide more details.";
     if (reportData.crimeType == "Select a crime type")
       newErrors.crimeType = "Please select a crime type.";
     if (!date) newErrors.date = "Please select a date.";
@@ -68,7 +66,7 @@ function ReportForm({ reportData, setReportData }) {
     try {
       const response = await API.post("/reports", report);
       toast.success(response.data.message || "Report submitted successfully");
-      navigate("/allreports");
+      navigate("/my-profile");
     } catch (error) {
       console.log(error);
       const msg = error.response?.data?.message || "Failed to submit report";

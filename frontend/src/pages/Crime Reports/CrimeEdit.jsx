@@ -1,7 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { editReport } from "../../feature/reportSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import DateSelector from "./DateSelector";
@@ -10,37 +8,51 @@ import ReportMap from "./ReportMap";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function CrimeEdit() {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [report, setReport] = useState("");
+  const [date, setDate] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const report = useSelector((state) =>
-    state.report.reports.find((r) => r.id == id)
-  );
+  const fetchReport = async () => {
+    try {
+      const res = await API.get(`/reports/${id}`);
+      setReport(res.data);
+    } catch (error) {
+      setReport("");
+    }
+  };
 
-  // const [crimeType, setCrimeType] = useState(report?.crimeType || "");
-  // const [title, setTitle] = useState(report?.title || "");
-  // const [details, setDetails] = useState(report?.details || "");
-  // const [street, setStreet] = useState(report?.street || "");
-  // const [latlng, setLatLng] = useState(report?.position || [23.8103, 90.4125]);
-  const [date, setDate] = useState(report?.date || "");
+  useEffect(() => {
+    fetchReport();
+  }, []);
 
   const [reportData, setReportData] = useState({
-    crimeType: report?.crimeType || "",
-    title: report?.title || "",
-    details: report?.details || "",
-    street: report?.street || "",
-    latlng: report?.latlng || { lat: 23.8103, lng: 90.4125 },
-    document: report?.document || "",
+    crimeType: "",
+    title: "",
+    details: "",
+    street: "",
+    latlng: { lat: 23.8103, lng: 90.4125 },
+    document: "",
   });
 
-  if (!report) {
-    return (
-      <div className="p-4 text-red-600 font-semibold">Report not found.</div>
-    );
-  }
+  useEffect(() => {
+    if (report) {
+      setReportData({
+        crimeType: report.crimeType,
+        title: report.title,
+        details: report.details,
+        street: report.street,
+        latlng: report.position,
+        document: report.document,
+      });
+      setDate(report.date);
+    }
+  }, [report]);
 
   const [errors, setErrors] = useState({});
 
@@ -52,10 +64,10 @@ function CrimeEdit() {
       newErrors.details = "Please provide more details.";
     if (reportData.crimeType == "Select a crime type")
       newErrors.crimeType = "Please select a crime type.";
-    if (!reportData.date) newErrors.date = "Please select a date.";
 
     setErrors(newErrors);
-    return newErrors.length === 0;
+    console.log(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleDocumentChange = (e) => {
@@ -69,7 +81,7 @@ function CrimeEdit() {
     }
   };
 
-  function handleEdit() {
+  async function handleEdit() {
     if (reportData.latlng == null || reportData.street == "") {
       toast.error("Please select a location");
       return;
@@ -79,23 +91,40 @@ function CrimeEdit() {
       return;
     }
 
-    toast.success("Successfully Editted!");
-
-    dispatch(
-      editReport({
-        id: report.id,
-        latlng: reportData.latlng,
-        street: reportData.street,
-        crimeType: reportData.crimeType,
-        title: reportData.title,
-        details: reportData.details,
-        date,
-        document: reportData.document,
-        status: "pending",
-      })
-    );
+    const updatedReport = {
+      position: reportData.latlng,
+      street: reportData.street,
+      crimeType: reportData.crimeType,
+      title: reportData.title,
+      details: reportData.details,
+      date,
+      document: reportData.document,
+      status: "pending",
+    };
+    try {
+      setLoading(true);
+      const response = await API.put(`/reports/${id}`, updatedReport);
+      toast.success(response.data.message || "Report updated successfully");
+      navigate("/allreports");
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      console.log(error);
+      const msg = error.response?.data?.message || "Failed to updated report";
+      toast.error(msg);
+      setLoading(false);
+    }
 
     navigate(`/crime/${id}`);
+  }
+
+  if (!report) {
+    return (
+      <div className="p-4 text-red-600 font-semibold">Report not found.</div>
+    );
+  }
+  if (loading) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -110,16 +139,14 @@ function CrimeEdit() {
               setReportData({ ...reportData, crimeType: data })
             }
           />
-          {errors.crimeType &&
-            reportData.crimeType == "Select a crime type" && (
-              <p className="text-red-500">{errors.crimeType}</p>
-            )}
+          {errors.crimeType && (
+            <p className="text-red-500">{errors.crimeType}</p>
+          )}
         </div>
         <div className="mb-4">
-          <DateSelector date={date} setDate={setDate} />
-          {errors.crimeType && date == "" && (
-            <p className="text-red-500">{errors.date}</p>
-          )}
+          <DateSelector date={date} setDate={(newdate) => setDate(newdate)} />
+          {console.log(date)}
+          {errors.date && <p className="text-red-500">{errors.date}</p>}
         </div>
 
         <div className="mb-4">

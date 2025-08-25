@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.auth.user);
-
   const isAuthenticated = currentUser ? true : false;
 
   const [isOpen, setIsOpen] = useState(false);

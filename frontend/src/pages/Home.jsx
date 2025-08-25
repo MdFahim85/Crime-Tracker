@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
 import { ReportCardDetails } from "../components/ReportCardDetails";
 import "leaflet/dist/leaflet.css";
 import {
@@ -12,11 +11,28 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
+import API from "../api/axios";
 
 function Home() {
-  const reports = useSelector((state) => state.report.reports);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/reports");
+      setReports(response.data.reports);
+      setLoading(false);
+    } catch (error) {
+      setReports([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
   const approvedReports = reports.filter((r) => r.status === "approved");
 
@@ -34,6 +50,10 @@ function Home() {
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [approvedReports]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-800">
@@ -99,7 +119,7 @@ function Home() {
           <ul className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentReports.map((report) => (
               <li
-                key={report.id}
+                key={report._id}
                 className="
                   rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-md transition
                   flex flex-col h-full

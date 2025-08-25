@@ -12,7 +12,7 @@ export default function ReportCrime() {
     title: "",
     details: "",
     document: "",
-    crimeType: "Select a crime type",
+    crimeType: "",
   });
 
   return (

@@ -11,7 +11,6 @@ import { useState } from "react";
 
 function DateSelector({ date, setDate }) {
   const [open, setOpen] = useState(false);
-
   return (
     <div className="z-99">
       <Label htmlFor="date" className="mb-2">
@@ -35,7 +34,6 @@ function DateSelector({ date, setDate }) {
             captionLayout="dropdown"
             onSelect={(date) => {
               setDate(new Date(date).toISOString());
-
               setOpen(false);
             }}
             disabled={(date) => date > new Date()}

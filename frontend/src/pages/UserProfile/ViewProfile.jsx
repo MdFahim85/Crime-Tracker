@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import CrimeBarChart from "./CrimeBarChart";
 import MyCrimeReports from "./MyCrimeReports";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function ViewProfile() {
-  const dispatch = useDispatch();
-  const reports = useSelector((state) => state.report.reports);
-
   const [user, setUser] = useState("");
+  const [reports, setReports] = useState([]);
+
+  const fetchReports = async () => {
+    try {
+      const response = await API.get("/reports/my");
+      setReports(response.data.reports);
+    } catch (error) {
+      setReports([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -22,16 +33,15 @@ function ViewProfile() {
       }
     };
     fetchUser();
-  }, [dispatch]);
+  }, []);
 
   if (!user) {
-    return <div className="text-center py-20">Loading profile...</div>;
+    return <LoadingSpinner />;
   }
 
-  const userReports = reports.filter((report) => report.user === user.username);
-  const approvedReports = userReports.filter((r) => r.status === "approved");
-  const pendingReports = userReports.filter((r) => r.status === "pending");
-  const rejectedReports = userReports.filter((r) => r.status === "rejected");
+  const approvedReports = reports.filter((r) => r.status === "approved");
+  const pendingReports = reports.filter((r) => r.status === "pending");
+  const rejectedReports = reports.filter((r) => r.status === "rejected");
 
   const joinDate = user ? user.date.split("T")[0] : "N/A";
 
@@ -73,7 +83,7 @@ function ViewProfile() {
                   <div className="py-2">
                     <p className="text-gray-500">
                       📝 Submitted :{" "}
-                      <span className="font-bold">{userReports.length}</span>
+                      <span className="font-bold">{reports.length}</span>
                     </p>
                   </div>
                   <div className="py-2">
@@ -115,7 +125,7 @@ function ViewProfile() {
         </div>
 
         <div className="flex-1">
-          <CrimeBarChart userReports={approvedReports} />
+          <CrimeBarChart userReports={reports} />
         </div>
       </div>
 

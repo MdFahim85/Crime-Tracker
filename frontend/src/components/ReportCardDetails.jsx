@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 export function ReportCardDetails({ report }) {
   return (
-    <Link to={`/crime/${report.id}`} className="block h-full">
+    <Link to={`/crime/${report._id}`} className="block h-full">
       <div className="grid grid-rows-[220px_auto] h-full">
         <div className="relative p-3 pb-0">
           <div className="relative rounded-md shadow overflow-hidden">

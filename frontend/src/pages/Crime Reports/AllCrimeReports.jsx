@@ -11,16 +11,33 @@ import DateSelector from "./DateSelector";
 import NoReportFound from "../../components/NoReportFound";
 import RegionFilter from "./RegionFilter";
 import Heatmap from "./Heatmap";
-import { useReports } from "../../hooks/useReports";
+import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function AllCrimeReports() {
   const regions = useSelector((state) => state.region.regionList);
-  const [filterType, setFilterType] = useState("Select a crime type");
+  const [filterType, setFilterType] = useState("");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [isHeatmap, setIsHeatmap] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const { reports, loading, error, fetchReports } = useReports();
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/reports");
+      setReports(response.data.reports);
+      setLoading(false);
+    } catch (error) {
+      setReports([]);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
   const selectedRegion = () => {
     return regions.find((region) => region.name == filterStreet);
@@ -42,7 +59,7 @@ function AllCrimeReports() {
 
   const filteredReports = reports.filter((r) => {
     return (
-      (filterType === "Select a crime type" || r.crimeType === filterType) &&
+      (filterType === "" || r.crimeType === filterType) &&
       (filterStreet === "" ||
         r.street.toLowerCase().includes(filterStreet.toLowerCase())) &&
       (filterDate === "" || r.date === filterDate)
@@ -52,12 +69,12 @@ function AllCrimeReports() {
   function clearFilters() {
     setFilterDate("");
     setFilterStreet("");
-    setFilterType("Select a crime type");
+    setFilterType("");
   }
 
-  if (loading) return <p>Loading...</p>;
-
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="px-5">
       <div>
@@ -93,7 +110,9 @@ function AllCrimeReports() {
             Clear filters
           </Button>
         </aside>
-        {filteredReports.length > 0 &&
+
+        {!loading &&
+        filteredReports.length > 0 &&
         filteredReports.some((r) => r.status === "approved") ? (
           <>
             <main className="col-span-12 md:col-span-9 space-y-4">
@@ -135,7 +154,7 @@ function AllCrimeReports() {
                         .filter((report) => report.status === "approved")
                         .map((report) => (
                           <Marker
-                            key={report.id}
+                            key={report._id}
                             position={report.position}
                             eventHandlers={{
                               click: () => scrollToCard(report._id),
@@ -177,7 +196,7 @@ function AllCrimeReports() {
                   .filter((report) => report.status === "approved")
                   .map((report) => (
                     <ReportCard
-                      key={report.id}
+                      key={report._id}
                       cardRefs={cardRefs}
                       report={report}
                       selectedId={selectedId}

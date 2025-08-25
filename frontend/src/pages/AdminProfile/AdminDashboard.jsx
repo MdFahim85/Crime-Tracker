@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
 import StatsCards from "./StatsCards";
 import PieChartStats from "./PieChartStats";
@@ -8,18 +7,45 @@ import ReportTable from "./ReportTable";
 import UserTable from "./UserTable";
 import PendingReportTable from "./PendingReportTable";
 import RegionTable from "./RegionTable";
-import { useUsers } from "../../hooks/useUsers";
-import { useReports } from "../../hooks/useReports";
+import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
+
 export default function AdminDashboard() {
   const [view, setView] = useState("dashboard");
+  const [reports, setReports] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const { users, fetchUsers } = useUsers();
-  const { reports, fetchReports } = useReports();
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/reports");
+      setReports(response.data.reports);
+      setLoading(false);
+    } catch (error) {
+      setReports([]);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get("/users");
+      setUsers(res.data.users);
+      setLoading(false);
+    } catch (error) {
+      setUsers([]);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
     fetchReports();
   }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex flex-col md:flex-row h-screen mt-10 sm:mt-16 md:mt-24 mx-8 mb-16">
@@ -39,10 +65,10 @@ export default function AdminDashboard() {
           <>
             <div className="flex flex-col md:flex-row gap-4 mb-8">
               <div className="w-full md:w-1/2">
-                <PieChartStats />
+                <PieChartStats reports={reports} />
               </div>
               <div className="w-full md:w-1/2">
-                <LineChartStats />
+                <LineChartStats reports={reports} />
               </div>
             </div>
             <div className="w-full">

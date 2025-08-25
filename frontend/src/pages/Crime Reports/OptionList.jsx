@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 
 function OptionList({ crimeType, setCrimeType, label }) {
   const crimeTypes = [
-    "Select a crime type",
     "Theft",
     "Assault",
     "Robbery",
@@ -26,9 +25,9 @@ function OptionList({ crimeType, setCrimeType, label }) {
         {label}
       </Label>
 
-      <Select id="type" value={crimeType} onValueChange={setCrimeType}>
+      <Select id="type" value={crimeType || ""} onValueChange={setCrimeType}>
         <SelectTrigger className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <SelectValue />
+          <SelectValue placeholder="Select a crime type" />
         </SelectTrigger>
         <SelectContent>
           {crimeTypes.map((type) => (

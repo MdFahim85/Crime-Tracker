@@ -8,7 +8,7 @@ const {
   getUserReports,
   updateReportSuggestion,
 } = require("../controllers/reportController");
-const { protect } = require("../middlewares/authMiddleware");
+const { protect, admin } = require("../middlewares/authMiddleware");
 const {
   getComments,
   setComment,
@@ -23,8 +23,10 @@ router
   .route("/reports/:id")
   .get(getReportDetails)
   .put(protect, updateReport)
-  .delete(protect, deleteReport);
-router.route("/reports/:id/status").patch(protect, updateReportSuggestion);
+  .delete(protect, admin, deleteReport);
+router
+  .route("/reports/:id/status")
+  .patch(protect, admin, updateReportSuggestion);
 
 // Comment Routes
 router
@@ -32,6 +34,6 @@ router
   .get(getComments)
   .post(protect, setComment);
 
-router.route("/reports/:id/comments/:commentId").delete(deleteComment);
+router.route("/reports/:id/comments/:commentId").delete(protect, deleteComment);
 
 module.exports = router;

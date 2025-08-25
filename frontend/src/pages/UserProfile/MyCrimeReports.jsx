@@ -1,8 +1,7 @@
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -12,20 +11,38 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import NoReportFound from "../../components/NoReportFound";
+import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 function MyCrimeReports() {
-  const user = useSelector((state) => state.auth.user);
-  const reports = useSelector((state) => state.report.reports);
   const [filter, setFilter] = useState("all");
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const userReports = reports.filter(
-    (report) => report.user === user?.username
-  );
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/reports/my");
+      setReports(response.data.reports);
+      setLoading(false);
+    } catch (error) {
+      setReports([]);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
   const filteredReports =
     filter === "all"
-      ? userReports
-      : userReports.filter((report) => report.status === filter);
+      ? reports
+      : reports.filter((report) => report.status === filter);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="sm:px-10 py-6">
@@ -53,10 +70,10 @@ function MyCrimeReports() {
         ) : (
           filteredReports.map((report) => (
             <li
-              key={report.id}
+              key={report._id}
               className="col-span-12 md:col-span-6 rounded-lg overflow-hidden bg-white border border-slate-200 shadow-sm hover:shadow-md transition"
             >
-              <Link to={`/crime/${report.id}`} className="block h-full">
+              <Link to={`/crime/${report._id}`} className="block h-full">
                 <div className="grid grid-rows-[220px_auto] h-full">
                   <div className="p-3 pb-0">
                     <MapContainer
@@ -110,7 +127,7 @@ function MyCrimeReports() {
                         {new Date(report.date).toLocaleDateString("en-GB")}
                       </p>
                       <p>
-                        <strong>Author:</strong> {report.user}
+                        <strong>Author:</strong> {report.user.username}
                       </p>
                       <p>
                         <strong>Total Comments:</strong>{" "}

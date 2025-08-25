@@ -8,13 +8,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useReports } from "../../hooks/useReports";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#6372ff"];
 
-export default function PieChartStats() {
-  const { reports } = useReports();
-
+export default function PieChartStats({ reports }) {
   const filterdReports = reports.filter(
     (report) => report.status === "approved"
   );

@@ -4,15 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { updateUser } from "../../feature/registerSlice"; // update to authSlice if you moved updateUser there
 import { useNavigate } from "react-router-dom";
-
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { reset, updateProfile } from "../../feature/authSlice";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
-// Schema for validation
 const editProfileSchema = z
   .object({
     username: z
@@ -39,8 +37,8 @@ const editProfileSchema = z
 function EditProfile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [submitted, setSubmitted] = useState(false);
 
-  // from new authSlice
   const { user, isError, isLoading, isSuccess, message } = useSelector(
     (state) => state.auth
   );
@@ -61,25 +59,12 @@ function EditProfile() {
     },
   });
 
-  // Sync when user updates
   useEffect(() => {
     if (user) {
       setValue("username", user.username || "");
       setImage(user.image || "");
     }
   }, [user, setValue]);
-
-  // Handle success/error after dispatch
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Profile updated successfully!");
-      navigate("/my-profile");
-    }
-    if (isError) {
-      toast.error(message || "Failed to update profile");
-    }
-    dispatch(reset());
-  }, [isSuccess, isError, message, navigate]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -98,10 +83,24 @@ function EditProfile() {
     if (data.password) payload.password = data.password;
 
     dispatch(updateProfile(payload));
+    setSubmitted(true);
   };
 
-  if (isLoading) return <div className="text-center py-20">Updating...</div>;
-  if (!user) return <div className="text-center py-20">Loading...</div>;
+  useEffect(() => {
+    if (!submitted) {
+      return;
+    }
+    if (isSuccess) {
+      toast.success("Profile updated successfully!");
+      navigate("/my-profile");
+    }
+    if (isError) {
+      toast.error(message || "Failed to update profile");
+    }
+    dispatch(reset());
+  }, [isSuccess, isError, message, navigate]);
+
+  if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">

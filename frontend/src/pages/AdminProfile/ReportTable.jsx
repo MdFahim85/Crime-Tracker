@@ -7,10 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import NoReportFound from "../../components/NoReportFound";
 import API from "../../api/axios";
+import toast from "react-hot-toast";
 
 export default function ReportTable({ reports, fetchReports }) {
   const [filter, setFilter] = useState("all"); //

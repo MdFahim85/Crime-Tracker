@@ -7,6 +7,7 @@ import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -60,6 +61,10 @@ function Login() {
       toast.error(message);
     }
   }, [isSuccess, isError, user, message, navigate, location]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -121,7 +126,7 @@ function Login() {
         {/* Actions */}
         <div className="flex justify-between items-center">
           <Button variant="primary" type="submit" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Log In"}
+            Log in
           </Button>
           <div className="flex flex-col items-end text-sm">
             <p className="text-slate-500">Don't have an account?</p>

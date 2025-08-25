@@ -54,7 +54,6 @@ const setReport = asyncHandler(async (req, res) => {
     date,
     user: req.user.id,
     status: "pending",
-    comments: [],
     suggestion: "",
   });
   if (!newReport) {
@@ -94,14 +93,15 @@ const updateReport = asyncHandler(async (req, res) => {
       street: street || report.street,
       document: document || report.document,
       date: date || report.date,
-      ...(report.user.toString() === req.user.id
-        ? { status: "pending", suggestion: "" }
-        : {}),
+      status: "pending",
+      suggestion: "",
     },
     { new: true }
   );
 
-  res.status(200).json({ message: "Report updated", updatedReport });
+  res
+    .status(200)
+    .json({ message: "Report updated successfully", updatedReport });
 });
 
 // Update report status and suggestion (Admin)
@@ -163,7 +163,7 @@ const deleteReport = asyncHandler(async (req, res) => {
   }
 
   // Delete report
-  await report.deleteOne();
+  await Report.findByIdAndDelete(req.params.id);
 
   res.status(200).json({ message: "Report and associated comments deleted" });
 });
