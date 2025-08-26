@@ -8,8 +8,12 @@ const {
   updateRegion,
   deleteRegion,
 } = require("../controllers/regionController");
+const { regionPagination } = require("../middlewares/pagination");
 
-router.route("/regions").get(getAllRegions).post(protect, admin, setRegion);
+router
+  .route("/regions")
+  .get(regionPagination, getAllRegions)
+  .post(protect, admin, setRegion);
 router
   .route("/regions/:id")
   .put(protect, admin, updateRegion)

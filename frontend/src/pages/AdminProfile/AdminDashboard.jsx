@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const response = await API.get("/reports");
+      const response = await API.get("/reports?page=1&limit=5");
       setReports(response.data.reports);
       setLoading(false);
     } catch (error) {

@@ -5,7 +5,7 @@ const { cloudinary } = require("../cloudinary");
 
 // Get all reports
 const getReports = asyncHandler(async (req, res) => {
-  const reports = await Report.find().populate("user", "username");
+  const reports = res.paginatedData.results;
   if (!reports.length) {
     res.status(404).json({ message: "No reports found" });
     return;

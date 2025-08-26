@@ -24,6 +24,7 @@ function Home() {
       setLoading(true);
       const response = await API.get("/reports");
       setReports(response.data.reports);
+      console.log(response);
       setLoading(false);
     } catch (error) {
       setReports([]);

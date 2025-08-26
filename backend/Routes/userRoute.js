@@ -13,6 +13,7 @@ const router = express.Router();
 
 const multer = require("multer");
 const { storage } = require("../cloudinary");
+const { userPagination } = require("../middlewares/pagination");
 const upload = multer({ storage });
 
 // Public routes
@@ -27,7 +28,7 @@ router
 
 // Admin Routes
 
-router.route("/users").get(protect, admin, getAllUsers);
+router.route("/users").get(protect, admin, userPagination, getAllUsers);
 router
   .route("/users/:id")
   .patch(protect, admin, updateUserByAdmin)

@@ -18,12 +18,13 @@ const router = express.Router();
 
 const multer = require("multer");
 const { storage } = require("../cloudinary");
+const { reportPagination } = require("../middlewares/pagination");
 const upload = multer({ storage });
 
 // Report Routes
 router
   .route("/reports")
-  .get(getReports)
+  .get(reportPagination, getReports)
   .post(protect, upload.single("image"), setReport);
 router.route("/reports/my").get(protect, getUserReports);
 router
