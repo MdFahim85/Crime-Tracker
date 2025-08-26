@@ -5,7 +5,7 @@ const User = require("../models/userModel");
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password, image } = req.body;
+  const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
     res.status(400);
@@ -24,7 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password: hashedPassword,
-    image: image || "",
+    image: { url: req.file.path, fileName: req.file.filename } || "",
     role: "user",
     date: new Date(),
   });
@@ -98,7 +98,7 @@ const updateUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-  const { username, oldPassword, password, image } = req.body;
+  const { username, oldPassword, password } = req.body;
 
   if (!username) {
     res.status(400);
@@ -129,7 +129,9 @@ const updateUser = asyncHandler(async (req, res) => {
     {
       username,
       password: updatedPassword,
-      image: image || currentUser.image,
+      image:
+        { url: req.file.path, fileName: req.file.filename } ||
+        currentUser.image,
     },
     { new: true }
   );
@@ -242,6 +244,10 @@ const deleteUserByAdmin = asyncHandler(async (req, res) => {
         .status(403)
         .json({ message: "Admins cannot delete other admins or master admin" });
     }
+
+    const del = await cloudinary.uploader.destroy(user.image.fileName);
+    console.log(del);
+
     await user.deleteOne();
     return res.status(200).json({ message: "User deleted successfully" });
   }

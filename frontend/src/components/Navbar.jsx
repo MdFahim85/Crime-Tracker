@@ -71,8 +71,8 @@ const Navbar = () => {
                   <img
                     className="size-12 rounded-full border-2 border-slate-300  hover:border-slate-500 transition duration-300 ease-in-out cursor-pointer"
                     src={
-                      currentUser?.image
-                        ? currentUser.image
+                      currentUser?.image?.url
+                        ? currentUser.image.url
                         : "https://imgs.search.brave.com/6G4l561oIhgssjfbYvozwAIa5jx6fv6YhMrFjEGbdhM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvYXZhdGFyLXZv/bC05LzUxMi80LTEy/OC5wbmc"
                     }
                     alt="Profile Picture"

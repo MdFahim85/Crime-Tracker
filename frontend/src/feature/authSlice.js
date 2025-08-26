@@ -18,7 +18,9 @@ export const registerUser = createAsyncThunk(
   "auth/register",
   async (user, thunkAPI) => {
     try {
-      const response = await API.post("/users", user);
+      const response = await API.post("/users", user, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data;
     } catch (error) {
       const message =
@@ -58,7 +60,9 @@ export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (user, thunkAPI) => {
     try {
-      const response = await API.put("/users/profile", user);
+      const response = await API.put("/users/profile", user, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       return response.data;
     } catch (error) {
       const message =

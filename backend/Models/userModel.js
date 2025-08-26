@@ -15,10 +15,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Enter your password"],
     },
-    image: {
-      type: String,
-      default: "",
-    },
+    image: { url: String, fileName: String },
     role: {
       type: String,
       enum: ["user", "admin"],

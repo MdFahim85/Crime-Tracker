@@ -61,7 +61,7 @@ function ViewProfile() {
               <img
                 className="w-12 h-12 rounded-full"
                 src={
-                  user.image ||
+                  user?.image?.url ||
                   "https://imgs.search.brave.com/6G4l561oIhgssjfbYvozwAIa5jx6fv6YhMrFjEGbdhM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvYXZhdGFyLXZv/bC05LzUxMi80LTEy/OC5wbmc"
                 }
                 alt="Profile Picture"

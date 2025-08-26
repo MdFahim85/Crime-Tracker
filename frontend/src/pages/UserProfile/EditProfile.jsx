@@ -69,20 +69,18 @@ function EditProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result);
-      reader.readAsDataURL(file);
+      setImage(file);
     }
   };
 
   const onSubmit = (data) => {
-    const payload = {
-      username: data.username,
-      image,
-    };
-    if (data.password) payload.password = data.password;
+    const formData = new FormData();
+    formData.append("username", data.username);
+    if (image) formData.append("image", image);
 
-    dispatch(updateProfile(payload));
+    if (data.password) formData.append("password", data.password);
+
+    dispatch(updateProfile(formData));
     setSubmitted(true);
   };
 

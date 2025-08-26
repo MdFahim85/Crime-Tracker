@@ -9,15 +9,21 @@ const {
   deleteUserByAdmin,
 } = require("../controllers/userController");
 const { protect, admin } = require("../middlewares/authMiddleware");
-
 const router = express.Router();
 
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
+
 // Public routes
-router.route("/users").post(registerUser);
+router.route("/users").post(upload.single("image"), registerUser);
 router.route("/users/login").post(loginUser);
 
 // User Routes
-router.route("/users/profile").get(protect, getUser).put(protect, updateUser);
+router
+  .route("/users/profile")
+  .get(protect, getUser)
+  .put(protect, upload.single("image"), updateUser);
 
 // Admin Routes
 

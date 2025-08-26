@@ -42,7 +42,7 @@ export default function Register() {
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
-  const { image, setImage } = useState("");
+  const [image, setImage] = useState("");
 
   const {
     register,
@@ -66,11 +66,7 @@ export default function Register() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setImage(file);
     }
   };
 
@@ -79,17 +75,16 @@ export default function Register() {
       toast.error("Passwords don't match!");
       return;
     }
-
-    dispatch(
-      registerUser({
-        username: data.username,
-        email: data.email,
-        password: data.password,
-        date: new Date().toLocaleDateString(),
-        image,
-        role: "user",
-      })
-    );
+    const formData = new FormData();
+    formData.append("username", data.username);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("date", new Date().toLocaleDateString());
+    formData.append("role", "user");
+    if (image) {
+      formData.append("image", image);
+    }
+    dispatch(registerUser(formData));
   };
 
   if (isLoading) {
