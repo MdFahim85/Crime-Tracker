@@ -18,8 +18,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 connectDB();
 
-app.use("/api", require("./Routes/reportRoute"));
-app.use("/api", require("./Routes/userRoute"));
+app.use("/api", require("./routes/reportRoute"));
+app.use("/api", require("./routes/userRoute"));
+app.use("/api", require("./routes/regionRoute"));
 
 app.use(errorHandler);
 app.listen(port, () => console.log(`Listeing to port ${port} `));

@@ -24,6 +24,7 @@ export default function AdminDashboard() {
       setLoading(false);
     } catch (error) {
       setReports([]);
+      setLoading(false);
     }
   };
 
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
       setLoading(false);
     } catch (error) {
       setUsers([]);
+      setLoading(false);
     }
   };
 

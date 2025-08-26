@@ -15,7 +15,7 @@ import API from "../../api/axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 function AllCrimeReports() {
-  const regions = useSelector((state) => state.region.regionList);
+  const [regions, setRegions] = useState([]);
   const [filterType, setFilterType] = useState("");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
@@ -35,8 +35,22 @@ function AllCrimeReports() {
     }
   };
 
+  const fetchRegions = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get("/regions");
+      setRegions(res.data.regions);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setRegions([]);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchReports();
+    fetchRegions();
   }, []);
 
   const selectedRegion = () => {

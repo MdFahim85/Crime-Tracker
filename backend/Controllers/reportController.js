@@ -163,7 +163,8 @@ const deleteReport = asyncHandler(async (req, res) => {
   }
 
   // Delete report
-  await Report.findByIdAndDelete(req.params.id);
+  const deletedRep = await Report.findByIdAndDelete(req.params.id);
+  console.log(deletedRep);
 
   res.status(200).json({ message: "Report and associated comments deleted" });
 });

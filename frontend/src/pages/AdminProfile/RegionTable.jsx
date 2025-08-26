@@ -1,7 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -12,15 +9,39 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { addRegion, editRegion, deleteRegion } from "../../feature/regionSlice";
+import API from "../../api/axios";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 export default function RegionTable() {
-  const dispatch = useDispatch();
-  const regionList = useSelector((state) => state.region?.regionList || []);
+  const [regionList, setRegionList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRegions = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get("/regions");
+      setRegionList(res.data.regions);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setRegionList([]);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRegions();
+  }, []);
+
   let regions = regionList.slice().reverse();
 
   const [editIndex, setEditIndex] = useState(null);
-  const [editData, setEditData] = useState({ name: "", lat: "", lng: "" });
+  const [editData, setEditData] = useState({
+    name: "",
+    lat: "",
+    lng: "",
+  });
   const [newRegion, setNewRegion] = useState({ name: "", lat: "", lng: "" });
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -38,39 +59,71 @@ export default function RegionTable() {
     const region = filteredRegions[index];
     setEditData({
       name: region.name,
-      lat: region.latlng[0],
-      lng: region.latlng[1],
+      lat: region.lat,
+      lng: region.lng,
     });
   };
 
-  const saveEdit = () => {
-    dispatch(
-      editRegion({
+  const saveEdit = async (id) => {
+    try {
+      setLoading(true);
+      const res = await API.put(`/regions/${id}`, {
         name: editData.name,
-        latlng: [parseFloat(editData.lat), parseFloat(editData.lng)],
-      })
-    );
-    setEditIndex(null);
+        lat: parseFloat(editData.lat),
+        lng: parseFloat(editData.lng),
+      });
+      toast.success(res.data.message);
+      setEditIndex(null);
+      fetchRegions();
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setEditIndex(null);
+      setLoading(false);
+    }
   };
 
-  const saveNewRegion = () => {
+  const saveNewRegion = async () => {
     if (!newRegion.name || !newRegion.lat || !newRegion.lng) return;
-    dispatch(
-      addRegion({
+    try {
+      setLoading(true);
+      const res = await API.post("/regions", {
         name: newRegion.name,
-        latlng: [parseFloat(newRegion.lat), parseFloat(newRegion.lng)],
-      })
-    );
-    setNewRegion({ name: "", lat: "", lng: "" });
-    setCurrentPage(1);
+        lat: parseFloat(newRegion.lat),
+        lng: parseFloat(newRegion.lng),
+      });
+      setNewRegion({ name: "", lat: "", lng: "" });
+      setCurrentPage(1);
+      fetchRegions();
+      toast.success(res.data.message);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
-  const sortByName = () => {};
+  const deleteRegion = async (id) => {
+    try {
+      setLoading(true);
+      const res = await API.delete(`/regions/${id}`);
+      fetchRegions();
+      toast.success(res.data.message);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
 
   const paginatedRegions = filteredRegions.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="mt-10">
@@ -157,7 +210,7 @@ export default function RegionTable() {
                       }
                     />
                   ) : (
-                    region.latlng[0]
+                    region.lat
                   )}
                 </TableCell>
                 <TableCell>
@@ -169,13 +222,17 @@ export default function RegionTable() {
                       }
                     />
                   ) : (
-                    region.latlng[1]
+                    region.lat
                   )}
                 </TableCell>
                 <TableCell className="flex gap-2">
                   {editIndex === globalIndex ? (
                     <>
-                      <Button size="sm" variant="primary" onClick={saveEdit}>
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => saveEdit(region._id)}
+                      >
                         Save
                       </Button>
                       <Button
@@ -198,7 +255,7 @@ export default function RegionTable() {
                       <Button
                         size="sm"
                         variant="second"
-                        onClick={() => dispatch(deleteRegion(region.name))}
+                        onClick={() => deleteRegion(region._id)}
                       >
                         Delete
                       </Button>

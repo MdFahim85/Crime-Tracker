@@ -27,6 +27,7 @@ function Home() {
       setLoading(false);
     } catch (error) {
       setReports([]);
+      setLoading(false);
     }
   };
 

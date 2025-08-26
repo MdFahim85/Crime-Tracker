@@ -23,7 +23,8 @@ router
   .route("/reports/:id")
   .get(getReportDetails)
   .put(protect, updateReport)
-  .delete(protect, admin, deleteReport);
+  .delete(protect, deleteReport);
+router.route("/reports/:id").delete(protect, admin, deleteReport);
 router
   .route("/reports/:id/status")
   .patch(protect, admin, updateReportSuggestion);

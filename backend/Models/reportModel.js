@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Comment = mongoose.models.Comment;
+const Comment = require("../models/commentModel");
 
 const reportSchema = new mongoose.Schema(
   {
@@ -66,7 +66,6 @@ const reportSchema = new mongoose.Schema(
   }
 );
 
-// Delete the comments when report is deleted
 reportSchema.post("findOneAndDelete", async function (doc) {
   if (doc) {
     await Comment.deleteMany({

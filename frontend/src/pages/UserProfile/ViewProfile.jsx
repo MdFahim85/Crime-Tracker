@@ -9,13 +9,17 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 function ViewProfile() {
   const [user, setUser] = useState("");
   const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchReports = async () => {
     try {
+      setLoading(true);
       const response = await API.get("/reports/my");
       setReports(response.data.reports);
+      setLoading(false);
     } catch (error) {
       setReports([]);
+      setLoading(false);
     }
   };
 
@@ -26,16 +30,19 @@ function ViewProfile() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        setLoading(true);
         const response = await API.get("/users/profile");
         setUser(response.data);
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         throw new Error("Failed to fetch user profile");
       }
     };
     fetchUser();
   }, []);
 
-  if (!user) {
+  if (loading) {
     return <LoadingSpinner />;
   }
 
