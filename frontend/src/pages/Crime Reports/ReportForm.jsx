@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import DateSelector from "./DateSelector";
@@ -32,11 +31,7 @@ function ReportForm({ reportData, setReportData }) {
   const handleDocumentChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setReportData((prev) => ({ ...prev, document: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      setReportData((prev) => ({ ...prev, document: file }));
     }
   };
 
@@ -50,21 +45,24 @@ function ReportForm({ reportData, setReportData }) {
       return;
     }
 
-    const report = {
-      position: {
-        lat: reportData.latlng.lat,
-        lng: reportData.latlng.lng,
-      },
-      crimeType: reportData.crimeType,
-      street: reportData.street,
-      title: reportData.title,
-      details: reportData.details,
-      document: reportData.document,
-      date,
-    };
+    const formData = new FormData();
+    formData.append("crimeType", reportData.crimeType);
+    formData.append("street", reportData.street);
+    formData.append("title", reportData.title);
+    formData.append("details", reportData.details);
+    formData.append("date", date);
+    formData.append("lat", reportData.latlng.lat);
+    formData.append("lng", reportData.latlng.lng);
+
+    if (reportData.document) {
+      formData.append("image", reportData.document);
+    }
 
     try {
-      const response = await API.post("/reports", report);
+      const response = await API.post("/reports", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log(response);
       toast.success(response.data.message || "Report submitted successfully");
       navigate("/my-profile");
     } catch (error) {

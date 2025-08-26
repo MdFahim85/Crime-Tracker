@@ -3,8 +3,7 @@ import { useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-function RegionFilter({ street, setStreet }) {
-  const regions = useSelector((state) => state.region.regionList);
+function RegionFilter({ street, setStreet, regions }) {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -29,7 +28,6 @@ function RegionFilter({ street, setStreet }) {
   };
 
   const handleBlur = () => {
-    // Only hide if not clicking on suggestions
     setShowSuggestions(false);
   };
 

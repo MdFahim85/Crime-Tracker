@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Report = require("../models/reportModel");
 const User = require("../models/userModel");
+const { cloudinary } = require("../cloudinary");
 
 // Get all reports
 const getReports = asyncHandler(async (req, res) => {
@@ -36,10 +37,9 @@ const getReportDetails = asyncHandler(async (req, res) => {
 
 // Create a new report
 const setReport = asyncHandler(async (req, res) => {
-  const { title, details, crimeType, position, street, document, date } =
-    req.body;
+  const { title, details, crimeType, lat, lng, street, date } = req.body;
 
-  if (!title || !details || !crimeType || !position || !street || !date) {
+  if (!title || !details || !crimeType || !lat || !lng || !street || !date) {
     res.status(400);
     throw new Error("Please fill out all required fields");
   }
@@ -48,9 +48,9 @@ const setReport = asyncHandler(async (req, res) => {
     title,
     details,
     crimeType,
-    position,
+    position: { lat, lng },
     street,
-    document: document || "",
+    image: { url: req.file?.path, fileName: req.file?.filename } || "",
     date,
     user: req.user.id,
     status: "pending",
@@ -80,8 +80,7 @@ const updateReport = asyncHandler(async (req, res) => {
     throw new Error("You are not allowed to edit this report");
   }
 
-  const { title, details, crimeType, position, street, document, date } =
-    req.body;
+  const { title, details, crimeType, position, street, date } = req.body;
 
   const updatedReport = await Report.findByIdAndUpdate(
     req.params.id,
@@ -91,7 +90,9 @@ const updateReport = asyncHandler(async (req, res) => {
       crimeType: crimeType || report.crimeType,
       position: position || report.position,
       street: street || report.street,
-      document: document || report.document,
+      document:
+        { url: req.file?.path, fileName: req.file?.filename } ||
+        report.document,
       date: date || report.date,
       status: "pending",
       suggestion: "",
@@ -163,8 +164,8 @@ const deleteReport = asyncHandler(async (req, res) => {
   }
 
   // Delete report
-  const deletedRep = await Report.findByIdAndDelete(req.params.id);
-  console.log(deletedRep);
+  await cloudinary.uploader.destroy(report.image.fileName);
+  await Report.findByIdAndDelete(req.params.id);
 
   res.status(200).json({ message: "Report and associated comments deleted" });
 });

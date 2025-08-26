@@ -23,7 +23,9 @@ function DateSelector({ date, setDate }) {
             id="date"
             className="w-48 justify-between font-normal bg-transparent"
           >
-            {date ? new Date(date).toLocaleDateString("en-GB") : "Select date"}
+            {date
+              ? new Date(date).toLocaleDateString("en-GB")
+              : new Date().toISOString().slice(0, 10)}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>

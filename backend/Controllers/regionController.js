@@ -12,7 +12,6 @@ const getAllRegions = asyncHandler(async (req, res) => {
 
 const setRegion = asyncHandler(async (req, res) => {
   const { name, lat, lng } = req.body;
-  console.log(req.body);
   if (!name || !lat || !lng) {
     res.status(400);
     throw new Error("Provide region information");

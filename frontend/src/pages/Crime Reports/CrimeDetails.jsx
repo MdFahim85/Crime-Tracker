@@ -110,7 +110,7 @@ export default function CrimeDetails() {
               >
                 Location
               </Button>
-              {report.document && (
+              {report.image && (
                 <Button
                   variant="primary"
                   className={`${
@@ -126,7 +126,7 @@ export default function CrimeDetails() {
             <div className="relative">
               {activeTab === "location" && <Map report={report} />}
               {activeTab === "document" && (
-                <FileReader fileData={report.document} />
+                <FileReader fileData={report.image} />
               )}
             </div>
 

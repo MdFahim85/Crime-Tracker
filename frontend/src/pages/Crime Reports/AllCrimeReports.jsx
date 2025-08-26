@@ -109,7 +109,11 @@ function AllCrimeReports() {
           </div>
 
           <div className="mb-4">
-            <RegionFilter street={filterStreet} setStreet={setFilterStreet} />
+            <RegionFilter
+              street={filterStreet}
+              setStreet={setFilterStreet}
+              regions={regions}
+            />
           </div>
 
           <div>

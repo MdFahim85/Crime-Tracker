@@ -130,7 +130,7 @@ function EditProfile() {
           />
           {image && (
             <img
-              src={image}
+              src={image.url}
               alt="Profile Preview"
               className="mt-2 w-20 h-20 rounded-full object-cover"
             />

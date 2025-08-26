@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const { cloudinary } = require("../cloudinary");
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
@@ -53,6 +54,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email });
+
   if (!user) {
     res.status(401);
     throw new Error("Invalid email or password");
@@ -233,10 +235,11 @@ const deleteUserByAdmin = asyncHandler(async (req, res) => {
         .status(403)
         .json({ message: "You cannot delete master admin" });
     }
+
+    await cloudinary.uploader.destroy(user.image.fileName);
     await user.deleteOne();
     return res.status(200).json({ message: "User deleted successfully" });
   }
-
   // ADMIN rules
   if (actingUser.role === "admin") {
     if (user.role === "master_admin" || user.role === "admin") {
@@ -245,8 +248,7 @@ const deleteUserByAdmin = asyncHandler(async (req, res) => {
         .json({ message: "Admins cannot delete other admins or master admin" });
     }
 
-    const del = await cloudinary.uploader.destroy(user.image.fileName);
-    console.log(del);
+    await cloudinary.uploader.destroy(user.image.fileName);
 
     await user.deleteOne();
     return res.status(200).json({ message: "User deleted successfully" });

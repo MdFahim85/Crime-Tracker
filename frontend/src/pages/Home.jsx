@@ -134,11 +134,13 @@ function Home() {
           <p className="text-slate-500">No recent reports found.</p>
         )}
 
-        <Link to="/allreports" className="mt-6">
-          <Button className="bg-slate-500 text-white hover:bg-slate-700">
-            View All Reports
-          </Button>
-        </Link>
+        {recentReports.length > 6 && (
+          <Link to="/allreports" className="mt-6">
+            <Button className="bg-slate-500 text-white hover:bg-slate-700">
+              View All Reports
+            </Button>
+          </Link>
+        )}
       </section>
       <Footer />
     </div>

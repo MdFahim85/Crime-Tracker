@@ -37,10 +37,7 @@ const reportSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    document: {
-      type: String,
-      default: "",
-    },
+    image: { url: String, fileName: String },
     date: {
       type: Date,
       required: true,

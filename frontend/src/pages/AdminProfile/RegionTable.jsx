@@ -222,7 +222,7 @@ export default function RegionTable() {
                       }
                     />
                   ) : (
-                    region.lat
+                    region.lng
                   )}
                 </TableCell>
                 <TableCell className="flex gap-2">

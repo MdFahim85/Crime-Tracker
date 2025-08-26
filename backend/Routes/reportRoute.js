@@ -16,13 +16,20 @@ const {
 } = require("../controllers/commentController");
 const router = express.Router();
 
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
+
 // Report Routes
-router.route("/reports").get(getReports).post(protect, setReport);
+router
+  .route("/reports")
+  .get(getReports)
+  .post(protect, upload.single("image"), setReport);
 router.route("/reports/my").get(protect, getUserReports);
 router
   .route("/reports/:id")
   .get(getReportDetails)
-  .put(protect, updateReport)
+  .put(protect, upload.single("image"), updateReport)
   .delete(protect, deleteReport);
 router.route("/reports/:id").delete(protect, admin, deleteReport);
 router

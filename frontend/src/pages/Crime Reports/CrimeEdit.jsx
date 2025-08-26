@@ -91,19 +91,24 @@ function CrimeEdit() {
       return;
     }
 
-    const updatedReport = {
-      position: reportData.latlng,
-      street: reportData.street,
-      crimeType: reportData.crimeType,
-      title: reportData.title,
-      details: reportData.details,
-      date,
-      document: reportData.document,
-      status: "pending",
-    };
+    const formData = new FormData();
+    formData.append("crimeType", reportData.crimeType);
+    formData.append("street", reportData.street);
+    formData.append("title", reportData.title);
+    formData.append("details", reportData.details);
+    formData.append("date", date);
+    formData.append("lat", reportData.latlng.lat);
+    formData.append("lng", reportData.latlng.lng);
+
+    if (reportData.document) {
+      formData.append("image", reportData.document);
+    }
+
     try {
       setLoading(true);
-      const response = await API.put(`/reports/${id}`, updatedReport);
+      const response = await API.put(`/reports/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       toast.success(response.data.message || "Report updated successfully");
       navigate("/allreports");
       setLoading(false);

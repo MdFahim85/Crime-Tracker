@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -10,6 +10,8 @@ import L from "leaflet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import RegionFilter from "./RegionFilter";
+import API from "../../api/axios";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -56,6 +58,33 @@ function SearchFly({ latlng }) {
 }
 
 function ReportMap({ reportData, setReportData }) {
+  const [filterStreet, setFilterStreet] = useState("");
+  const [regions, setRegions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchRegions = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get("/regions");
+      setRegions(res.data.regions);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setRegions([]);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRegions();
+  }, []);
+
+  const selectedRegion = () => {
+    return regions.find((region) => region.name == filterStreet);
+  };
+
+  const region = selectedRegion();
+
   const handleSearch = async () => {
     if (!reportData.street.trim()) {
       toast.error("Please enter a location");
@@ -91,26 +120,33 @@ function ReportMap({ reportData, setReportData }) {
 
   return (
     <div className="mb-6">
-      <div className="flex mb-2 gap-2">
-        <Input
-          type="text"
-          value={reportData.street}
-          onChange={(e) =>
-            setReportData({ ...reportData, street: e.target.value })
-          }
-          onKeyDown={handleKeyDown}
-          placeholder="Search for a location..."
-          className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
+      <div className="flex mb-2 gap-2 items-end">
+        <RegionFilter
+          street={filterStreet}
+          setStreet={setFilterStreet}
+          regions={regions}
         />
-
-        <Button
-          onClick={handleSearch}
-          className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
-        >
-          Search
-        </Button>
+        <div className="flex gap-2 w-1/2">
+          <Input
+            type="text"
+            value={reportData.street}
+            onChange={(e) =>
+              setReportData({ ...reportData, street: e.target.value })
+            }
+            onKeyDown={handleKeyDown}
+            placeholder="Search for a location..."
+            className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
+          />
+          <Button
+            onClick={handleSearch}
+            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+          >
+            Search
+          </Button>
+        </div>
       </div>
 
+      <div className="flex mb-2 gap-2"></div>
       <div className="h-[400px] rounded overflow-hidden">
         <MapContainer
           center={[23.8103, 90.4125]}
@@ -124,6 +160,7 @@ function ReportMap({ reportData, setReportData }) {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
           <LocationPicker setReportData={setReportData} />
+          {region && <SearchFly latlng={[region.lat, region.lng]} />}
           {reportData.latlng && <SearchFly latlng={reportData.latlng} />}
           {reportData.latlng && <Marker position={reportData.latlng} />}
         </MapContainer>
