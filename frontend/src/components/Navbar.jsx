@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../feature/authSlice";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
+import Notification from "./Notification";
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.auth.user);
@@ -22,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-900 text-white shadow-md px-4 py-3 fixed top-0 left-0 right-0 z-9999">
+    <nav className="bg-slate-900 text-white shadow-md px-4 py-3 fixed top-0 left-0 right-0 z-9990">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold  ">
           CrimeTracker
@@ -78,6 +79,8 @@ const Navbar = () => {
                     alt="Profile Picture"
                   />
                 </NavLink>
+
+                <Notification />
 
                 <Button
                   onClick={() => handleLogout()}

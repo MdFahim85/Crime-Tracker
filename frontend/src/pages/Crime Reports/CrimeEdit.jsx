@@ -66,7 +66,6 @@ function CrimeEdit() {
       newErrors.crimeType = "Please select a crime type.";
 
     setErrors(newErrors);
-    console.log(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 

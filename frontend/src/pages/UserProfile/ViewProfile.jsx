@@ -22,23 +22,20 @@ function ViewProfile() {
       setLoading(false);
     }
   };
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/users/profile");
+      setUser(response.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      throw new Error("Failed to fetch user profile");
+    }
+  };
 
   useEffect(() => {
     fetchReports();
-  }, []);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const response = await API.get("/users/profile");
-        setUser(response.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        throw new Error("Failed to fetch user profile");
-      }
-    };
     fetchUser();
   }, []);
 

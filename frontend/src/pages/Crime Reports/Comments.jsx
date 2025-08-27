@@ -48,10 +48,8 @@ function Comments({ comment, setComment, user, report }) {
 
   async function deleteCommentHandler(id) {
     try {
-      console.log(id);
       const res = await API.delete(`/reports/${report._id}/comments/${id}`);
       toast.success(res.data.message);
-      console.log(res.data);
       fetchComments();
     } catch (error) {
       console.log(error);

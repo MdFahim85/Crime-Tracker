@@ -31,7 +31,7 @@ export function CrimeCard({ report, user, handelDelete, navigate }) {
           textMsg={"Are you sure to delete this report ?"}
           onClick={() => handelDelete(report._id)}
           textDescription={
-            "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+            "This action cannot be undone. This will permanently delete this report and corresponding images."
           }
         />
         <Button

@@ -62,8 +62,10 @@ function ReportForm({ reportData, setReportData }) {
       const response = await API.post("/reports", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log(response);
-      toast.success(response.data.message || "Report submitted successfully");
+
+      toast.success(
+        "Report submitted successfully. Please wait for admin approval"
+      );
       navigate("/my-profile");
     } catch (error) {
       console.log(error);

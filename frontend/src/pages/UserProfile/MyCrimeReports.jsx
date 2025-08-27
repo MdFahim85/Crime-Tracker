@@ -13,17 +13,23 @@ import { Label } from "@/components/ui/label";
 import NoReportFound from "../../components/NoReportFound";
 import API from "../../api/axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { Pagination } from "../../components/Pagination";
 
 function MyCrimeReports() {
   const [filter, setFilter] = useState("all");
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [next, setNext] = useState();
+  const [prev, setPrev] = useState();
 
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const response = await API.get("/reports/my");
+      const response = await API.get(`/reports/my?page=${page}&limit=10`);
       setReports(response.data.reports);
+      setNext(response.data.next);
+      setPrev(response.data.prev);
       setLoading(false);
     } catch (error) {
       setReports([]);
@@ -33,7 +39,7 @@ function MyCrimeReports() {
 
   useEffect(() => {
     fetchReports();
-  }, []);
+  }, [page]);
 
   const filteredReports =
     filter === "all"
@@ -143,6 +149,12 @@ function MyCrimeReports() {
           ))
         )}
       </ul>
+
+      {next || prev ? (
+        <Pagination setPage={setPage} prev={prev} page={page} next={next} />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

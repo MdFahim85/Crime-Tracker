@@ -12,16 +12,22 @@ import { Input } from "@/components/ui/input";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { Pagination } from "../../components/Pagination";
 
 export default function RegionTable() {
   const [regionList, setRegionList] = useState([]);
+  const [page, setPage] = useState(1);
+  const [next, setNext] = useState();
+  const [prev, setPrev] = useState();
   const [loading, setLoading] = useState(true);
 
   const fetchRegions = async () => {
     try {
       setLoading(true);
-      const res = await API.get("/regions");
+      const res = await API.get(`/regions?page=${page}&limit=10`);
       setRegionList(res.data.regions);
+      setNext(res.data.next);
+      setPrev(res.data.prev);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -32,7 +38,7 @@ export default function RegionTable() {
 
   useEffect(() => {
     fetchRegions();
-  }, []);
+  }, [page]);
 
   let regions = regionList.slice().reverse();
 
@@ -45,14 +51,9 @@ export default function RegionTable() {
   const [newRegion, setNewRegion] = useState({ name: "", lat: "", lng: "" });
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
   const filteredRegions = regions.filter((region) =>
     region.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const totalPages = Math.ceil(filteredRegions.length / itemsPerPage);
 
   const startEdit = (index) => {
     setEditIndex(index);
@@ -93,7 +94,7 @@ export default function RegionTable() {
         lng: parseFloat(newRegion.lng),
       });
       setNewRegion({ name: "", lat: "", lng: "" });
-      setCurrentPage(1);
+      setPage(1);
       fetchRegions();
       toast.success(res.data.message);
       setLoading(false);
@@ -116,17 +117,12 @@ export default function RegionTable() {
     }
   };
 
-  const paginatedRegions = filteredRegions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="mt-10">
+    <div className="mt-6 bg-slate-100 px-10 py-8 rounded-xl shadow-md">
       <div className="flex flex-col justify-center items-start gap-2 mb-4">
         <h1 className="text-xl font-bold">Dhaka Regions</h1>
         <Input
@@ -185,8 +181,8 @@ export default function RegionTable() {
             </TableCell>
           </TableRow>
 
-          {paginatedRegions.map((region, index) => {
-            const globalIndex = (currentPage - 1) * itemsPerPage + index;
+          {filteredRegions.map((region, index) => {
+            const globalIndex = index;
             return (
               <TableRow key={globalIndex}>
                 <TableCell>
@@ -268,46 +264,11 @@ export default function RegionTable() {
         </TableBody>
       </Table>
 
-      <div className="flex gap-2 justify-center mt-2">
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => setCurrentPage(1)}
-          disabled={currentPage === 1}
-        >
-          {"<<"}
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          {"<"}
-        </Button>
-        <span className="px-2 py-1 text-slate-500">
-          <span className="font-normal text-slate-900">{currentPage}</span> /{" "}
-          <span className="font-bold">{totalPages}</span>
-        </span>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          {">"}
-        </Button>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => setCurrentPage(totalPages)}
-          disabled={currentPage === totalPages}
-        >
-          {">>"}
-        </Button>
-      </div>
+      {next || prev ? (
+        <Pagination setPage={setPage} prev={prev} page={page} next={next} />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

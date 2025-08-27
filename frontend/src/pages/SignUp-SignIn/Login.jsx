@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../feature/authSlice";
+import { loginUser, reset } from "../../feature/authSlice";
 import toast from "react-hot-toast";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
+  email: z.email("Enter a valid email"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -41,7 +41,7 @@ function Login() {
   });
 
   const onSubmit = (data) => {
-    dispatch(loginUser(data)); // { email, password }
+    dispatch(loginUser(data));
   };
 
   useEffect(() => {
@@ -56,8 +56,8 @@ function Login() {
         navigate("/admin", { replace: true });
       }
     }
-
-    if (isError && message) {
+    dispatch(reset());
+    if (isError) {
       toast.error(message);
     }
   }, [isSuccess, isError, user, message, navigate, location]);

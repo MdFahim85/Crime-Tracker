@@ -21,6 +21,7 @@ connectDB();
 app.use("/api", require("./routes/reportRoute"));
 app.use("/api", require("./routes/userRoute"));
 app.use("/api", require("./routes/regionRoute"));
+app.use("/api", require("./routes/notificationRoute"));
 
 app.use(errorHandler);
 app.listen(port, () => console.log(`Listeing to port ${port} `));

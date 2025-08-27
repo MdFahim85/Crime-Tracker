@@ -1,26 +1,29 @@
 const asyncHandler = require("express-async-handler");
 const Report = require("../models/reportModel");
+const Notification = require("../models/notificationModel");
 const User = require("../models/userModel");
 const { cloudinary } = require("../cloudinary");
 
 // Get all reports
 const getReports = asyncHandler(async (req, res) => {
+  const { next, prev } = res.paginatedData;
   const reports = res.paginatedData.results;
   if (!reports.length) {
     res.status(404).json({ message: "No reports found" });
     return;
   }
-  res.status(200).json({ reports });
+  res.status(200).json({ reports, next, prev });
 });
 
 // Get reports of logged-in user
 const getUserReports = asyncHandler(async (req, res) => {
-  const userReports = await Report.find({ user: req.user.id });
-  if (!userReports.length) {
+  const { next, prev } = res.paginatedData;
+  const reports = res.paginatedData.results;
+  if (!reports.length) {
     res.status(404);
     throw new Error("No reports found");
   }
-  res.status(200).json({ reports: userReports });
+  res.status(200).json({ reports, next, prev });
 });
 
 // Get report details
@@ -140,6 +143,13 @@ const updateReportSuggestion = asyncHandler(async (req, res) => {
   report.suggestion = suggestion || "";
   await report.save();
 
+  await Notification.create({
+    userId: report.user,
+    reportId: report._id,
+    reportTitle: report.title,
+    status: report.status,
+  });
+
   res
     .status(200)
     .json({ message: "Report status updated successfully", report });
@@ -164,7 +174,8 @@ const deleteReport = asyncHandler(async (req, res) => {
   }
 
   // Delete report
-  await cloudinary.uploader.destroy(report.image.fileName);
+  report.image.fileName &&
+    (await cloudinary.uploader.destroy(report.image.fileName));
   await Report.findByIdAndDelete(req.params.id);
 
   res.status(200).json({ message: "Report and associated comments deleted" });

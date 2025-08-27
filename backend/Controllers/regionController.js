@@ -2,12 +2,13 @@ const asyncHandler = require("express-async-handler");
 const Region = require("../models/regionModel");
 
 const getAllRegions = asyncHandler(async (req, res) => {
+  const { prev, next } = res.paginatedData;
   const regions = res.paginatedData.results;
   if (!regions) {
     res.status(404);
     throw new Error("No regions found");
   }
-  res.json({ regions });
+  res.json({ regions, prev, next });
 });
 
 const setRegion = asyncHandler(async (req, res) => {

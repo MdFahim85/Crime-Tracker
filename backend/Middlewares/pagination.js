@@ -9,6 +9,12 @@ const reportPagination = asyncHandler(async (req, res, next) => {
   next();
 });
 
+const userReportPagination = asyncHandler(async (req, res, next) => {
+  const allRep = await Report.find({ user: req.user.id });
+  pagination(req, res, allRep);
+  next();
+});
+
 const regionPagination = asyncHandler(async (req, res, next) => {
   const allReg = await Region.find();
   pagination(req, res, allReg);
@@ -16,7 +22,7 @@ const regionPagination = asyncHandler(async (req, res, next) => {
 });
 
 const userPagination = asyncHandler(async (req, res, next) => {
-  const allUser = await User.find();
+  const allUser = await User.find().select("-password");
   pagination(req, res, allUser);
   next();
 });
@@ -37,4 +43,9 @@ const pagination = (req, res, data) => {
   res.paginatedData = result;
 };
 
-module.exports = { reportPagination, regionPagination, userPagination };
+module.exports = {
+  reportPagination,
+  userReportPagination,
+  regionPagination,
+  userPagination,
+};

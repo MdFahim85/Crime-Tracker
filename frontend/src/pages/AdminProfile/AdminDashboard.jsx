@@ -19,7 +19,7 @@ export default function AdminDashboard() {
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const response = await API.get("/reports?page=1&limit=5");
+      const response = await API.get(`/reports`);
       setReports(response.data.reports);
       setLoading(false);
     } catch (error) {
@@ -54,11 +54,6 @@ export default function AdminDashboard() {
       <Sidebar onMenuClick={setView} />
       <main className="flex-1 px-4 sm:px-8 ">
         <StatsCards
-          totalUsers={users?.length || 0}
-          totalReports={reports?.length || 0}
-          pendingReports={
-            reports?.filter((r) => r.status === "pending").length || 0
-          }
           onUsersClick={() => setView("users")}
           onReportsClick={() => setView("reports")}
           onPendingClick={() => setView("pending")}
@@ -74,19 +69,15 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="w-full">
-              <ReportTable reports={reports} fetchReports={fetchReports} />
+              <ReportTable fetchReports={fetchReports} />
             </div>
           </>
         )}
-        {view === "reports" && (
-          <ReportTable reports={reports} fetchReports={fetchReports} />
-        )}
+        {view === "reports" && <ReportTable fetchReports={fetchReports} />}
         {view === "pending" && (
-          <PendingReportTable reports={reports} fetchReports={fetchReports} />
+          <PendingReportTable fetchReports={fetchReports} />
         )}
-        {view === "users" && (
-          <UserTable users={users} fetchUsers={fetchUsers} />
-        )}
+        {view === "users" && <UserTable fetchUsers={fetchUsers} />}
         {view === "regions" && <RegionTable />}
       </main>
     </div>

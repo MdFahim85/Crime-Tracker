@@ -25,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     email,
     password: hashedPassword,
-    image: { url: req.file.path, fileName: req.file.filename } || "",
+    image: { url: req.file?.path, fileName: req.file?.filename } || "",
     role: "user",
     date: new Date(),
   });
@@ -149,8 +149,10 @@ const updateUser = asyncHandler(async (req, res) => {
 
 // Get all users (Admin)
 const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find().select("-password"); // exclude passwords
-  res.status(200).json({ users });
+  const { next, prev } = res.paginatedData;
+  const users = res.paginatedData.results;
+
+  res.status(200).json({ users, next, prev });
 });
 
 // Update user info / role (Admin)
@@ -236,7 +238,8 @@ const deleteUserByAdmin = asyncHandler(async (req, res) => {
         .json({ message: "You cannot delete master admin" });
     }
 
-    await cloudinary.uploader.destroy(user.image.fileName);
+    user.image.fileName &&
+      (await cloudinary.uploader.destroy(user.image.fileName));
     await user.deleteOne();
     return res.status(200).json({ message: "User deleted successfully" });
   }

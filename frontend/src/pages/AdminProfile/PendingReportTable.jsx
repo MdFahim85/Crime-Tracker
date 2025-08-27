@@ -9,12 +9,31 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import SuggestionTrigger from "./SuggestionTrigger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReportModal from "./ReportModal";
 import NoReportFound from "../../components/NoReportFound";
 import API from "../../api/axios";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
-export default function PendingReportTable({ reports, fetchReports }) {
+export default function PendingReportTable({ fetchReports }) {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState([]);
+
+  const fetchPendReports = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get("/reports");
+      setReports(response.data.reports);
+      setLoading(false);
+    } catch (error) {
+      setReports([]);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendReports();
+  }, []);
   const pendingReports = reports.filter((report) => report.status == "pending");
   const [suggestion, setSuggestion] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
@@ -48,6 +67,9 @@ export default function PendingReportTable({ reports, fetchReports }) {
     );
   }
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="w-full max-w-8xl p-6 bg-slate-100 shadow-md rounded-xl">
       <h2 className="text-xl font-semibold mb-4">Pending Reports</h2>
@@ -55,7 +77,6 @@ export default function PendingReportTable({ reports, fetchReports }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Author</TableHead>
               <TableHead>Crime Type</TableHead>
@@ -67,7 +88,6 @@ export default function PendingReportTable({ reports, fetchReports }) {
           <TableBody>
             {pendingReports.map((r, index) => (
               <TableRow key={index}>
-                <TableCell>{index + 1}</TableCell>
                 <TableCell>
                   {r.title}
                   <Button

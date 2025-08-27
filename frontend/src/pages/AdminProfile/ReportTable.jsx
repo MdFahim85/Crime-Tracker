@@ -7,18 +7,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import NoReportFound from "../../components/NoReportFound";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { Pagination } from "../../components/Pagination";
 
-export default function ReportTable({ reports, fetchReports }) {
+export default function ReportTable({ fetchReports }) {
   const [filter, setFilter] = useState("all"); //
+  const [reports, setReports] = useState([]);
+  const [page, setPage] = useState(1);
+  const [next, setNext] = useState();
+  const [prev, setPrev] = useState();
+  const [loading, setLoading] = useState(true);
+
+  const fetchPageRep = async () => {
+    try {
+      setLoading(true);
+      const response = await API.get(`/reports?page=${page}&limit=10`);
+      setReports(response.data.reports);
+      setNext(response.data.next);
+      setPrev(response.data.prev);
+      setLoading(false);
+    } catch (error) {
+      setReports([]);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPageRep();
+  }, [page]);
 
   const handleDelete = async (id) => {
     try {
-      await API.delete(`/reports/${id}`);
+      const res = await API.delete(`/reports/${id}`);
+      console.log(res);
       toast.success("Report deleted successfully.");
       fetchReports();
     } catch (error) {
@@ -29,6 +55,9 @@ export default function ReportTable({ reports, fetchReports }) {
   const filteredReports =
     filter === "all" ? reports : reports.filter((r) => r.status === filter);
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="w-full max-w-8xl p-2 sm:p-6 bg-slate-100 shadow-md rounded-xl">
       <div className="flex justify-between items-center mb-4">
@@ -71,7 +100,6 @@ export default function ReportTable({ reports, fetchReports }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="hidden sm:table-cell">ID</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Author</TableHead>
               <TableHead>Crime Type</TableHead>
@@ -83,9 +111,6 @@ export default function ReportTable({ reports, fetchReports }) {
           <TableBody>
             {filteredReports.map((r, index) => (
               <TableRow key={index}>
-                <TableCell className="hidden sm:table-cell">
-                  {index + 1}
-                </TableCell>
                 <TableCell>
                   <Link to={`/crime/${r._id}`} className="block w-full h-full">
                     {r.title} 🔗
@@ -123,6 +148,11 @@ export default function ReportTable({ reports, fetchReports }) {
             ))}
           </TableBody>
         </Table>
+      )}
+      {next || prev ? (
+        <Pagination setPage={setPage} prev={prev} page={page} next={next} />
+      ) : (
+        ""
       )}
     </div>
   );
