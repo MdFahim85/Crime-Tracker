@@ -93,7 +93,7 @@ const updateReport = asyncHandler(async (req, res) => {
       crimeType: crimeType || report.crimeType,
       position: position || report.position,
       street: street || report.street,
-      document:
+      image:
         { url: req.file?.path, fileName: req.file?.filename } ||
         report.document,
       date: date || report.date,

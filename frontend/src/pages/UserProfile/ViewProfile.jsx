@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+import {
+  Calendar,
+  FileText,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Edit3,
+} from "lucide-react";
 import CrimeBarChart from "./CrimeBarChart";
 import MyCrimeReports from "./MyCrimeReports";
 import { Link } from "react-router-dom";
@@ -18,6 +26,7 @@ function ViewProfile() {
       setReports(response.data.reports);
       setLoading(false);
     } catch (error) {
+      console.log(error);
       setReports([]);
       setLoading(false);
     }
@@ -29,6 +38,7 @@ function ViewProfile() {
       setUser(response.data);
       setLoading(false);
     } catch (error) {
+      console.log(error);
       setLoading(false);
       throw new Error("Failed to fetch user profile");
     }
@@ -50,23 +60,30 @@ function ViewProfile() {
   const joinDate = user ? user.date.split("T")[0] : "N/A";
 
   return (
-    <div className="flex flex-col px-4 sm:px-8 py-10 max-w-7xl mx-auto gap-6 sm:mt-10 md:mt-16">
+    <div className="flex flex-col px-4 sm:px-0 py-10 max-w-7xl mx-auto gap-6 sm:mt-10 md:mt-16 bg-gradient-to-br min-h-screen">
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-1/4 bg-slate-100 shadow-lg rounded-lg p-6 mt-10 sm:mt-0">
-          <div className="flex justify-between items-center border-b pb-3 mb-4">
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-x-2">
-              <img
-                className="w-12 h-12 rounded-full"
-                src={
-                  user?.image?.url ||
-                  "https://imgs.search.brave.com/6G4l561oIhgssjfbYvozwAIa5jx6fv6YhMrFjEGbdhM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvYXZhdGFyLXZv/bC05LzUxMi80LTEy/OC5wbmc"
-                }
-                alt="Profile Picture"
-              />
-              {user.username}
+        <div className="w-full md:w-1/4 bg-white shadow-xl rounded-2xl p-6 mt-10 sm:mt-0 border border-slate-200">
+          <div className="flex justify-between items-center border-b border-slate-200 pb-4 mb-6">
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-x-3">
+              <div className="relative">
+                <img
+                  className="w-14 h-14 rounded-full border-4 border-blue-100 shadow-lg object-cover"
+                  src={
+                    user?.image?.url ||
+                    "https://imgs.search.brave.com/6G4l561oIhgssjfbYvozwAIa5jx6fv6YhMrFjEGbdhM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4x/Lmljb25maW5kZXIu/Y29tL2RhdGEvaWNv/bnMvYXZhdGFyLXZv/bC05LzUxMi80LTEy/OC5wbmc"
+                  }
+                  alt="Profile Picture"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span>{user.username}</span>
+                </div>
+              </div>
             </h2>
             <Link to="/edit-profile">
-              <Button className="border border-slate-500 bg-slate-100 text-slate-500 hover:bg-slate-500 hover:text-white">
+              <Button className="border border-blue-500 bg-white text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-200 shadow-md hover:shadow-lg">
+                <Edit3 className="w-4 h-4 mr-2" />
                 Edit
               </Button>
             </Link>
@@ -74,40 +91,50 @@ function ViewProfile() {
 
           <div className="flex flex-col justify-between">
             <div>
-              <div className="py-2 rounded">
-                <p className="text-gray-500">
-                  📅 Joined On : <span className="font-bold">{joinDate}</span>
+              <div className="py-3 rounded-lg bg-slate-50 px-4 mb-6 border border-slate-200">
+                <p className="text-slate-600 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-slate-500" />
+                  <span className="font-bold text-slate-800">{joinDate}</span>
                 </p>
               </div>
-              <div className="pt-4">
-                <h2 className="text-lg text-slate-700 font-bold">
+              <div className="pt-2">
+                <h2 className="text-lg text-slate-700 font-bold mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-slate-600" />
                   Report Summary
                 </h2>
-                <div className="py-4">
-                  <div className="py-2">
-                    <p className="text-gray-500">
-                      📝 Submitted :{" "}
-                      <span className="font-bold">{reports.length}</span>
+                <div className="space-y-3">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+                    <p className="text-slate-600 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-blue-500" />
+                      Submitted :{" "}
+                      <span className="font-bold text-slate-800 text-lg">
+                        {reports.length}
+                      </span>
                     </p>
                   </div>
-                  <div className="py-2">
-                    <p className="text-gray-500">
-                      ✅ Approved :{" "}
-                      <span className="font-bold">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                    <p className="text-slate-600 flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      Approved :{" "}
+                      <span className="font-bold text-green-700 text-lg">
                         {approvedReports.length}
                       </span>
                     </p>
                   </div>
-                  <div className="py-2">
-                    <p className="text-gray-500">
-                      ⌛ Pending :{" "}
-                      <span className="font-bold">{pendingReports.length}</span>
+                  <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-xl border border-yellow-100">
+                    <p className="text-slate-600 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-yellow-500" />
+                      Pending :{" "}
+                      <span className="font-bold text-yellow-700 text-lg">
+                        {pendingReports.length}
+                      </span>
                     </p>
                   </div>
-                  <div className="py-2">
-                    <p className="text-gray-500">
-                      ❌ Rejected :{" "}
-                      <span className="font-bold">
+                  <div className="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100">
+                    <p className="text-slate-600 flex items-center gap-2">
+                      <XCircle className="w-4 h-4 text-red-500" />
+                      Rejected :{" "}
+                      <span className="font-bold text-red-700 text-lg">
                         {rejectedReports.length}
                       </span>
                     </p>
@@ -115,21 +142,13 @@ function ViewProfile() {
                 </div>
               </div>
             </div>
-
-            {user.role === "admin" ||
-              (user.role === "master_admin" && (
-                <Link
-                  to="/admin"
-                  className="block rounded hover:bg-slate-100 transition-colors duration-200"
-                >
-                  <Button variant="primary">Admin Dashboard</Button>
-                </Link>
-              ))}
           </div>
         </div>
 
         <div className="flex-1">
-          <CrimeBarChart userReports={reports} />
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+            <CrimeBarChart userReports={reports} />
+          </div>
         </div>
       </div>
 

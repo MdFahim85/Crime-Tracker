@@ -23,6 +23,7 @@ function CrimeEdit() {
       const res = await API.get(`/reports/${id}`);
       setReport(res.data);
     } catch (error) {
+      console.log(error);
       setReport("");
     }
   };
@@ -72,11 +73,7 @@ function CrimeEdit() {
   const handleDocumentChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setReportData((prev) => ({ ...prev, document: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      setReportData((prev) => ({ ...prev, document: file }));
     }
   };
 
@@ -109,7 +106,6 @@ function CrimeEdit() {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success(response.data.message || "Report updated successfully");
-      navigate("/allreports");
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -149,7 +145,6 @@ function CrimeEdit() {
         </div>
         <div className="mb-4">
           <DateSelector date={date} setDate={(newdate) => setDate(newdate)} />
-          {console.log(date)}
           {errors.date && <p className="text-red-500">{errors.date}</p>}
         </div>
 

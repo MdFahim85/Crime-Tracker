@@ -25,7 +25,7 @@ const reportSchema = new mongoose.Schema(
         "Robbery",
         "Murder",
         "Vandalism",
-        "Drug-related",
+        "Drugs",
         "Other",
       ],
     },

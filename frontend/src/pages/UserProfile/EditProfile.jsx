@@ -10,6 +10,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { reset, updateProfile } from "../../feature/authSlice";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import { Camera } from "lucide-react";
 
 const editProfileSchema = z
   .object({
@@ -17,6 +18,7 @@ const editProfileSchema = z
       .string()
       .min(3, "Username must be at least 3 characters")
       .max(20, "Username must be at most 20 characters"),
+    oldPassword: z.string().optional(),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -44,27 +46,31 @@ function EditProfile() {
   );
 
   const [image, setImage] = useState(user?.image || "");
+  const [preview, setPreview] = useState(user?.image || "");
 
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
       username: user?.username || "",
+      oldPassword: "",
       password: "",
       confirmPassword: "",
     },
   });
 
   useEffect(() => {
-    if (user) {
-      setValue("username", user.username || "");
-      setImage(user.image || "");
+    if (image instanceof File) {
+      const objectUrl = URL.createObjectURL(image);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else if (image && typeof image === "object" && image.path) {
+      setPreview(image.path);
     }
-  }, [user, setValue]);
+  }, [image]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -72,12 +78,11 @@ function EditProfile() {
       setImage(file);
     }
   };
-
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append("username", data.username);
     if (image) formData.append("image", image);
-
+    if (data.oldPassword) formData.append("oldPassword", data.oldPassword);
     if (data.password) formData.append("password", data.password);
 
     dispatch(updateProfile(formData));
@@ -101,77 +106,121 @@ function EditProfile() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md"
+        className="bg-white shadow-lg rounded-2xl px-8 pt-10 pb-8 w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
-        <div className="space-y-4">
-          {/* Username */}
-          <Label htmlFor="username">Username</Label>
-          <Input
-            id="username"
-            type="text"
-            {...register("username")}
-            placeholder="Update username"
-          />
-          {errors.username && (
-            <p className="text-red-500 text-sm">{errors.username.message}</p>
-          )}
-
-          {/* Profile Image */}
-          <Label htmlFor="picture">Profile Image</Label>
-          <Input
-            id="picture"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-          {image && (
+        <div className="flex flex-col items-center mb-8">
+          <div className="relative group">
             <img
-              src={image.url}
+              src={preview.url ? preview.url : preview}
               alt="Profile Preview"
-              className="mt-2 w-20 h-20 rounded-full object-cover"
+              className="w-28 h-28 rounded-full object-cover border-4 border-gray-200 shadow-md"
             />
-          )}
+            <label
+              htmlFor="picture"
+              className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full shadow cursor-pointer hover:bg-blue-700 transition"
+            >
+              <Camera className="w-4 h-4" />
+            </label>
+            <Input
+              id="picture"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </div>
+        </div>
 
-          {/* Password */}
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            {...register("password")}
-            placeholder="Update password (optional)"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password.message}</p>
-          )}
+        <h2 className="text-2xl font-bold mb-6 text-center text-slate-800">
+          Edit Profile
+        </h2>
 
-          {/* Confirm Password */}
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            {...register("confirmPassword")}
-            placeholder="Confirm updated password"
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm">
-              {errors.confirmPassword.message}
-            </p>
-          )}
+        <div className="space-y-5">
+          <div>
+            <Label htmlFor="username" className="text-sm font-medium">
+              Username
+            </Label>
+            <Input
+              id="username"
+              type="text"
+              {...register("username")}
+              placeholder="Update username"
+              className="mt-1"
+            />
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
 
-          <div className="flex justify-center space-x-4">
+          <div>
+            <Label htmlFor="oldPassword" className="text-sm font-medium">
+              Old Password
+            </Label>
+            <Input
+              id="oldPassword"
+              type="password"
+              {...register("oldPassword")}
+              placeholder="Enter old password (optional)"
+              className="mt-1"
+            />
+            {errors.oldPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.oldPassword.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="password" className="text-sm font-medium">
+              Password
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              {...register("password")}
+              placeholder="Update password (optional)"
+              className="mt-1"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="confirmPassword" className="text-sm font-medium">
+              Confirm Password
+            </Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              {...register("confirmPassword")}
+              placeholder="Confirm updated password"
+              className="mt-1"
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex justify-center space-x-4 mt-6">
             <Button
               type="submit"
-              className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+              className="px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
             >
               Save
             </Button>
             <Button
               type="button"
-              className="border border-red-500 bg-white text-red-500 hover:text-white hover:bg-red-500"
+              className="px-6 py-2 rounded-full border border-red-500 bg-white text-red-500 hover:bg-red-500 hover:text-white transition"
               onClick={() => navigate(-1)}
             >
               Cancel

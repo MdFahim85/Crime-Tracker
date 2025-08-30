@@ -64,7 +64,7 @@ export default Notification = () => {
             ""
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="mt-4">
+        <DropdownMenuContent>
           <DropdownMenuLabel>Notifications</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {notifications.length ? (

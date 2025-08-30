@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import CommentList from "./CommentList";
 import API from "../../api/axios";
 import { useEffect, useState } from "react";
+import { Send, MessageCircle } from "lucide-react";
 
 function Comments({ comment, setComment, user, report }) {
   const [comments, setComments] = useState([]);
@@ -68,8 +69,12 @@ function Comments({ comment, setComment, user, report }) {
               />
             ))
           ) : (
-            <li>
-              <p className="text-red-500">No comments yet</p>
+            <li className="flex flex-col items-center py-8 text-center">
+              <MessageCircle className="w-12 h-12 text-slate-400 mb-3" />
+              <p className="text-slate-500 font-medium">No comments yet</p>
+              <p className="text-slate-400 text-sm">
+                Be the first to share your thoughts
+              </p>
             </li>
           )}
         </ul>
@@ -82,7 +87,11 @@ function Comments({ comment, setComment, user, report }) {
           onChange={(e) => setComment(e.target.value)}
           className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
         />
-        <Button variant="primary" onClick={() => addCommentHandler()}>
+        <Button
+          onClick={() => addCommentHandler()}
+          className="bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-2"
+        >
+          <Send className="w-4 h-4" />
           Comment
         </Button>
       </form>

@@ -13,7 +13,7 @@ function DateSelector({ date, setDate }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="z-99">
-      <Label htmlFor="date" className="mb-2">
+      <Label htmlFor="date" className="mb-2 text-slate-700">
         Date of crime
       </Label>
       <Popover open={open} onOpenChange={setOpen}>

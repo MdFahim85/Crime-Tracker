@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import RegionFilter from "./RegionFilter";
 import API from "../../api/axios";
+import { MapPin, Search, Globe } from "lucide-react";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -105,7 +106,7 @@ function ReportMap({ reportData, setReportData }) {
           latlng: { lat: parseFloat(lat), lng: parseFloat(lon) },
         }));
       } else {
-        alert("Location not found.");
+        toast.error("Location not found.");
       }
     } catch (err) {
       console.error("Geocoding failed", err);
@@ -119,35 +120,37 @@ function ReportMap({ reportData, setReportData }) {
   };
 
   return (
-    <div className="mb-6">
-      <div className="flex mb-2 gap-2 items-end">
-        <RegionFilter
-          street={filterStreet}
-          setStreet={setFilterStreet}
-          regions={regions}
-        />
-        <div className="flex gap-2 w-1/2">
-          <Input
-            type="text"
-            value={reportData.street}
-            onChange={(e) =>
-              setReportData({ ...reportData, street: e.target.value })
-            }
-            onKeyDown={handleKeyDown}
-            placeholder="Search for a location..."
-            className="w-full px-3 py-2 border border-slate-300 rounded focus:outline-0 focus:border-2 focus:border-slate-600 "
+    <div className="overflow-hidden">
+      <div className="px-0 py-4 space-y-4">
+        <div className="flex flex-col lg:flex-row gap-3">
+          <RegionFilter
+            street={filterStreet}
+            setStreet={setFilterStreet}
+            regions={regions}
           />
-          <Button
-            onClick={handleSearch}
-            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
-          >
-            Search
-          </Button>
+          <div className="flex gap-2 flex-1">
+            <Input
+              type="text"
+              value={reportData.street}
+              onChange={(e) =>
+                setReportData({ ...reportData, street: e.target.value })
+              }
+              onKeyDown={handleKeyDown}
+              placeholder="Search for a location..."
+              className="flex-1 border-2 border-slate-200 focus:border-blue-400 transition-colors"
+            />
+            <Button
+              onClick={handleSearch}
+              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white shadow"
+            >
+              <Search className="w-4 h-4" />
+              Search
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="flex mb-2 gap-2"></div>
-      <div className="h-[400px] rounded overflow-hidden">
+      <div className="h-[400px] ">
         <MapContainer
           center={[23.8103, 90.4125]}
           zoom={13}

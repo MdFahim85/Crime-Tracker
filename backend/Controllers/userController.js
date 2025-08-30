@@ -131,9 +131,9 @@ const updateUser = asyncHandler(async (req, res) => {
     {
       username,
       password: updatedPassword,
-      image:
-        { url: req.file.path, fileName: req.file.filename } ||
-        currentUser.image,
+      image: req.file
+        ? { url: req.file.path, fileName: req.file.filename }
+        : currentUser.image,
     },
     { new: true }
   );

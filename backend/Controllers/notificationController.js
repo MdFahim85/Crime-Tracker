@@ -2,12 +2,13 @@ const asyncHandler = require("express-async-handler");
 const Notification = require("../models/notificationModel");
 
 const getNotifications = asyncHandler(async (req, res) => {
-  const notifications = await Notification.find({ userId: req.user.id }).sort({
+  let notifications = await Notification.find({ userId: req.user.id }).sort({
     timestamp: -1,
   });
   if (!notifications) {
     res.status(404).json({ message: "You have no new notifications" });
   }
+  notifications = notifications.slice(0, 5);
   res.json({ notifications });
 });
 

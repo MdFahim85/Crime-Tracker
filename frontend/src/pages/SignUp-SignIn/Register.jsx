@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -12,11 +11,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
 import { registerUser, reset } from "../../feature/authSlice";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { User, Mail, Lock, Image, Shield, ArrowRight } from "lucide-react";
 
 const registerSchema = z.object({
   username: z
     .string()
-    .min(3, "Username must be atleast 3characters")
+    .min(3, "Username must be atleast 3 characters")
     .max(20, "Username must be at most 20 characters"),
   password: z
     .string()
@@ -24,15 +32,10 @@ const registerSchema = z.object({
     .max(50, "Password must be at most 50 characters")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-      "Password must contain at least one lowercase letter, one uppercase letter, and one number"
+      "Password must contain at least one lowercase, one uppercase, and one number"
     ),
-  confirmPassword: z
-    .string()
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    }),
-  email: z.email(),
+  confirmPassword: z.string(),
+  email: z.string().email("Enter a valid email"),
 });
 
 export default function Register() {
@@ -65,9 +68,7 @@ export default function Register() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setImage(file);
-    }
+    if (file) setImage(file);
   };
 
   const onSubmit = (data) => {
@@ -87,105 +88,190 @@ export default function Register() {
     dispatch(registerUser(formData));
   };
 
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+  if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-        <div className="space-y-4">
-          <Label htmlFor="username" className="mb-2">
-            User Name
-          </Label>
-          <Input
-            type="text"
-            id="username"
-            placeholder="Enter User Name"
-            {...register("username")}
-            className={`${errors.username ? "focus:ring-red-500" : ""}`}
-          />
-          {errors.username && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.username.message}
-            </p>
-          )}
-
-          <Label htmlFor="email" className="mb-2">
-            Email
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            {...register("email")}
-            placeholder="Enter email"
-            className={`${errors.email ? "focus:ring-red-500" : ""}`}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
-
-          <Label htmlFor="picture" className="mb-2">
-            Profile Image
-          </Label>
-          <Input
-            id="picture"
-            name="picture"
-            type="file"
-            onChange={handleImageChange}
-            accept="image/*"
-          />
-
-          <Label htmlFor="password" className="mb-2">
-            Password
-          </Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            {...register("password")}
-            placeholder="Enter password"
-            className={`${errors.password ? "focus:ring-red-500" : ""}`}
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-
-          <Label htmlFor="confirmPassword" className="mb-2">
-            Confirm Password
-          </Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            {...register("confirmPassword")}
-            placeholder="Confirm Password"
-            className={`${errors.confirmPassword ? "focus:ring-red-500" : ""}`}
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.confirmPassword.message}
-            </p>
-          )}
-
-          <div className="flex justify-between items-center">
-            <Button variant="primary" type="submit">
-              Register
-            </Button>
-            <div className="flex flex-col items-end text-sm">
-              <p className=" text-slate-500">Already Registered? </p>
-              <Link to="/login" className="  bg-white text-slate-500 underline">
-                Log In
-              </Link>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-blue-100 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="relative z-10 w-full max-w-md">
+        <div className="text-center mb-8">
+          <Badge className="mb-4 bg-purple-500/20 text-gray-800 border-purple-500/30">
+            <Shield className="w-3 h-3 mr-1" />
+            Secure Register
+          </Badge>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Create Account
+          </h1>
+          <p className="text-slate-400">
+            Join CrimeTracker and start reporting securely
+          </p>
         </div>
-      </form>
+
+        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          <CardHeader className="pb-4 space-y-1">
+            <CardTitle className="text-2xl font-bold text-center text-slate-900">
+              Register
+            </CardTitle>
+            <CardDescription className="text-center text-slate-600">
+              Fill in your details to create an account
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="username"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <User className="w-4 h-4 text-slate-500" />
+                  Username
+                </Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Enter username"
+                  {...register("username")}
+                  className={`h-11 ${
+                    errors.username
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-purple-500 focus:ring-purple-500/20"
+                  }`}
+                />
+                {errors.username && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.username.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4 text-slate-500" />
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter email"
+                  {...register("email")}
+                  className={`h-11 ${
+                    errors.email
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-purple-500 focus:ring-purple-500/20"
+                  }`}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="picture"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <Image className="w-4 h-4 text-slate-500" />
+                  Profile Image
+                </Label>
+                <Input
+                  id="picture"
+                  type="file"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <Lock className="w-4 h-4 text-slate-500" />
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter password"
+                  {...register("password")}
+                  className={`h-11 ${
+                    errors.password
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-purple-500 focus:ring-purple-500/20"
+                  }`}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="confirmPassword"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <Lock className="w-4 h-4 text-slate-500" />
+                  Confirm Password
+                </Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm password"
+                  {...register("confirmPassword")}
+                  className={`h-11 ${
+                    errors.confirmPassword
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-purple-500 focus:ring-purple-500/20"
+                  }`}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-11 bg-blue-400 hover:bg-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
+              >
+                {isLoading ? (
+                  "Registering..."
+                ) : (
+                  <>
+                    Register
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+                  </>
+                )}
+              </Button>
+
+              <div className="text-center pt-4 border-t border-slate-100">
+                <p className="text-sm text-slate-600 mb-2">
+                  Already have an account?
+                </p>
+                <Button asChild variant="outline" className="w-full">
+                  <Link
+                    to="/login"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    Log In
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
