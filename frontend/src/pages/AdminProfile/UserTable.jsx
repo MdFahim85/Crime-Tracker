@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import API from "../../api/axios";
+import UserModal from "./UserModal";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +31,7 @@ export default function UserTable({ fetchUsers }) {
   const [page, setPage] = useState(1);
   const [next, setNext] = useState();
   const [prev, setPrev] = useState();
-
+  const [userId, setUserId] = useState(null);
   const fetchPageUsers = async () => {
     try {
       setLoading(true);
@@ -50,7 +51,6 @@ export default function UserTable({ fetchUsers }) {
     fetchPageUsers();
   }, [page]);
 
-  // Delete a user
   const handleDelete = async (id) => {
     try {
       setLoading(true);
@@ -65,7 +65,6 @@ export default function UserTable({ fetchUsers }) {
     }
   };
 
-  // Update role
   const handleRoleChange = async (id, role) => {
     try {
       await API.patch(`/users/${id}`, { role });
@@ -77,7 +76,6 @@ export default function UserTable({ fetchUsers }) {
     }
   };
 
-  // Filtered users
   const filteredUsers =
     filter === "all"
       ? users
@@ -217,7 +215,10 @@ export default function UserTable({ fetchUsers }) {
                     <TableCell className="font-medium text-gray-600">
                       {globalIndex}
                     </TableCell>
-                    <TableCell>
+                    <TableCell
+                      onClick={() => setUserId(u._id)}
+                      className="hover:cursor-pointer"
+                    >
                       <div className="flex items-center gap-2">
                         {isCurrentUser && (
                           <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
@@ -297,6 +298,12 @@ export default function UserTable({ fetchUsers }) {
           </Table>
         )}
       </div>
+
+      <UserModal
+        userId={userId}
+        open={!!userId}
+        onClose={() => setUserId(null)}
+      />
 
       {(next || prev) && (
         <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">

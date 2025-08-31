@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Menu, User, LogOut } from "lucide-react";
 import Notification from "./Notification";
 
@@ -70,16 +71,18 @@ const Navbar = () => {
 
           {isAuthenticated ? (
             <div className="flex items-center space-x-4">
-              <NavLink
-                to={currentUser.role == "user" ? "/my-profile" : "/admin"}
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-colors hover:text-white ${
-                    isActive ? "text-white" : "text-slate-300"
-                  }`
-                }
-              >
-                Dashboard
-              </NavLink>
+              {currentUser.role != "user" && (
+                <NavLink
+                  to={currentUser.role == "user" ? "/my-profile" : "/admin"}
+                  className={({ isActive }) =>
+                    `text-sm font-medium transition-colors hover:text-white ${
+                      isActive ? "text-white" : "text-slate-300"
+                    }`
+                  }
+                >
+                  Dashboard
+                </NavLink>
+              )}
               <Notification />
 
               <DropdownMenu>

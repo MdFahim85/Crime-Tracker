@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Comment = require("../models/commentModel");
 const Report = require("../models/reportModel");
+const User = require("../models/userModel");
 
 // Get comments for a specific report
 const getComments = asyncHandler(async (req, res) => {
@@ -19,6 +20,7 @@ const getComments = asyncHandler(async (req, res) => {
 // Post a new comment
 const setComment = asyncHandler(async (req, res) => {
   const rep = await Report.findById(req.params.id);
+  const authUser = await User.findById(req.user.id);
   const { comment } = req.body;
   const report = req.params.id;
   const user = req.user.id;
@@ -30,8 +32,9 @@ const setComment = asyncHandler(async (req, res) => {
 
   const newComment = await Comment.create({ comment, user, report });
   rep.comments.push(newComment._id);
+  authUser.comments.push(newComment._id);
   await rep.save();
-
+  await authUser.save();
   res.status(201).json({ message: "Comment added successfully", newComment });
 });
 
@@ -45,11 +48,7 @@ const deleteComment = asyncHandler(async (req, res) => {
   }
 
   // Only author or admin can delete
-  if (
-    comment.user.toString() !== req.user.id &&
-    req.user.role !== "admin" &&
-    req.user.role !== "master_admin"
-  ) {
+  if (comment.user.toString() !== req.user.id) {
     res.status(403);
     throw new Error("You are not allowed to delete this comment");
   }
@@ -63,6 +62,11 @@ const deleteComment = asyncHandler(async (req, res) => {
   await Report.findByIdAndUpdate(req.params.id, {
     $pull: { comments: req.params.commentId },
   });
+  await User.findByIdAndUpdate(req.user.id, {
+    $pull: { comments: req.params.commentId },
+  });
+
+  const us = User.findById();
 
   if (deleted) {
     res.status(200).json({ message: "Comment deleted successfully" });

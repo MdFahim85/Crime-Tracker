@@ -9,7 +9,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
+import {
+  BarChart3,
+  TrendingUp,
+  AlertTriangle,
+  ChartNoAxesColumn,
+} from "lucide-react";
 
 function CrimeBarChart({ userReports }) {
   const crimeCounts = userReports.reduce((acc, report) => {
@@ -67,7 +72,7 @@ function CrimeBarChart({ userReports }) {
           <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-xl border border-indigo-100">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-4 h-4 text-white" />
+                <ChartNoAxesColumn className="w-4 h-4 text-white" />
               </div>
               <div>
                 <p className="text-sm text-indigo-600 font-medium">

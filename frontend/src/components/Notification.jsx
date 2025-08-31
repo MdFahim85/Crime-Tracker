@@ -29,7 +29,7 @@ export default Notification = () => {
     fetchNotification();
   }, []);
 
-  const unreadNotif = notifications.filter((noti) => noti.isRead == false);
+  const unreadNotif = notifications?.filter((noti) => noti.isRead == false);
 
   const onRead = async (id) => {
     try {
@@ -56,7 +56,7 @@ export default Notification = () => {
       <DropdownMenu>
         <DropdownMenuTrigger className="flex">
           <Bell />
-          {unreadNotif.length ? (
+          {unreadNotif?.length ? (
             <sup>
               <Badge variant="destructive">{unreadNotif.length}</Badge>
             </sup>
@@ -67,7 +67,7 @@ export default Notification = () => {
         <DropdownMenuContent>
           <DropdownMenuLabel>Notifications</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {notifications.length ? (
+          {notifications?.length ? (
             notifications.map((noti) => (
               <DropdownMenuItem key={noti._id}>
                 <div className="flex gap-2 items-center ps-2">

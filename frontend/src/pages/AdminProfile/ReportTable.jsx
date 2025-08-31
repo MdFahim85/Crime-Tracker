@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import NoReportFound from "../../components/NoReportFound";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -19,8 +18,6 @@ import {
   Filter,
   Trash2,
   ExternalLink,
-  User,
-  Calendar,
   AlertCircle,
   CheckCircle,
   XCircle,
@@ -261,7 +258,6 @@ export default function ReportTable({ fetchReports }) {
         )}
       </div>
 
-      {/* Footer with Pagination */}
       {(next || prev) && (
         <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">
           <Pagination setPage={setPage} prev={prev} page={page} next={next} />

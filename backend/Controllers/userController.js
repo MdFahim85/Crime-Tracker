@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
+const Report = require("../models/reportModel");
 const { cloudinary } = require("../cloudinary");
 
 // Register User
@@ -155,6 +156,15 @@ const getAllUsers = asyncHandler(async (req, res) => {
   res.status(200).json({ users, next, prev });
 });
 
+// Get all reports of a individual user
+const getUserAllReports = asyncHandler(async (req, res) => {
+  const reports = await Report.find({ user: req.params.id });
+  if (!reports) {
+    res.status(404).json({ message: "No reports found for this user" });
+  }
+  res.json({ reports });
+});
+
 // Update user info / role (Admin)
 const updateUserByAdmin = asyncHandler(async (req, res) => {
   const { role } = req.body;
@@ -240,7 +250,7 @@ const deleteUserByAdmin = asyncHandler(async (req, res) => {
 
     user.image.fileName &&
       (await cloudinary.uploader.destroy(user.image.fileName));
-    await user.deleteOne();
+    await User.findByIdAndDelete(req.params.id);
     return res.status(200).json({ message: "User deleted successfully" });
   }
   // ADMIN rules
@@ -271,6 +281,7 @@ module.exports = {
   getUser,
   updateUser,
   getAllUsers,
+  getUserAllReports,
   updateUserByAdmin,
   deleteUserByAdmin,
 };

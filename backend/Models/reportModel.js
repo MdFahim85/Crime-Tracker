@@ -68,6 +68,9 @@ reportSchema.post("findOneAndDelete", async function (doc) {
     await Comment.deleteMany({
       _id: { $in: doc.comments },
     });
+    await Notification.deleteMany({
+      reportId: doc._id,
+    });
   }
 });
 

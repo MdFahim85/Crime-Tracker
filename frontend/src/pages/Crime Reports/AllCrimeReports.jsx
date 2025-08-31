@@ -31,6 +31,7 @@ import {
   List,
   Eye,
 } from "lucide-react";
+import FilterDateRange from "./FilterDateRange";
 
 function AllCrimeReports() {
   const [regions, setRegions] = useState([]);
@@ -96,12 +97,39 @@ function AllCrimeReports() {
     }
   };
 
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const lastWeek = new Date();
+  lastWeek.setDate(today.getDate() - 7);
+
+  const lastMonth = new Date();
+  lastMonth.setMonth(today.getMonth() - 1);
+
+  const lastYear = new Date();
+  lastYear.setYear(today.getFullYear() - 1);
+
   const filteredReports = reports.filter((r) => {
+    const reportDate = new Date(r.date);
     return (
       (filterType === "" || r.crimeType === filterType) &&
       (filterStreet === "" ||
         r.street.toLowerCase().includes(filterStreet.toLowerCase())) &&
-      (filterDate === "" || r.date === filterDate)
+      (filterDate === "" ||
+        (filterDate === "Today" &&
+          reportDate.toDateString() === today.toDateString()) ||
+        (filterDate === "Yesterday" &&
+          reportDate.toDateString() === yesterday.toDateString()) ||
+        (filterDate === "Last week" &&
+          reportDate >= lastWeek &&
+          reportDate <= today) ||
+        (filterDate === "Last month" &&
+          reportDate >= lastMonth &&
+          reportDate <= today) ||
+        (filterDate === "Last year" &&
+          reportDate >= lastYear &&
+          reportDate <= today))
     );
   });
 
@@ -246,9 +274,9 @@ function AllCrimeReports() {
                         </div>
 
                         <div>
-                          <DateSelector
-                            date={filterDate}
-                            setDate={setFilterDate}
+                          <FilterDateRange
+                            filterDate={filterDate}
+                            setFilterDate={setFilterDate}
                           />
                         </div>
 
@@ -340,9 +368,9 @@ function AllCrimeReports() {
                             </div>
 
                             <div>
-                              <DateSelector
-                                date={filterDate}
-                                setDate={setFilterDate}
+                              <FilterDateRange
+                                filterDate={filterDate}
+                                setFilterDate={setFilterDate}
                               />
                             </div>
 
@@ -461,7 +489,8 @@ function AllCrimeReports() {
               <Minimize2 className="w-4 h-4 mr-1" />
               Exit Fullscreen
             </Button>
-            <div className="absolute top-4 right-4 z-10 w-80 max-h-[80vh] overflow-y-auto">
+
+            <div className="absolute top-20 right-4 z-10 w-80 max-h-[80vh] overflow-y-auto hidden lg:block">
               <Card className={`border-0 shadow-none`}>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -492,7 +521,10 @@ function AllCrimeReports() {
                   </div>
 
                   <div>
-                    <DateSelector date={filterDate} setDate={setFilterDate} />
+                    <FilterDateRange
+                      filterDate={filterDate}
+                      setFilterDate={setFilterDate}
+                    />
                   </div>
 
                   <Button
@@ -531,23 +563,99 @@ function AllCrimeReports() {
                 </CardContent>
               </Card>
             </div>
+            <div className="lg:hidden absolute bottom-4 right-10  z-10 w-80 max-h-[80vh] overflow-y-auto">
+              <Dialog open={showFilters} onOpenChange={setShowFilters}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full">
+                    <Filter className="w-4 h-4 mr-2" />
+                    Show Filters
+                    {(filterType || filterStreet || filterDate) && (
+                      <Badge className="ml-2 bg-blue-100 text-blue-800">
+                        {
+                          [filterType, filterStreet, filterDate].filter(Boolean)
+                            .length
+                        }
+                      </Badge>
+                    )}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Filter Crime Reports</DialogTitle>
+                  </DialogHeader>
+                  <Card className={`shadow-none border-0`}>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Filter className="w-5 h-5 text-blue-600" />
+                        Filter Reports
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <Label className="text-sm font-medium text-slate-700 mb-2 block">
+                          Search by Crime Type
+                        </Label>
+                        <OptionList
+                          crimeType={filterType}
+                          setCrimeType={setFilterType}
+                        />
+                      </div>
 
-            <div className="absolute bottom-4 left-4 z-10">
-              <Card className="bg-white/95 backdrop-blur-sm border-0 shadow-lg">
-                <CardContent className="p-4">
-                  <div className="text-sm text-slate-700">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Eye className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium">Map View</span>
-                    </div>
-                    <div className="space-y-1 text-xs text-slate-600">
-                      <div>• Click markers to view report details</div>
-                      <div>• Use filters to narrow results</div>
-                      <div>• Toggle between heatmap and markers</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                      <div>
+                        <Label className="text-sm font-medium text-slate-700 mb-2 block">
+                          Search by Location
+                        </Label>
+                        <RegionFilter
+                          street={filterStreet}
+                          setStreet={setFilterStreet}
+                          regions={regions}
+                        />
+                      </div>
+
+                      <div>
+                        <FilterDateRange
+                          filterDate={filterDate}
+                          setFilterDate={setFilterDate}
+                        />
+                      </div>
+
+                      <Button
+                        onClick={clearFilters}
+                        variant="outline"
+                        className="w-full mt-4 border-slate-300 text-slate-600 hover:bg-slate-50"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Clear Filters
+                      </Button>
+
+                      {(filterType || filterStreet || filterDate) && (
+                        <div className="pt-2 border-t">
+                          <div className="text-xs text-slate-600 mb-2">
+                            Active Filters:
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {filterType && (
+                              <Badge variant="ghost" className="text-xs">
+                                Type: {filterType}
+                              </Badge>
+                            )}
+                            {filterStreet && (
+                              <Badge variant="ghost" className="text-xs">
+                                Location: {filterStreet}
+                              </Badge>
+                            )}
+                            {filterDate && (
+                              <Badge variant="ghost" className="text-xs">
+                                Date: {filterDate}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>

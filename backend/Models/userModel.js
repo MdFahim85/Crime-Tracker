@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const Comment = require("../models/commentModel");
+const Report = require("../models/reportModel");
+const Notification = require("../models/notificationModel");
 
 const userSchema = new mongoose.Schema(
   {
@@ -25,10 +28,36 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.post("findOneAndDelete", async function (doc) {
+  if (!doc) return;
+
+  const deletedComments = await Comment.find({
+    _id: { $in: doc.comments },
+  }).select("_id");
+  const deletedCommentIds = deletedComments.map((c) => c._id);
+
+  await Comment.deleteMany({ _id: { $in: doc.comments } });
+
+  await Report.updateMany(
+    { comments: { $in: deletedCommentIds } },
+    { $pull: { comments: { $in: deletedCommentIds } } }
+  );
+
+  await Report.deleteMany({ user: doc._id });
+
+  await Notification.deleteMany({ userId: doc._id });
+});
 
 module.exports = mongoose.model("User", userSchema);

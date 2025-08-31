@@ -42,7 +42,7 @@ function SuggestionTrigger({ r, handleSuggest, suggestion, setSuggestion }) {
               handleSuggest(r._id, suggestion);
               setSuggestion("");
             }}
-            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+            className="border border-blue-500 bg-white text-blue-500 hover:text-white hover:bg-blue-500"
           >
             Suggest
           </AlertDialogAction>

@@ -11,7 +11,6 @@ import {
   Lightbulb,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function ReportModal({ report, open, onClose }) {
   if (!report) return null;

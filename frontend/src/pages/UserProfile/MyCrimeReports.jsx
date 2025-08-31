@@ -147,7 +147,7 @@ function MyCrimeReports() {
           filteredReports.map((report) => (
             <li
               key={report._id}
-              className="col-span-12 lg:col-span-6 xl:col-span-4 rounded-2xl overflow-hidden bg-white border border-slate-200 hover:scale-105 transition-all duration-300 group"
+              className="col-span-12 lg:col-span-6 xl:col-span-4 rounded-2xl overflow-hidden bg-white border border-slate-200  transition-all duration-300 group"
             >
               <Link
                 to={`/crime/${report._id}`}

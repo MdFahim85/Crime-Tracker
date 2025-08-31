@@ -11,14 +11,12 @@ import {
 import SuggestionTrigger from "./SuggestionTrigger";
 import { useEffect, useState } from "react";
 import ReportModal from "./ReportModal";
-import NoReportFound from "../../components/NoReportFound";
 import API from "../../api/axios";
 import {
   Clock,
   AlertCircle,
   ExternalLink,
   CheckCircle,
-  XCircle,
   Loader2,
   Calendar,
   User,

@@ -75,12 +75,12 @@ export default function AreaChartStats({ reports }) {
   }
 
   const colors = [
-    "#2563eb", // blue-600
-    "#dc2626", // red-600
-    "#ea580c", // orange-600
-    "#ca8a04", // yellow-600
-    "#9333ea", // purple-600
-    "#059669", // emerald-600
+    "#2563eb",
+    "#dc2626",
+    "#ea580c",
+    "#ca8a04",
+    "#9333ea",
+    "#059669",
   ];
 
   const CustomTooltip = ({ active, payload, label }) => {
@@ -106,7 +106,6 @@ export default function AreaChartStats({ reports }) {
 
   return (
     <Card className="w-full bg-white/80 backdrop-blur-sm shadow-xl border border-blue-100 rounded-2xl p-6 lg:p-8 hover:shadow-2xl transition-all duration-300">
-      {/* Enhanced header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="p-2 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg">
           <TrendingUp className="w-6 h-6 text-white" />
@@ -121,7 +120,6 @@ export default function AreaChartStats({ reports }) {
         </div>
       </div>
 
-      {/* Chart container with enhanced styling */}
       <div
         className="w-full bg-gradient-to-br from-blue-25 to-slate-25 rounded-xl p-4 border border-blue-50"
         style={{ minHeight: 280 }}
@@ -200,16 +198,11 @@ export default function AreaChartStats({ reports }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Enhanced footer stats */}
       <div className="mt-6 pt-6 border-t border-blue-100">
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-center text-sm">
           <div className="flex items-center gap-2 text-gray-600">
             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
             <span>Total Reports: {filterdReports.length}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span>Approved Status</span>
           </div>
         </div>
       </div>

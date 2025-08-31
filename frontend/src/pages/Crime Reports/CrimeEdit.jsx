@@ -59,10 +59,8 @@ function CrimeEdit() {
 
   const validate = () => {
     const newErrors = {};
-    if (!reportData.title || reportData.title.length < 5)
-      newErrors.title = "Please provide a valid title.";
-    if (!reportData.details || reportData.details.length < 10)
-      newErrors.details = "Please provide more details.";
+    if (!reportData.title) newErrors.title = "Please provide a valid title.";
+    if (!reportData.details) newErrors.details = "Please provide more details.";
     if (reportData.crimeType == "Select a crime type")
       newErrors.crimeType = "Please select a crime type.";
 

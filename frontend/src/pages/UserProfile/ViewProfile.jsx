@@ -6,6 +6,7 @@ import {
   Clock,
   XCircle,
   Edit3,
+  ChartColumnDecreasingIcon,
 } from "lucide-react";
 import CrimeBarChart from "./CrimeBarChart";
 import MyCrimeReports from "./MyCrimeReports";
@@ -13,11 +14,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import API from "../../api/axios";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import UserReportsTable from "./UserReportsTable";
 
 function ViewProfile() {
   const [user, setUser] = useState("");
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState("analytics");
 
   const fetchReports = async () => {
     try {
@@ -94,7 +97,18 @@ function ViewProfile() {
               <div className="py-3 rounded-lg bg-slate-50 px-4 mb-6 border border-slate-200">
                 <p className="text-slate-600 flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-slate-500" />
-                  <span className="font-bold text-slate-800">{joinDate}</span>
+                  <span className="font-bold text-slate-800">
+                    Joined on : {joinDate}
+                  </span>
+                </p>
+              </div>
+              <div
+                onClick={() => setView("analytics")}
+                className="py-3 rounded-lg bg-slate-50 px-4 mb-6 border border-slate-200 hover:cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out"
+              >
+                <p className="text-slate-600 flex items-center gap-2">
+                  <ChartColumnDecreasingIcon className="w-4 h-4 text-slate-500" />
+                  <span className="font-bold text-slate-800">Analytics</span>
                 </p>
               </div>
               <div className="pt-2">
@@ -103,7 +117,10 @@ function ViewProfile() {
                   Report Summary
                 </h2>
                 <div className="space-y-3">
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
+                  <div
+                    onClick={() => setView("submitted")}
+                    className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 hover:cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out"
+                  >
                     <p className="text-slate-600 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-blue-500" />
                       Submitted :{" "}
@@ -112,7 +129,10 @@ function ViewProfile() {
                       </span>
                     </p>
                   </div>
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100">
+                  <div
+                    onClick={() => setView("approved")}
+                    className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-100 hover:cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out"
+                  >
                     <p className="text-slate-600 flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-green-500" />
                       Approved :{" "}
@@ -121,7 +141,10 @@ function ViewProfile() {
                       </span>
                     </p>
                   </div>
-                  <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-xl border border-yellow-100">
+                  <div
+                    onClick={() => setView("pending")}
+                    className="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-xl border border-yellow-100 hover:cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out"
+                  >
                     <p className="text-slate-600 flex items-center gap-2">
                       <Clock className="w-4 h-4 text-yellow-500" />
                       Pending :{" "}
@@ -130,7 +153,10 @@ function ViewProfile() {
                       </span>
                     </p>
                   </div>
-                  <div className="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100">
+                  <div
+                    onClick={() => setView("rejected")}
+                    className="bg-gradient-to-r from-red-50 to-rose-50 p-4 rounded-xl border border-red-100 hover:cursor-pointer hover:scale-105 transition-all duration-300 ease-in-out"
+                  >
                     <p className="text-slate-600 flex items-center gap-2">
                       <XCircle className="w-4 h-4 text-red-500" />
                       Rejected :{" "}
@@ -145,9 +171,17 @@ function ViewProfile() {
           </div>
         </div>
 
-        <div className="flex-1">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
-            <CrimeBarChart userReports={reports} />
+        <div className="flex-1 ">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 h-full">
+            {view == "analytics" && <CrimeBarChart userReports={reports} />}
+            {view == "submitted" && <UserReportsTable reports={reports} />}
+            {view == "approved" && (
+              <UserReportsTable reports={approvedReports} />
+            )}
+            {view == "rejected" && (
+              <UserReportsTable reports={rejectedReports} />
+            )}
+            {view == "pending" && <UserReportsTable reports={pendingReports} />}
           </div>
         </div>
       </div>
