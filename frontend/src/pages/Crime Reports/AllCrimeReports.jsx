@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import DateSelector from "./DateSelector";
 import NoReportFound from "../../components/NoReportFound";
 import RegionFilter from "./RegionFilter";
 import Heatmap from "./Heatmap";
@@ -29,9 +28,9 @@ import {
   X,
   Layers,
   List,
-  Eye,
 } from "lucide-react";
 import FilterDateRange from "./FilterDateRange";
+import CustomDatePicker from "./CustomDatePicker";
 
 function AllCrimeReports() {
   const [regions, setRegions] = useState([]);
@@ -110,6 +109,11 @@ function AllCrimeReports() {
   const lastYear = new Date();
   lastYear.setYear(today.getFullYear() - 1);
 
+  const [state, setState] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+
   const filteredReports = reports.filter((r) => {
     const reportDate = new Date(r.date);
     return (
@@ -129,7 +133,10 @@ function AllCrimeReports() {
           reportDate <= today) ||
         (filterDate === "Last year" &&
           reportDate >= lastYear &&
-          reportDate <= today))
+          reportDate <= today) ||
+        (filterDate === "Custom" &&
+          reportDate >= state.startDate &&
+          reportDate <= state.endDate))
     );
   });
 
@@ -243,6 +250,7 @@ function AllCrimeReports() {
             <div className="max-w-7xl mx-auto px-4 py-6">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div className="lg:col-span-1">
+                  {/* PC Filters */}
                   <div className="hidden lg:block">
                     <Card className={`shadow-lg border-0`}>
                       <CardHeader className="pb-3">
@@ -274,10 +282,25 @@ function AllCrimeReports() {
                         </div>
 
                         <div>
-                          <FilterDateRange
-                            filterDate={filterDate}
-                            setFilterDate={setFilterDate}
-                          />
+                          {filterDate !== "Custom" ? (
+                            <FilterDateRange
+                              filterDate={filterDate}
+                              setFilterDate={setFilterDate}
+                            />
+                          ) : (
+                            <>
+                              <CustomDatePicker
+                                state={state}
+                                setState={setState}
+                                label={"Select start date"}
+                              />
+                              <CustomDatePicker
+                                state={state}
+                                setState={setState}
+                                label={"Select last date"}
+                              />
+                            </>
+                          )}
                         </div>
 
                         <Button
@@ -316,7 +339,7 @@ function AllCrimeReports() {
                       </CardContent>
                     </Card>
                   </div>
-
+                  {/* Mobile Filters */}
                   <div className="lg:hidden">
                     <Dialog open={showFilters} onOpenChange={setShowFilters}>
                       <DialogTrigger asChild>
@@ -368,10 +391,25 @@ function AllCrimeReports() {
                             </div>
 
                             <div>
-                              <FilterDateRange
-                                filterDate={filterDate}
-                                setFilterDate={setFilterDate}
-                              />
+                              {filterDate !== "Custom" ? (
+                                <FilterDateRange
+                                  filterDate={filterDate}
+                                  setFilterDate={setFilterDate}
+                                />
+                              ) : (
+                                <>
+                                  <CustomDatePicker
+                                    state={state}
+                                    setState={setState}
+                                    label={"Select start date"}
+                                  />
+                                  <CustomDatePicker
+                                    state={state}
+                                    setState={setState}
+                                    label={"Select last date"}
+                                  />
+                                </>
+                              )}
                             </div>
 
                             <Button
@@ -521,10 +559,25 @@ function AllCrimeReports() {
                   </div>
 
                   <div>
-                    <FilterDateRange
-                      filterDate={filterDate}
-                      setFilterDate={setFilterDate}
-                    />
+                    {filterDate !== "Custom" ? (
+                      <FilterDateRange
+                        filterDate={filterDate}
+                        setFilterDate={setFilterDate}
+                      />
+                    ) : (
+                      <>
+                        <CustomDatePicker
+                          state={state}
+                          setState={setState}
+                          label={"Select start date"}
+                        />
+                        <CustomDatePicker
+                          state={state}
+                          setState={setState}
+                          label={"Select last date"}
+                        />
+                      </>
+                    )}
                   </div>
 
                   <Button

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function FilterDateRange({ filterDate, setFilterDate }) {
   const dateRange = [
@@ -16,6 +16,7 @@ function FilterDateRange({ filterDate, setFilterDate }) {
     "Last week",
     "Last month",
     "Last year",
+    "Custom",
   ];
   useEffect(() => {
     if (filterDate === "Today") {

@@ -10,13 +10,10 @@ import {
   FileText,
   Download,
 } from "lucide-react";
-import { useState } from "react";
-import PDF from "./PDF";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfRender from "./PdfRender";
 
 export function CrimeCard({ report, user, handelDelete, navigate }) {
-  const [viewPDF, setViewPDF] = useState(false);
   return (
     <div className="border-0 bg-transparent">
       <CardHeader className="pb-4">
@@ -94,13 +91,6 @@ export function CrimeCard({ report, user, handelDelete, navigate }) {
           </Button>
         </div>
       </CardContent>
-      {viewPDF && (
-        <PDF
-          report={report}
-          open={!!viewPDF}
-          onClose={() => setViewPDF(null)}
-        />
-      )}
     </div>
   );
 }
