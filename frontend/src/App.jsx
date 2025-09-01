@@ -15,6 +15,7 @@ import EditProfile from "./pages/UserProfile/EditProfile.jsx";
 import AdminDashboard from "./pages/AdminProfile/AdminDashboard.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import GuestRoute from "./components/GuestRoute.jsx";
+import PDF from "./pages/Crime Reports/PDF.jsx";
 
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/downloadPdf" element={<PDF />} />
         <Route path="*" element={<Error />} />
       </Routes>
 
