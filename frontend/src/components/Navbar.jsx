@@ -39,8 +39,8 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { to: "/report", label: "Report a Crime" },
-    { to: "/allreports", label: "View Reports" },
+    { to: "/report", label: "File a Report" },
+    { to: "/allreports", label: "Incident Map" },
   ];
 
   return (

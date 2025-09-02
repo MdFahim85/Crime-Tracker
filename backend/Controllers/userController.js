@@ -64,19 +64,24 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
   }
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) {
-    res.status(401);
-    throw new Error("Invalid email or password");
+  if (user.password) {
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      res.status(401);
+      throw new Error("Invalid email or password");
+    } else {
+      res.json({
+        _id: user._id,
+        username: user.username,
+        image: user.image,
+        role: user.role,
+        token: generateToken(user._id),
+      });
+    }
+  } else {
+    res.status(404);
+    throw new Error("Wrong Credentials");
   }
-
-  res.json({
-    _id: user._id,
-    username: user.username,
-    image: user.image,
-    role: user.role,
-    token: generateToken(user._id),
-  });
 });
 
 // Google Login

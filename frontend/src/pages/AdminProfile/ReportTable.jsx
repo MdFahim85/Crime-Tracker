@@ -214,7 +214,7 @@ export default function ReportTable({ fetchReports }) {
                     </TableCell>
                     <TableCell>
                       <span className="font-medium text-gray-900">
-                        {r.user.username}
+                        {r.user?.username}
                       </span>
                     </TableCell>
                     <TableCell>
