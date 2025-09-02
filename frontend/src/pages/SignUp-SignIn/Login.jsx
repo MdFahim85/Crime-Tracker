@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, reset } from "../../feature/authSlice";
+import { loginUser, googleLogin, reset } from "../../feature/authSlice";
+import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,6 +50,10 @@ function Login() {
 
   const onSubmit = (data) => {
     dispatch(loginUser(data));
+  };
+
+  const handleGoogleLogin = (credentialResponse) => {
+    dispatch(googleLogin(credentialResponse));
   };
 
   useEffect(() => {
@@ -171,23 +176,30 @@ function Login() {
                   </p>
                 )}
               </div>
+              <div className="flex flex-col items-center">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
+                >
+                  {isLoading ? (
+                    "Signing in..."
+                  ) : (
+                    <>
+                      Sign In
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+                    </>
+                  )}
+                </Button>
+                <span className="my-4">Or</span>
+                <GoogleLogin
+                  theme="filled_blue"
+                  onSuccess={handleGoogleLogin}
+                  onError={() => console.log("Google login failed")}
+                />
+              </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
-              >
-                {isLoading ? (
-                  "Signing in..."
-                ) : (
-                  <>
-                    Sign In
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
-                  </>
-                )}
-              </Button>
-
-              <div className="text-center pt-4 border-t border-slate-100">
+              <div className="text-center pt-4 border-t border-slate-100 ">
                 <p className="text-sm text-slate-600 mb-2">
                   Don't have an account?
                 </p>

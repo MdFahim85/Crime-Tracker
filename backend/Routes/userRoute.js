@@ -8,6 +8,7 @@ const {
   updateUserByAdmin,
   deleteUserByAdmin,
   getUserAllReports,
+  googleLogin,
 } = require("../controllers/userController");
 const { protect, admin } = require("../middlewares/authMiddleware");
 const router = express.Router();
@@ -20,6 +21,9 @@ const upload = multer({ storage });
 // Public routes
 router.route("/users").post(upload.single("image"), registerUser);
 router.route("/users/login").post(loginUser);
+
+// Google Login/Register
+router.route("/users/googleLogin").post(googleLogin);
 
 // User Routes
 router

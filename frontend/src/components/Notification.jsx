@@ -64,8 +64,12 @@ export default Notification = () => {
             ""
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+        <DropdownMenuContent className="w-80">
+          <DropdownMenuLabel>
+            <div className="flex justify-between">
+              Notifications <Link to="/notifications">See All</Link>
+            </div>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {notifications?.length ? (
             notifications.map((noti) => (

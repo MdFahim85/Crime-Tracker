@@ -15,12 +15,12 @@ import EditProfile from "./pages/UserProfile/EditProfile.jsx";
 import AdminDashboard from "./pages/AdminProfile/AdminDashboard.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import GuestRoute from "./components/GuestRoute.jsx";
+import Notifications from "./pages/UserProfile/Notifications.jsx";
 
 function App() {
   return (
     <Router>
       <Navbar />
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
@@ -84,7 +84,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="*" element={<Error />} />
       </Routes>
 
