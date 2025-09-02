@@ -1,9 +1,12 @@
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { OAuth2Client } = require("google-auth-library");
 const User = require("../models/userModel");
 const Report = require("../models/reportModel");
 const { cloudinary } = require("../cloudinary");
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Register User
 const registerUser = asyncHandler(async (req, res) => {
@@ -74,6 +77,48 @@ const loginUser = asyncHandler(async (req, res) => {
     role: user.role,
     token: generateToken(user._id),
   });
+});
+
+// Google Login
+
+const googleLogin = asyncHandler(async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub, name, email, picture } = payload;
+
+    let user = await User.findOne({ googleId: sub });
+    if (!user) {
+      user = await User.findOne({ email });
+      if (user) {
+        user.googleId = sub;
+        user.image = { url: picture, fileName: null };
+        await user.save();
+      } else {
+        user = await User.create({
+          googleId: sub,
+          username: name,
+          email,
+          password: undefined,
+          image: { url: picture, fileName: null },
+        });
+      }
+    }
+    res.json({
+      _id: user._id,
+      username: user.username,
+      image: user.image,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: "Google SignIn Failed" });
+  }
 });
 
 // Get Current User
@@ -261,7 +306,8 @@ const deleteUserByAdmin = asyncHandler(async (req, res) => {
         .json({ message: "Admins cannot delete other admins or master admin" });
     }
 
-    await cloudinary.uploader.destroy(user.image.fileName);
+    user.image.fileName &&
+      (await cloudinary.uploader.destroy(user.image.fileName));
 
     await user.deleteOne();
     return res.status(200).json({ message: "User deleted successfully" });
@@ -278,6 +324,7 @@ const generateToken = (id) => {
 module.exports = {
   registerUser,
   loginUser,
+  googleLogin,
   getUser,
   updateUser,
   getAllUsers,

@@ -53,6 +53,27 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const googleLogin = createAsyncThunk(
+  "auth/googleLogin",
+  async (credentialResponse, thunkAPI) => {
+    try {
+      const response = await API.post("/users/googleLogin", {
+        token: credentialResponse.credential,
+      });
+      return response.data;
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.thunkAPI;
+      console.log(error);
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const logout = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("user");
 });
@@ -117,6 +138,22 @@ const authSlice = createSlice({
         localStorage.setItem("user", JSON.stringify(action.payload));
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.payload;
+        state.user = null;
+      })
+      // GoogleLogin
+      .addCase(googleLogin.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(googleLogin.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      })
+      .addCase(googleLogin.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
         state.message = action.payload;

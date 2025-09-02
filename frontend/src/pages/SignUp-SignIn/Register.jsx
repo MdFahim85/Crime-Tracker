@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { GoogleLogin } from "@react-oauth/google";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingSpinner from "../../components/LoadingSpinner";
 
-import { registerUser, reset } from "../../feature/authSlice";
+import { registerUser, googleLogin, reset } from "../../feature/authSlice";
 import {
   Card,
   CardHeader,
@@ -69,6 +70,10 @@ export default function Register() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) setImage(file);
+  };
+
+  const handleGoogleLogin = (credentialResponse) => {
+    dispatch(googleLogin(credentialResponse));
   };
 
   const onSubmit = (data) => {
@@ -238,23 +243,30 @@ export default function Register() {
                   </p>
                 )}
               </div>
+              <div className="flex flex-col items-center">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-11 bg-blue-600 hover:bg-blue-400 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
+                >
+                  {isLoading ? (
+                    "Registering..."
+                  ) : (
+                    <>
+                      Register
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+                    </>
+                  )}
+                </Button>
+                <span className="my-4">Or</span>
+                <GoogleLogin
+                  theme="filled_blue"
+                  onSuccess={handleGoogleLogin}
+                  onError={() => console.log("Google login failed")}
+                />
+              </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-11 bg-blue-400 hover:bg-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
-              >
-                {isLoading ? (
-                  "Registering..."
-                ) : (
-                  <>
-                    Register
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
-                  </>
-                )}
-              </Button>
-
-              <div className="text-center pt-4 border-t border-slate-100">
+              <div className="text-center pt-4 border-t border-slate-100 ">
                 <p className="text-sm text-slate-600 mb-2">
                   Already have an account?
                 </p>
