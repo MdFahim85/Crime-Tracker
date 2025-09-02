@@ -139,7 +139,7 @@ export function ReportCardDetails({ report }) {
                 <User className="h-4 w-4 text-slate-400" />
                 <div className="flex items-center gap-2">
                   <span className="truncate max-w-24">
-                    {report.user.username}
+                    {report.user?.username}
                   </span>
                 </div>
               </div>

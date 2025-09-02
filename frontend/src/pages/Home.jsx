@@ -152,7 +152,7 @@ function Home() {
             >
               <Link to="/allreports" className="flex items-center gap-2">
                 <Eye className="w-4 h-4" />
-                Browse Reports
+                View Map & Reports
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>

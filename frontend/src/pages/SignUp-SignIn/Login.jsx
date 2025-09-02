@@ -14,7 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -62,7 +61,7 @@ function Login() {
 
       const from = location.state?.from?.pathname || "/allreports";
 
-      if (user.role == "user") {
+      if (user.role === "user") {
         navigate(from, { replace: true });
       } else {
         navigate("/admin", { replace: true });
@@ -70,6 +69,7 @@ function Login() {
     }
     dispatch(reset());
     if (isError) {
+      console.log("hahah");
       toast.error(message);
     }
   }, [isSuccess, isError, user, message, navigate, location, dispatch]);
@@ -80,25 +80,10 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="relative z-10 w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="mb-4">
-            <Badge className="mb-4 bg-blue-500/20 text-gray-800 border-blue-500/30">
-              <Shield className="w-3 h-3 mr-1" />
-              Secure Login
-            </Badge>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-slate-400">
-            Sign in to access your CrimeTracker account
-          </p>
-        </div>
-
+      <div className="relative z-10 w-full max-w-md mt-12">
         <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl font-bold text-center text-slate-900">
+            <CardTitle className="text-2xl font-bold text-center text-slate-900 ">
               Login
             </CardTitle>
             <CardDescription className="text-center text-slate-600">

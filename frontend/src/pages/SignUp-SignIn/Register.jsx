@@ -97,20 +97,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-blue-100 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="relative z-10 w-full max-w-md">
-        <div className="text-center mb-8">
-          <Badge className="mb-4 bg-purple-500/20 text-gray-800 border-purple-500/30">
-            <Shield className="w-3 h-3 mr-1" />
-            Secure Register
-          </Badge>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Create Account
-          </h1>
-          <p className="text-slate-400">
-            Join CrimeTracker and start reporting securely
-          </p>
-        </div>
-
+      <div className="relative z-10 w-full max-w-md mt-12">
         <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
           <CardHeader className="pb-4 space-y-1">
             <CardTitle className="text-2xl font-bold text-center text-slate-900">
