@@ -7,6 +7,7 @@ const {
   getAllUsers,
   updateUserByAdmin,
   deleteUserByAdmin,
+  getUserAllReports,
 } = require("../controllers/userController");
 const { protect, admin } = require("../middlewares/authMiddleware");
 const router = express.Router();
@@ -31,6 +32,7 @@ router
 router.route("/users").get(protect, admin, userPagination, getAllUsers);
 router
   .route("/users/:id")
+  .get(protect, admin, getUserAllReports)
   .patch(protect, admin, updateUserByAdmin)
   .delete(protect, admin, deleteUserByAdmin);
 

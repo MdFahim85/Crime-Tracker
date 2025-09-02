@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 function RegionFilter({ street, setStreet, regions }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -33,9 +31,6 @@ function RegionFilter({ street, setStreet, regions }) {
 
   return (
     <div className="relative w-full max-w-sm">
-      <Label id="region" className="block text-slate-700 mb-2 text-xl">
-        Search by region
-      </Label>
       <Input
         id="region"
         name="region"

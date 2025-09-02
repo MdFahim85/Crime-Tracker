@@ -11,7 +11,11 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       token = req.headers.authorization.split(" ")[1];
       const decode = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decode.id).select("-password");
+      const user = await User.findById(decode.id).select("-password");
+      if (!user) {
+        return res.status(401).json({ message: "User deleted or inactive" });
+      }
+      req.user = user;
       next();
     } catch (error) {
       res.status(401);

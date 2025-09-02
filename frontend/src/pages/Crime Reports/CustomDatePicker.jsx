@@ -7,25 +7,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function DateSelector({ date, setDate }) {
+function CustomDatePicker({ label, state, setState }) {
   const [open, setOpen] = useState(false);
+  const [date, setDate] = useState(new Date());
+  useEffect(() => {
+    setState({ ...state, startDate: date });
+  }, [date]);
   return (
-    <div className="z-99">
-      <Label htmlFor="date" className="mb-2 text-slate-700">
-        Date of crime
+    <div className="flex flex-col gap-3 my-2">
+      <Label htmlFor="date" className="px-1 text-slate-700">
+        {label}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             id="date"
-            className="w-48 justify-between font-normal bg-transparent"
+            className="w-48 justify-between font-normal"
           >
-            {date
-              ? new Date(date).toLocaleDateString("en-GB")
-              : new Date().toISOString().slice(0, 10)}
+            {date ? date.toLocaleDateString() : "Select first date"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
@@ -35,10 +37,9 @@ function DateSelector({ date, setDate }) {
             selected={date}
             captionLayout="dropdown"
             onSelect={(date) => {
-              setDate(new Date(date).toISOString());
+              setDate(date);
               setOpen(false);
             }}
-            disabled={(date) => date > new Date()}
           />
         </PopoverContent>
       </Popover>
@@ -46,4 +47,4 @@ function DateSelector({ date, setDate }) {
   );
 }
 
-export default DateSelector;
+export default CustomDatePicker;

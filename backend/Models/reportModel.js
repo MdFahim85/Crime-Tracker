@@ -25,7 +25,7 @@ const reportSchema = new mongoose.Schema(
         "Robbery",
         "Murder",
         "Vandalism",
-        "Drug-related",
+        "Drugs",
         "Other",
       ],
     },
@@ -67,6 +67,9 @@ reportSchema.post("findOneAndDelete", async function (doc) {
   if (doc) {
     await Comment.deleteMany({
       _id: { $in: doc.comments },
+    });
+    await Notification.deleteMany({
+      reportId: doc._id,
     });
   }
 });

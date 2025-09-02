@@ -14,6 +14,7 @@ import ViewProfile from "./pages/UserProfile/ViewProfile.jsx";
 import EditProfile from "./pages/UserProfile/EditProfile.jsx";
 import AdminDashboard from "./pages/AdminProfile/AdminDashboard.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
+import GuestRoute from "./components/GuestRoute.jsx";
 
 function App() {
   return (
@@ -22,8 +23,22 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
         <Route
           path="/report"
           element={
@@ -69,6 +84,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="*" element={<Error />} />
       </Routes>
 

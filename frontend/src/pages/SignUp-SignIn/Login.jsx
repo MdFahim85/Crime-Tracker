@@ -3,18 +3,25 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, reset } from "../../feature/authSlice";
 import toast from "react-hot-toast";
-import { EyeIcon, EyeOffIcon } from "@heroicons/react/outline";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import LoadingSpinner from "../../components/LoadingSpinner";
-
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Mail, Lock, Shield, ArrowRight } from "lucide-react";
 
 const loginSchema = z.object({
-  email: z.email("Enter a valid email"),
+  email: z.string().email("Enter a valid email"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -60,82 +67,144 @@ function Login() {
     if (isError) {
       toast.error(message);
     }
-  }, [isSuccess, isError, user, message, navigate, location]);
+  }, [isSuccess, isError, user, message, navigate, location, dispatch]);
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-
-        {/* Email */}
-        <div className="mb-4">
-          <Label htmlFor="email" className="mb-2">
-            Email
-          </Label>
-          <Input
-            type="text"
-            id="email"
-            placeholder="Enter Email"
-            {...register("email")}
-            className={`${errors.email ? "focus:ring-red-500" : ""}`}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
-        </div>
-
-        {/* Password */}
-        <div className="mb-6 relative flex items-end gap-4">
-          <div className="flex-1">
-            <Label htmlFor="password" className="mb-2">
-              Password
-            </Label>
-            <Input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              placeholder="Enter Password"
-              {...register("password")}
-              className={`${errors.password ? "focus:ring-red-500" : ""}`}
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.password.message}
-              </p>
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 flex items-center justify-center p-4">
+      <div className="relative z-10 w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="mb-4">
+            <Badge className="mb-4 bg-blue-500/20 text-gray-800 border-blue-500/30">
+              <Shield className="w-3 h-3 mr-1" />
+              Secure Login
+            </Badge>
           </div>
-          <Button
-            variant="primary"
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? (
-              <EyeOffIcon className="h-5 w-5" />
-            ) : (
-              <EyeIcon className="h-5 w-5" />
-            )}
-          </Button>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-slate-400">
+            Sign in to access your CrimeTracker account
+          </p>
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-between items-center">
-          <Button variant="primary" type="submit" disabled={isLoading}>
-            Log in
-          </Button>
-          <div className="flex flex-col items-end text-sm">
-            <p className="text-slate-500">Don't have an account?</p>
-            <Link to="/register" className="bg-white text-slate-500 underline">
-              Register
-            </Link>
-          </div>
-        </div>
-      </form>
+        <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-2xl font-bold text-center text-slate-900">
+              Login
+            </CardTitle>
+            <CardDescription className="text-center text-slate-600">
+              Enter your credentials to continue
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4 text-slate-500" />
+                  Email Address
+                </Label>
+                <Input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email"
+                  {...register("email")}
+                  className={`h-11 ${
+                    errors.email
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                      : "border-slate-300 focus:border-blue-500 focus:ring-blue-500/20"
+                  } transition-colors`}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
+                  <Lock className="w-4 h-4 text-slate-500" />
+                  Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    placeholder="Enter your password"
+                    {...register("password")}
+                    className={`h-11 pr-11 ${
+                      errors.password
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
+                        : "border-slate-300 focus:border-blue-500 focus:ring-blue-500/20"
+                    } transition-colors`}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-1 top-1 h-9 w-9 p-0 hover:bg-slate-100"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-slate-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-slate-500" />
+                    )}
+                  </Button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
+              >
+                {isLoading ? (
+                  "Signing in..."
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+                  </>
+                )}
+              </Button>
+
+              <div className="text-center pt-4 border-t border-slate-100">
+                <p className="text-sm text-slate-600 mb-2">
+                  Don't have an account?
+                </p>
+                <Button asChild variant="outline" className="w-full">
+                  <Link
+                    to="/register"
+                    className="flex items-center justify-center gap-2"
+                  >
+                    Create Account
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
