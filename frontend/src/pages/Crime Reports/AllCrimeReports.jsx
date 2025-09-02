@@ -2,7 +2,6 @@ import { ReportCard } from "./ReportCard";
 import { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import OptionList from "./OptionList";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,10 +30,10 @@ import {
 } from "lucide-react";
 import FilterDateRange from "./FilterDateRange";
 import CustomDatePicker from "./CustomDatePicker";
+import Checker from "./Checker";
 
 function AllCrimeReports() {
   const [regions, setRegions] = useState([]);
-  const [filterType, setFilterType] = useState("");
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [isHeatmap, setIsHeatmap] = useState(false);
@@ -45,6 +44,16 @@ function AllCrimeReports() {
   const [prev, setPrev] = useState();
   const [isFullscreenMap, setIsFullscreenMap] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [arr, setArr] = useState([]);
+  const [state2, setState2] = useState({
+    theft: false,
+    assault: false,
+    robbery: false,
+    murder: false,
+    vandalism: false,
+    drugs: false,
+    other: false,
+  });
 
   const fetchReports = async () => {
     try {
@@ -114,10 +123,26 @@ function AllCrimeReports() {
     endDate: new Date(),
   });
 
+  const [filteredArr, setFilteredArr] = useState([]);
+
+  useEffect(() => {
+    const filterFunc = () => {
+      const newArr = arr
+        .filter((obj) => obj.value)
+        .map((obj) => obj.key.toLowerCase());
+
+      setFilteredArr(newArr);
+    };
+
+    filterFunc();
+  }, [arr]);
+
   const filteredReports = reports.filter((r) => {
     const reportDate = new Date(r.date);
+
     return (
-      (filterType === "" || r.crimeType === filterType) &&
+      (filteredArr.length === 0 ||
+        filteredArr.includes(r.crimeType.toLowerCase())) &&
       (filterStreet === "" ||
         r.street.toLowerCase().includes(filterStreet.toLowerCase())) &&
       (filterDate === "" ||
@@ -147,7 +172,16 @@ function AllCrimeReports() {
   function clearFilters() {
     setFilterDate("");
     setFilterStreet("");
-    setFilterType("");
+    setFilteredArr([]);
+    setState2({
+      theft: false,
+      assault: false,
+      robbery: false,
+      murder: false,
+      vandalism: false,
+      drugs: false,
+      other: false,
+    });
   }
 
   const MapComponent = ({ height = "400px" }) => (
@@ -224,7 +258,6 @@ function AllCrimeReports() {
       </div>
     </div>
   );
-
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -264,9 +297,10 @@ function AllCrimeReports() {
                           <Label className="text-sm font-medium text-slate-700 mb-2 block">
                             Search by Crime Type
                           </Label>
-                          <OptionList
-                            crimeType={filterType}
-                            setCrimeType={setFilterType}
+                          <Checker
+                            state={state2}
+                            setState={setState2}
+                            setArr={setArr}
                           />
                         </div>
 
@@ -312,16 +346,18 @@ function AllCrimeReports() {
                           Clear Filters
                         </Button>
 
-                        {(filterType || filterStreet || filterDate) && (
+                        {(filteredArr || filterStreet || filterDate) && (
                           <div className="pt-2 border-t">
                             <div className="text-xs text-slate-600 mb-2">
                               Active Filters:
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {filterType && (
+                              {filteredArr.length ? (
                                 <Badge variant="ghost" className="text-xs">
-                                  Type: {filterType}
+                                  Type: {filteredArr.join(" , ")}
                                 </Badge>
+                              ) : (
+                                ""
                               )}
                               {filterStreet && (
                                 <Badge variant="ghost" className="text-xs">
@@ -346,10 +382,10 @@ function AllCrimeReports() {
                         <Button variant="outline" className="w-full">
                           <Filter className="w-4 h-4 mr-2" />
                           Show Filters
-                          {(filterType || filterStreet || filterDate) && (
+                          {(filteredArr || filterStreet || filterDate) && (
                             <Badge className="ml-2 bg-blue-100 text-blue-800">
                               {
-                                [filterType, filterStreet, filterDate].filter(
+                                [filteredArr, filterStreet, filterDate].filter(
                                   Boolean
                                 ).length
                               }
@@ -373,9 +409,10 @@ function AllCrimeReports() {
                               <Label className="text-sm font-medium text-slate-700 mb-2 block">
                                 Search by Crime Type
                               </Label>
-                              <OptionList
-                                crimeType={filterType}
-                                setCrimeType={setFilterType}
+                              <Checker
+                                state={state2}
+                                setState={setState2}
+                                setArr={setArr}
                               />
                             </div>
 
@@ -421,16 +458,18 @@ function AllCrimeReports() {
                               Clear Filters
                             </Button>
 
-                            {(filterType || filterStreet || filterDate) && (
+                            {(filteredArr || filterStreet || filterDate) && (
                               <div className="pt-2 border-t">
                                 <div className="text-xs text-slate-600 mb-2">
                                   Active Filters:
                                 </div>
                                 <div className="flex flex-wrap gap-1">
-                                  {filterType && (
+                                  {filteredArr.length ? (
                                     <Badge variant="ghost" className="text-xs">
-                                      Type: {filterType}
+                                      Type: {filteredArr.join(" , ")}
                                     </Badge>
+                                  ) : (
+                                    ""
                                   )}
                                   {filterStreet && (
                                     <Badge variant="ghost" className="text-xs">
@@ -541,9 +580,10 @@ function AllCrimeReports() {
                     <Label className="text-sm font-medium text-slate-700 mb-2 block">
                       Search by Crime Type
                     </Label>
-                    <OptionList
-                      crimeType={filterType}
-                      setCrimeType={setFilterType}
+                    <Checker
+                      state={state2}
+                      setState={setState2}
+                      setArr={setArr}
                     />
                   </div>
 
@@ -589,16 +629,18 @@ function AllCrimeReports() {
                     Clear Filters
                   </Button>
 
-                  {(filterType || filterStreet || filterDate) && (
+                  {(filteredArr || filterStreet || filterDate) && (
                     <div className="pt-2 border-t">
                       <div className="text-xs text-slate-600 mb-2">
                         Active Filters:
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {filterType && (
+                        {filteredArr.length ? (
                           <Badge variant="ghost" className="text-xs">
-                            Type: {filterType}
+                            Type: {filteredArr.join(" , ")}
                           </Badge>
+                        ) : (
+                          ""
                         )}
                         {filterStreet && (
                           <Badge variant="ghost" className="text-xs">
@@ -622,11 +664,12 @@ function AllCrimeReports() {
                   <Button variant="outline" className="w-full">
                     <Filter className="w-4 h-4 mr-2" />
                     Show Filters
-                    {(filterType || filterStreet || filterDate) && (
+                    {(filteredArr || filterStreet || filterDate) && (
                       <Badge className="ml-2 bg-blue-100 text-blue-800">
                         {
-                          [filterType, filterStreet, filterDate].filter(Boolean)
-                            .length
+                          [filteredArr, filterStreet, filterDate].filter(
+                            Boolean
+                          ).length
                         }
                       </Badge>
                     )}
@@ -648,9 +691,10 @@ function AllCrimeReports() {
                         <Label className="text-sm font-medium text-slate-700 mb-2 block">
                           Search by Crime Type
                         </Label>
-                        <OptionList
-                          crimeType={filterType}
-                          setCrimeType={setFilterType}
+                        <Checker
+                          state={state2}
+                          setState={setState2}
+                          setArr={setArr}
                         />
                       </div>
 
@@ -681,16 +725,18 @@ function AllCrimeReports() {
                         Clear Filters
                       </Button>
 
-                      {(filterType || filterStreet || filterDate) && (
+                      {(filteredArr || filterStreet || filterDate) && (
                         <div className="pt-2 border-t">
                           <div className="text-xs text-slate-600 mb-2">
                             Active Filters:
                           </div>
                           <div className="flex flex-wrap gap-1">
-                            {filterType && (
+                            {filteredArr.length ? (
                               <Badge variant="ghost" className="text-xs">
-                                Type: {filterType}
+                                Type: {filteredArr.join(" , ")}
                               </Badge>
+                            ) : (
+                              ""
                             )}
                             {filterStreet && (
                               <Badge variant="ghost" className="text-xs">
