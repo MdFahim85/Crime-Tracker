@@ -5,6 +5,7 @@ const app = express();
 const { errorHandler } = require("./Middlewares/errorMiddleware");
 const { connectDB } = require("./config/dbConfig");
 const cors = require("cors");
+const path = require("path");
 
 app.use(
   cors({
