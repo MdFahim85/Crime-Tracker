@@ -2,8 +2,8 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { OAuth2Client } = require("google-auth-library");
-const User = require("../models/userModel");
-const Report = require("../models/reportModel");
+const User = require("../Models/userModel");
+const Report = require("../Models/reportModel");
 const { cloudinary } = require("../cloudinary");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);

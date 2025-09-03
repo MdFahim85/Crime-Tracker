@@ -9,7 +9,7 @@ const {
   deleteUserByAdmin,
   getUserAllReports,
   googleLogin,
-} = require("../controllers/userController");
+} = require("../Controllers/userController");
 const { protect, admin } = require("../middlewares/authMiddleware");
 const router = express.Router();
 

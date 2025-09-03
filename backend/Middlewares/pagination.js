@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const Report = require("../models/reportModel");
-const Region = require("../models/regionModel");
-const User = require("../models/userModel");
+const Report = require("../Models/reportModel");
+const Region = require("../Models/regionModel");
+const User = require("../Models/userModel");
 
 const reportPagination = asyncHandler(async (req, res, next) => {
   const allRep = await Report.find().populate("user", "username");

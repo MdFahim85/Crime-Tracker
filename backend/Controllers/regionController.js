@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const Region = require("../models/regionModel");
+const Region = require("../Models/regionModel");
 
 const getAllRegions = asyncHandler(async (req, res) => {
   const { prev, next } = res.paginatedData;

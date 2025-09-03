@@ -7,7 +7,7 @@ const {
   setRegion,
   updateRegion,
   deleteRegion,
-} = require("../controllers/regionController");
+} = require("../Controllers/regionController");
 const { regionPagination } = require("../middlewares/pagination");
 
 router

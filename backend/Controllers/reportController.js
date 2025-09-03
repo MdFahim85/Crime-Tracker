@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const Report = require("../models/reportModel");
-const Notification = require("../models/notificationModel");
-const User = require("../models/userModel");
+const Report = require("../Models/reportModel");
+const Notification = require("../Models/notificationModel");
+const User = require("../Models/userModel");
 const { cloudinary } = require("../cloudinary");
 
 // Get all reports

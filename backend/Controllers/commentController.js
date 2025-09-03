@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const Comment = require("../models/commentModel");
-const Report = require("../models/reportModel");
-const User = require("../models/userModel");
+const Comment = require("../Models/commentModel");
+const Report = require("../Models/reportModel");
+const User = require("../Models/userModel");
 
 // Get comments for a specific report
 const getComments = asyncHandler(async (req, res) => {

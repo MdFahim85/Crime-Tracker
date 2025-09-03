@@ -7,13 +7,13 @@ const {
   getReportDetails,
   getUserReports,
   updateReportSuggestion,
-} = require("../controllers/reportController");
+} = require("../Controllers/reportController");
 const { protect, admin } = require("../middlewares/authMiddleware");
 const {
   getComments,
   setComment,
   deleteComment,
-} = require("../controllers/commentController");
+} = require("../Controllers/commentController");
 const router = express.Router();
 
 const multer = require("multer");
