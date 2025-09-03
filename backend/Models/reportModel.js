@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Comment = require("../models/commentModel");
+const Comment = require("./commentModel");
 
 const reportSchema = new mongoose.Schema(
   {

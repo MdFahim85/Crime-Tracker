@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Comment = require("../models/commentModel");
-const Report = require("../models/reportModel");
-const Notification = require("../models/notificationModel");
+const Comment = require("./commentModel");
+const Report = require("./reportModel");
+const Notification = require("./notificationModel");
 
 const userSchema = new mongoose.Schema(
   {

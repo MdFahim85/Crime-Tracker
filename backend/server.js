@@ -2,7 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const port = process.env.PORT || 4000;
 const app = express();
-const { errorHandler } = require("./Middlewares/errorMiddleware");
+const { errorHandler } = require("./middlewares/errorMiddleware");
 const { connectDB } = require("./config/dbConfig");
 const cors = require("cors");
 
@@ -18,10 +18,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 connectDB();
 
-app.use("/api", require("./Routes/reportRoute"));
-app.use("/api", require("./Routes/userRoute"));
-app.use("/api", require("./Routes/regionRoute"));
-app.use("/api", require("./Routes/notificationRoute"));
+app.use("/api", require("./routes/reportRoute"));
+app.use("/api", require("./routes/userRoute"));
+app.use("/api", require("./routes/regionRoute"));
+app.use("/api", require("./routes/notificationRoute"));
 
 app.use(errorHandler);
 
