@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Checker({
   state,
@@ -16,23 +16,11 @@ export default function Checker({
   setActive,
 }) {
   useEffect(() => {
-    const arr = [];
-    for (const key of Object.keys(state)) {
-      arr.push({ key, value: state[key] });
-    }
+    const arr = Object.entries(state).map(([key, value]) => ({ key, value }));
     setArr(arr);
-    for (const key of Object.keys(state)) {
-      if (state[key]) {
-        if (!active.includes(key)) {
-          setActive((prev) => [...prev, key]);
-        }
-      } else {
-        setActive((prev) => prev.filter((type) => type != key));
-      }
-    }
-  }, [state, setActive]);
-
-  console.log(active);
+    const newActive = Object.keys(state).filter((key) => state[key]);
+    setActive(newActive);
+  }, [state, setArr, setActive]);
 
   return (
     <div className="w-full">
