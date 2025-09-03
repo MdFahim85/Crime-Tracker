@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Badge } from "@/components/ui/badge";
-import {  
+import {
   Shield,
   AlertTriangle,
   CircleAlert,
@@ -58,16 +58,7 @@ export default function Map({ report }) {
       <MapContainer
         center={[report.position.lat, report.position.lng]}
         zoom={17}
-        minZoom={17}
-        maxZoom={17}
         zoomControl={false}
-        scrollWheelZoom={false}
-        doubleClickZoom={false}
-        dragging={false}
-        touchZoom={false}
-        boxZoom={false}
-        keyboard={false}
-        tap={false}
         className="rounded-xl shadow-lg border border-slate-200"
         style={{
           height: "300px",
