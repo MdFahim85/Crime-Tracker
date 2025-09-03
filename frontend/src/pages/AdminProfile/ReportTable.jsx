@@ -63,7 +63,7 @@ export default function ReportTable({ fetchReports }) {
     }
   };
 
-  const filteblueReports =
+  const filteredReports =
     filter === "all" ? reports : reports.filter((r) => r.status === filter);
 
   const filterOptions = [
@@ -149,7 +149,7 @@ export default function ReportTable({ fetchReports }) {
       </div>
 
       <div className="overflow-x-auto mx-4">
-        {filteblueReports.length === 0 ? (
+        {filteredReports.length === 0 ? (
           <div className="p-12 text-center">
             <div className="p-4 bg-gray-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
               <FileText className="h-8 w-8 text-gray-400" />
@@ -190,7 +190,7 @@ export default function ReportTable({ fetchReports }) {
             </TableHeader>
 
             <TableBody>
-              {filteblueReports.map((r, index) => {
+              {filteredReports.map((r, index) => {
                 const globalIndex = (page - 1) * 10 + index + 1;
 
                 return (
@@ -258,7 +258,7 @@ export default function ReportTable({ fetchReports }) {
         )}
       </div>
 
-      {(next || prev) && (
+      {filteredReports.length && (next || prev) && (
         <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">
           <Pagination setPage={setPage} prev={prev} page={page} next={next} />
         </div>

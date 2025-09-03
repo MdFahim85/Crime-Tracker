@@ -15,7 +15,10 @@ const router = express.Router();
 
 const multer = require("multer");
 const { storage } = require("../cloudinary");
-const { userPagination } = require("../Middlewares/pagination");
+const {
+  userPagination,
+  userReportsPagination,
+} = require("../Middlewares/pagination");
 const upload = multer({ storage });
 
 // Public routes
@@ -35,8 +38,10 @@ router
 
 router.route("/users").get(protect, admin, userPagination, getAllUsers);
 router
+  .route("/users/:id/reports")
+  .get(protect, admin, userReportsPagination, getUserAllReports);
+router
   .route("/users/:id")
-  .get(protect, admin, getUserAllReports)
   .patch(protect, admin, updateUserByAdmin)
   .delete(protect, admin, deleteUserByAdmin);
 

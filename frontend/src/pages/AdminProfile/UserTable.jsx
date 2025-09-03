@@ -305,7 +305,7 @@ export default function UserTable({ fetchUsers }) {
         onClose={() => setUserId(null)}
       />
 
-      {(next || prev) && (
+      {filteredUsers.length && (next || prev) && (
         <div className="px-8 py-4 bg-gray-50 border-t border-gray-200">
           <Pagination setPage={setPage} prev={prev} page={page} next={next} />
         </div>

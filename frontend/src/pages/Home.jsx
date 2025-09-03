@@ -159,6 +159,58 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <section className="py-12 px-4 bg-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
+                <MapPin className="w-8 h-8 text-blue-600" />
+                Recent Crime Reports
+              </h2>
+              <p className="text-slate-600 mt-2">
+                Latest incidents reported by the community
+              </p>
+            </div>
+            {recentReports.length > 6 && (
+              <Button asChild variant="outline" className="hidden sm:flex">
+                <Link to="/allreports" className="flex items-center gap-2">
+                  View All
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            )}
+          </div>
+
+          {recentReports.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentReports.map((report) => (
+                  <ReportCardDetails key={report._id} report={report} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <Card className="border-0 shadow-md">
+              <CardContent className="p-12">
+                <div className="text-center text-slate-500">
+                  <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+                  <h3 className="text-xl font-semibold mb-2">
+                    No Recent Reports
+                  </h3>
+                  <p>
+                    No recent reports found. Be the first to report an incident.
+                  </p>
+                  <Button asChild className="mt-4">
+                    <Link to="/report">Report an Incident</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </section>
+
       <section className="py-12 px-4 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -312,57 +364,6 @@ function Home() {
               )}
             </CardContent>
           </Card>
-        </div>
-      </section>
-
-      <section className="py-12 px-4 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
-                <MapPin className="w-8 h-8 text-blue-600" />
-                Recent Crime Reports
-              </h2>
-              <p className="text-slate-600 mt-2">
-                Latest incidents reported by the community
-              </p>
-            </div>
-            {recentReports.length > 6 && (
-              <Button asChild variant="outline" className="hidden sm:flex">
-                <Link to="/allreports" className="flex items-center gap-2">
-                  View All
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
-            )}
-          </div>
-
-          {recentReports.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recentReports.map((report) => (
-                  <ReportCardDetails key={report._id} report={report} />
-                ))}
-              </div>
-            </>
-          ) : (
-            <Card className="border-0 shadow-md">
-              <CardContent className="p-12">
-                <div className="text-center text-slate-500">
-                  <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                  <h3 className="text-xl font-semibold mb-2">
-                    No Recent Reports
-                  </h3>
-                  <p>
-                    No recent reports found. Be the first to report an incident.
-                  </p>
-                  <Button asChild className="mt-4">
-                    <Link to="/report">Report an Incident</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </section>
 

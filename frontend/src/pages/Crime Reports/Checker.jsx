@@ -8,14 +8,31 @@ import {
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function Checker({ state, setState, setArr }) {
+export default function Checker({
+  state,
+  setState,
+  setArr,
+  active,
+  setActive,
+}) {
   useEffect(() => {
     const arr = [];
     for (const key of Object.keys(state)) {
       arr.push({ key, value: state[key] });
     }
     setArr(arr);
-  }, [state]);
+    for (const key of Object.keys(state)) {
+      if (state[key]) {
+        if (!active.includes(key)) {
+          setActive((prev) => [...prev, key]);
+        }
+      } else {
+        setActive((prev) => prev.filter((type) => type != key));
+      }
+    }
+  }, [state, setActive]);
+
+  console.log(active);
 
   return (
     <div className="w-full">
@@ -23,7 +40,13 @@ export default function Checker({ state, setState, setArr }) {
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="w-62 flex justify-between">
             <span className="text-slate-600  font-normal">
-              Select a crime type
+              {active.length
+                ? active.map((type) => (
+                    <span className="text-wrap" key={type}>
+                      {type}{" "}
+                    </span>
+                  ))
+                : "Select a crime type"}
             </span>
             <ChevronDown className="text-slate-300" />
           </Button>

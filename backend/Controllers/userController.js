@@ -208,11 +208,12 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 // Get all reports of a individual user
 const getUserAllReports = asyncHandler(async (req, res) => {
-  const reports = await Report.find({ user: req.params.id });
+  const { next, prev } = res.paginatedData;
+  const reports = res.paginatedData.results;
   if (!reports) {
     res.status(404).json({ message: "No reports found for this user" });
   }
-  res.json({ reports });
+  res.json({ reports, next, prev });
 });
 
 // Update user info / role (Admin)

@@ -15,6 +15,12 @@ const userReportPagination = asyncHandler(async (req, res, next) => {
   next();
 });
 
+const userReportsPagination = asyncHandler(async (req, res, next) => {
+  const allRep = await Report.find({ user: req.params.id });
+  pagination(req, res, allRep);
+  next();
+});
+
 const regionPagination = asyncHandler(async (req, res, next) => {
   const allReg = await Region.find();
   pagination(req, res, allReg);
@@ -29,7 +35,7 @@ const userPagination = asyncHandler(async (req, res, next) => {
 
 const pagination = (req, res, data) => {
   const page = req.query.page ? parseInt(req.query.page) : 1;
-  const limit = req.query.limit ? parseInt(req.query.limit) : 100;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 200;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
   const result = {};
@@ -46,6 +52,7 @@ const pagination = (req, res, data) => {
 module.exports = {
   reportPagination,
   userReportPagination,
+  userReportsPagination,
   regionPagination,
   userPagination,
 };

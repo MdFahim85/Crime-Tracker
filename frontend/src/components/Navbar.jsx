@@ -152,7 +152,7 @@ const Navbar = () => {
                 size="icon"
                 className="hover:bg-slate-800"
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="size-7" />
               </Button>
             </SheetTrigger>
             <SheetContent

@@ -34,6 +34,7 @@ import Checker from "./Checker";
 
 function AllCrimeReports() {
   const [regions, setRegions] = useState([]);
+  const [active, setActive] = useState([]);
   const [filterStreet, setFilterStreet] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [isHeatmap, setIsHeatmap] = useState(false);
@@ -135,7 +136,7 @@ function AllCrimeReports() {
     };
 
     filterFunc();
-  }, [arr]);
+  }, [arr, active]);
 
   const filteredReports = reports.filter((r) => {
     const reportDate = new Date(r.date);
@@ -182,6 +183,7 @@ function AllCrimeReports() {
       drugs: false,
       other: false,
     });
+    setActive([]);
   }
 
   const MapComponent = ({ height = "400px" }) => (
@@ -301,6 +303,8 @@ function AllCrimeReports() {
                             state={state2}
                             setState={setState2}
                             setArr={setArr}
+                            active={active}
+                            setActive={setActive}
                           />
                         </div>
 
@@ -346,7 +350,7 @@ function AllCrimeReports() {
                           Clear Filters
                         </Button>
 
-                        {(filteredArr || filterStreet || filterDate) && (
+                        {(filteredArr.length || filterStreet || filterDate) && (
                           <div className="pt-2 border-t">
                             <div className="text-xs text-slate-600 mb-2">
                               Active Filters:
@@ -382,7 +386,9 @@ function AllCrimeReports() {
                         <Button variant="outline" className="w-full">
                           <Filter className="w-4 h-4 mr-2" />
                           Show Filters
-                          {(filteredArr || filterStreet || filterDate) && (
+                          {(filteredArr.length ||
+                            filterStreet ||
+                            filterDate) && (
                             <Badge className="ml-2 bg-blue-100 text-blue-800">
                               {
                                 [filteredArr, filterStreet, filterDate].filter(
@@ -413,6 +419,8 @@ function AllCrimeReports() {
                                 state={state2}
                                 setState={setState2}
                                 setArr={setArr}
+                                active={active}
+                                setActive={setActive}
                               />
                             </div>
 
@@ -458,7 +466,9 @@ function AllCrimeReports() {
                               Clear Filters
                             </Button>
 
-                            {(filteredArr || filterStreet || filterDate) && (
+                            {(filteredArr.length ||
+                              filterStreet ||
+                              filterDate) && (
                               <div className="pt-2 border-t">
                                 <div className="text-xs text-slate-600 mb-2">
                                   Active Filters:
@@ -584,6 +594,8 @@ function AllCrimeReports() {
                       state={state2}
                       setState={setState2}
                       setArr={setArr}
+                      active={active}
+                      setActive={setActive}
                     />
                   </div>
 
@@ -629,7 +641,7 @@ function AllCrimeReports() {
                     Clear Filters
                   </Button>
 
-                  {(filteredArr || filterStreet || filterDate) && (
+                  {(filteredArr.length || filterStreet || filterDate) && (
                     <div className="pt-2 border-t">
                       <div className="text-xs text-slate-600 mb-2">
                         Active Filters:
@@ -664,7 +676,7 @@ function AllCrimeReports() {
                   <Button variant="outline" className="w-full">
                     <Filter className="w-4 h-4 mr-2" />
                     Show Filters
-                    {(filteredArr || filterStreet || filterDate) && (
+                    {(filteredArr.length || filterStreet || filterDate) && (
                       <Badge className="ml-2 bg-blue-100 text-blue-800">
                         {
                           [filteredArr, filterStreet, filterDate].filter(
@@ -695,6 +707,8 @@ function AllCrimeReports() {
                           state={state2}
                           setState={setState2}
                           setArr={setArr}
+                          active={active}
+                          setActive={setActive}
                         />
                       </div>
 
@@ -725,7 +739,7 @@ function AllCrimeReports() {
                         Clear Filters
                       </Button>
 
-                      {(filteredArr || filterStreet || filterDate) && (
+                      {(filteredArr.length || filterStreet || filterDate) && (
                         <div className="pt-2 border-t">
                           <div className="text-xs text-slate-600 mb-2">
                             Active Filters:

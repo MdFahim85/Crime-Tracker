@@ -166,7 +166,7 @@ export default function CrimeDetails() {
             </div>
           </div>
 
-          {report.status === "approved" && (
+          {user && report.status === "approved" && (
             <div className="md:w-1/3">
               <div className="bg-white rounded-2xl border border-slate-200 shadow-lg p-6 flex flex-col max-h-[500px] overflow-y-auto">
                 <div className="flex items-center gap-2 mb-4 text-slate-800 border-b pb-2">
