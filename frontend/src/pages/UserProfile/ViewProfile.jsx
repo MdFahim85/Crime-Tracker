@@ -174,14 +174,10 @@ function ViewProfile() {
         <div className="flex-1 ">
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 h-full">
             {view == "analytics" && <CrimeBarChart userReports={reports} />}
-            {view == "submitted" && <UserReportsTable reports={reports} />}
-            {view == "approved" && (
-              <UserReportsTable reports={approvedReports} />
-            )}
-            {view == "rejected" && (
-              <UserReportsTable reports={rejectedReports} />
-            )}
-            {view == "pending" && <UserReportsTable reports={pendingReports} />}
+            {view == "submitted" && <UserReportsTable view={view} />}
+            {view == "approved" && <UserReportsTable view={view} />}
+            {view == "rejected" && <UserReportsTable view={view} />}
+            {view == "pending" && <UserReportsTable view={view} />}
           </div>
         </div>
       </div>
