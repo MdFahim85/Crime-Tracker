@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config();
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 const app = express();
 const { errorHandler } = require("./Middlewares/errorMiddleware");
 const { connectDB } = require("./config/dbConfig");
@@ -24,4 +24,13 @@ app.use("/api", require("./routes/regionRoute"));
 app.use("/api", require("./routes/notificationRoute"));
 
 app.use(errorHandler);
+
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, "frontend/dist")));
+
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+  );
+}
 app.listen(port, () => console.log(`Listeing to port ${port} `));
