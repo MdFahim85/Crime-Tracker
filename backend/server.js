@@ -18,10 +18,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 connectDB();
 
-app.use("/api", require("./routes/reportRoute"));
-app.use("/api", require("./routes/userRoute"));
-app.use("/api", require("./routes/regionRoute"));
-app.use("/api", require("./routes/notificationRoute"));
+app.use("/api", require("./Routes/reportRoute"));
+app.use("/api", require("./Routes/userRoute"));
+app.use("/api", require("./Routes/regionRoute"));
+app.use("/api", require("./Routes/notificationRoute"));
 
 app.use(errorHandler);
 
