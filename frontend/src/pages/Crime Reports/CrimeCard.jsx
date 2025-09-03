@@ -42,7 +42,7 @@ export function CrimeCard({ report, user, handelDelete, navigate }) {
 
           <div className="flex items-center gap-2 text-sm">
             <User className="w-4 h-4 text-slate-500" />
-            <span className="text-slate-600">{report.user.username}</span>
+            <span className="text-slate-600">{report.user?.username}</span>
           </div>
         </div>
 
