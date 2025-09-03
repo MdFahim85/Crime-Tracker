@@ -8,7 +8,7 @@ const {
   getUserReports,
   updateReportSuggestion,
 } = require("../Controllers/reportController");
-const { protect, admin } = require("../middlewares/authMiddleware");
+const { protect, admin } = require("../Middlewares/authMiddleware");
 const {
   getComments,
   setComment,
@@ -21,7 +21,7 @@ const { storage } = require("../cloudinary");
 const {
   reportPagination,
   userReportPagination,
-} = require("../middlewares/pagination");
+} = require("../Middlewares/pagination");
 
 const upload = multer({ storage });
 

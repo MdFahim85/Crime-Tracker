@@ -10,12 +10,12 @@ const {
   getUserAllReports,
   googleLogin,
 } = require("../Controllers/userController");
-const { protect, admin } = require("../middlewares/authMiddleware");
+const { protect, admin } = require("../Middlewares/authMiddleware");
 const router = express.Router();
 
 const multer = require("multer");
 const { storage } = require("../cloudinary");
-const { userPagination } = require("../middlewares/pagination");
+const { userPagination } = require("../Middlewares/pagination");
 const upload = multer({ storage });
 
 // Public routes
