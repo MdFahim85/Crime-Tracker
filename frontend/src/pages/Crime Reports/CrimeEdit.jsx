@@ -126,7 +126,7 @@ function CrimeEdit() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto mt-20 mb-5  p-4 space-y-6 border border-slate-300 rounded">
+    <div className="max-w-3xl mx-auto mt-20 mb-5  p-4 space-y-6 border border-blue-300 rounded">
       <h2 className="text-2xl font-bold mb-4">Edit Crime Report</h2>
       <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
         <div className="mb-4">
@@ -207,7 +207,7 @@ function CrimeEdit() {
         </div>
 
         <div>
-          <label className="block font-semibold mb-1 text-slate-700">
+          <label className="block font-semibold mb-1 text-blue-700">
             Select Location on Map:
           </label>
           <ReportMap reportData={reportData} setReportData={setReportData} />
@@ -222,7 +222,7 @@ function CrimeEdit() {
           <Button
             type="button"
             onClick={() => handleEdit()}
-            className="border border-slate-500 bg-white text-slate-500 hover:text-white hover:bg-slate-500"
+            className="border border-blue-500 bg-white text-blue-500 hover:text-white hover:bg-blue-500"
           >
             Save Changes
           </Button>
