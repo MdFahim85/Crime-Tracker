@@ -18,6 +18,14 @@ Welcome to **Crime Tracker**, a **MERN stack application** for reporting, tracki
 
 ---
 
+
+## 🚀 Live Demo
+
+Check out the deployed application here:  
+
+👉 [Crime Tracker Live](https://crime-tracker.onrender.com/)
+
+
   
 
 ## 🎯 Features
@@ -128,7 +136,7 @@ Welcome to **Crime Tracker**, a **MERN stack application** for reporting, tracki
 
 ### Frontend
 
-- React.js, Redux, TailwindCSS, React Router
+- React.js, Redux-toolkit, TailwindCSS, React Router
 
   
 
