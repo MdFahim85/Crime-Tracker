@@ -106,7 +106,7 @@ function EditProfile() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4 mt-16 md:mt-0">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-lg rounded-2xl px-8 pt-10 pb-8 w-full max-w-md"
